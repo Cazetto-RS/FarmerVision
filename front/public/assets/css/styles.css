@@ -1,0 +1,1157 @@
+:root {
+    --verde: #7AB317;
+    --verde-escuro: #4d720e;
+    --verde-amarelado: #CEA80F;
+    --verde-amarelado-escuro: #9e810c;
+
+    --amarelo: #F0971C;
+    --amarelo-escuro: #b97516;
+    --amarelo-avermelhado: #CC3E18;
+    --amarelo-avermelhado-escuro: #922e12;
+
+    --vermelho: #C21B12;
+    --vermelho-escuro: #8b160f;
+
+    --azul: #11baac;
+    --azul-escuro: #0c9287;
+
+    --branco: #F6EEE0;
+    --cinza-claro: #5a5a5a;
+    --cinza: #373636;
+    --cinza-escuro: #151515;
+    --preto: #0B0B0B;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.title,
+.header,
+.heading {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    /* Peso semi-negrito para melhor contraste */
+    color: #F6EEE0;
+}
+
+/* --- Fontes Secundárias (Inter para textos menores) --- */
+body,
+p,
+a,
+li,
+input,
+button,
+.text,
+.paragraph {
+    font-family: 'Inter', Arial, sans-serif;
+    font-weight: 400;
+    /* Peso normal para legibilidade */
+    color: #F6EEE0;
+}
+
+body {
+    background-color: #151515;
+}
+
+img {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+
+/* CSS PAGINA ERRO.HTML */
+.erro-esconder {
+
+    /* Container Principal */
+    .erro-container {
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+    }
+
+    /* Títulos */
+    .erro-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .erro-subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .erro-caixa {
+        display: flex;
+        justify-content: center;
+        /* Centraliza horizontalmente */
+        align-items: center;
+        /* Centraliza verticalmente */
+        margin: 0;
+        /* Remove margens padrão */
+        text-align: center;
+    }
+
+    /* Código de Erro */
+    .erro-code {
+        font-size: 148px;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--cinza-escuro);
+        background-color: var(--branco);
+        width: 660px;
+        height: 350px;
+        text-align: center;
+        justify-content: center;
+
+        -webkit-box-shadow: 14px 14px 0px 0px rgba(11, 11, 11, 1);
+        -moz-box-shadow: 14px 14px 0px 0px rgba(11, 11, 11, 1);
+        box-shadow: 14px 14px 0px 0px rgba(11, 11, 11, 1);
+    }
+
+    .erro-code-text {
+        font-size: 148px;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--cinza-escuro);
+        background-color: var(--branco);
+        margin-top: 90px;
+    }
+
+    .erro-code2 {
+        display: flex;
+        /* Ativa flexbox */
+        align-items: center;
+        /* Centraliza verticalmente os itens */
+        gap: 10px;
+        /* Espaço entre os elementos (opcional) */
+
+        line-height: 1;
+        color: var(--cinza);
+        background-color: var(--cinza);
+        width: 660px;
+        height: 40px;
+
+        -webkit-box-shadow: 14px 14px 0px 0px rgba(11, 11, 11, 1);
+        -moz-box-shadow: 14px 14px 0px 0px rgba(11, 11, 11, 1);
+        box-shadow: 14px 14px 0px 0px rgba(11, 11, 11, 1);
+    }
+
+    .bola,
+    .bola2,
+    .bola3 {
+        display: inline-flex;
+        /* Alinha em linha */
+        width: 18px;
+        height: 18px;
+        border-radius: 100px;
+    }
+
+    /* Mensagens */
+    .erro-message {
+        margin-top: 40px;
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    /* Botão */
+    .erro-button {
+        background-color: var(--verde);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .erro-button:hover {
+        background-color: #4d720e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+
+
+        .erro-container {
+            padding: 1rem;
+            width: 95%;
+        }
+
+        .erro-title {
+            font-size: 1.5rem;
+        }
+
+        .erro-subtitle {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .erro-caixa {
+            width: 100%;
+        }
+
+        .erro-code,
+        .erro-code2 {
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 7px 7px 0px 0px rgba(11, 11, 11, 1);
+        }
+
+        .erro-code {
+            width: 300px;
+            height: 350px;
+            font-size: 100px;
+            /* border-bottom-right-radius: 10px;
+          border-bottom-left-radius: 10px; */
+        }
+
+        .erro-code2 {
+            width: 300px;
+            height: 40px;
+            font-size: 100px;
+            /* border-top-right-radius: 10px;
+          border-top-left-radius: 10px; */
+        }
+
+        .erro-code-text {
+            font-size: 100px;
+            margin-top: 120px;
+        }
+
+        .erro-message {
+            margin-top: 30px;
+            font-size: 1rem;
+        }
+
+        .erro-suggestion {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .erro-button {
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    }
+}
+
+
+.home-esconde {
+    .home-page {
+        overflow: hidden;
+    }
+
+    /* COMPONENTE HOME */
+    .home {
+        width: 100%;
+        min-height: 100dvh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        box-sizing: border-box;
+    }
+
+    .home__container {
+        width: 100%;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .home__content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .home__info {
+        flex: 1;
+    }
+
+    .home__visual {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+
+    .home__logo {
+        width: 25%;
+        max-width: 200px;
+        height: auto;
+        margin-bottom: -10px;
+    }
+
+    .home__title {
+        font-size: clamp(3.75rem, 10vw, 9.25rem);
+        /* Técnica de fluid typography */
+        font-weight: 700;
+        color: var(--branco);
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .home__description {
+        font-size: 1.5rem;
+        color: var(--branco);
+        line-height: 1.4;
+    }
+
+    .home__cta {
+        background-color: var(--verde);
+        color: var(--branco);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 30px;
+    }
+
+    .home__cta:hover,
+    .home__cta:focus {
+        background-color: var(--verde-escuro);
+        transform: translateY(-2px);
+        box-shadow: var(--sombra);
+    }
+
+    .home__plant {
+        width: 130%;
+        max-width: 600px;
+        height: auto;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 768px) {
+
+        .home__content {
+            flex-direction: column;
+            text-align: start;
+        }
+
+        .home__logo {
+            width: 40%;
+            margin: -10 auto 10px;
+            margin-left: 5px;
+        }
+
+        .home__title {
+            font-size: 3.75rem;
+            text-align: center;
+        }
+
+        .home__description {
+            font-size: 1.125rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .home__cta {
+            margin: 10px auto 0;
+            display: flex;
+        }
+
+        .home__plant {
+            display: none;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .container {
+            padding: 30px;
+            flex-direction: row;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .logo {
+            width: 100px;
+            left: 30px;
+            bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-top: -40px;
+            /* Compensa o logo */
+            line-height: 1.2;
+        }
+
+        .content {
+            flex: 1;
+            padding-bottom: 80px;
+            /* Espaço para o logo */
+        }
+
+        .image-container {
+            flex: 1;
+            display: block !important;
+            /* Garante que a imagem aparece */
+        }
+
+        .image-container img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin-left: auto;
+        }
+    }
+
+
+}
+
+.plantas-esconder {
+    .plantas-container {
+        display: flex;
+        /* um do lado do outro */
+        align-items: center;
+        /* alinhar verticalmente */
+        /* width: fit-content; */
+    }
+
+    .div-plantas-imagem {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .plantas-imagem {
+        height: 41px;
+        background-color: var(--preto);
+        padding: 13px;
+        border-radius: 100px;
+    }
+
+    .plantas-info {
+        background-color: var(--preto);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 300px;
+        height: 75px;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding-left: 20px;
+        border-left: 3px solid var(--verde);
+        margin-left: 20px;
+        transition: all 0.5s;
+    }
+
+    .plantas-info:hover {
+        /* margin-left: 30px;
+      transition: all 0.5s; */
+        cursor: pointer;
+    }
+
+    .plantas-nome-usual {
+        font-size: 22px;
+        margin-top: 2px;
+        padding-bottom: 8px;
+
+        user-select: none;
+    }
+
+    .plantas-nome-cientifico {
+        margin-top: -15px;
+        font-size: 15px;
+        color: var(--cinza-claro) !important;
+        font-weight: bold;
+
+        user-select: none;
+    }
+
+    @media (max-width: 768px) {
+        .plantas-container {
+            margin-top: 30px;
+            margin: 0 auto;
+            justify-content: center;
+            /* Centraliza horizontalmente */
+        }
+
+        .plantas-info {
+            margin-left: 20px;
+        }
+    }
+}
+
+
+.modal-plantas-esconder {
+
+    /* Estilos base */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Overlay do modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+    }
+
+    /* Container principal - DESKTOP */
+    .modal-plantas-container {
+        position: relative;
+        background-color: var(--preto);
+        width: 700px;
+        max-width: 100%;
+        height: 900px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        animation: modalFadeIn 0.3s ease-out;
+        overflow: scroll;
+        overflow-x: hidden;
+    }
+
+    /* Botão de fechar */
+    .modal-close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: var(--branco);
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-close-btn:hover {
+        background: var(--verde-escuro);
+    }
+
+    /* Cabeçalho */
+    .modal-plantas-cabecalho {
+        background: var(--verde);
+        width: 100%;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+    }
+
+    .modal-plantas-cabecalho-content {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        width: 100%;
+    }
+
+    .modal-plantas-icon-cabecalho {
+        width: 12%;
+        background-color: #222222;
+        padding: 15px;
+        border-radius: 50%;
+        object-fit: contain;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-plantas-info-cabecalho {
+        flex: 1;
+    }
+
+    .modal-plantas-nome-usual {
+        font-size: 28px;
+        margin: 0;
+        color: var(--branco);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-plantas-nome-cientifico {
+        font-size: 16px;
+        color: var(--cinza);
+        font-weight: 500;
+        margin: 5px 0 0 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #4d720e;
+        width: fit-content;
+        font-style: italic;
+    }
+
+    /* Conteúdo */
+    .modal-plantas-conteudo {
+        padding: 25px 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        overflow-y: auto;
+    }
+
+    .modal-plantas-info-item {
+        background-color: var(--cinza-escuro);
+        padding: 18px 20px;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+        /* border-bottom-style: solid;
+        border-bottom-width: 3px;
+        border-color: var(--verde-escuro); */
+    }
+
+    .modal-plantas-info-item:hover {
+        /* transform: translateX(5px); */
+    }
+
+    .modal-plantas-info-titulo {
+        font-size: 18px;
+        color: var(--verde);
+        margin: 0 0 8px 0;
+        font-weight: 600;
+
+        user-select: none;
+    }
+
+    .modal-plantas-info-titulo-grafico {
+        font-size: 18px;
+        color: var(--branco);
+        margin: 0 0 8px 0;
+        font-weight: 600;
+
+        user-select: none;
+    }
+
+    .modal-plantas-info-descricao {
+        font-size: 16px;
+        color: #e0e0e0;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* Dicas */
+    .modal-plantas-tips {
+        margin-top: 15px;
+    }
+
+    .modal-plantas-tips-titulo {
+        font-size: 20px;
+        color: var(--branco);
+        margin: 0 0 15px 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--verde-escuro);
+        width: fit-content;
+        font-weight: 600;
+
+        user-select: none;
+    }
+
+    .modal-plantas-tips-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .modal-plantas-tips-texto {
+        font-size: 14px;
+        color: var(--branco);
+        font-weight: 500;
+        margin: 0;
+        background-color: var(--verde);
+        padding: 8px 15px;
+        border-radius: 20px;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .modal-plantas-tips-texto:hover {
+        background-color: var(--verde-escuro);
+        transform: translateY(-2px);
+    }
+
+    /* Animações */
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* VERSÃO MOBILE - Telas menores que 768px */
+    @media (max-width: 768px) {
+        .modal-plantas-container {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            border-radius: 0px;
+            /* margin: 20px auto; */
+        }
+
+        .modal-plantas-cabecalho {
+            height: 100px;
+            padding: 0 20px;
+        }
+
+        .modal-plantas-icon-cabecalho {
+            width: 60px;
+            height: 60px;
+            padding: 12px;
+        }
+
+        .modal-plantas-nome-usual {
+            font-size: 22px;
+        }
+
+        .modal-plantas-nome-cientifico {
+            font-size: 14px;
+        }
+
+        .modal-plantas-conteudo {
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .modal-plantas-info-item {
+            padding: 15px;
+        }
+
+        .modal-plantas-info-titulo {
+            font-size: 16px;
+        }
+
+        .modal-plantas-info-descricao {
+            font-size: 14px;
+        }
+
+        .modal-plantas-tips-titulo {
+            font-size: 18px;
+        }
+
+        .modal-plantas-tips-texto {
+            font-size: 13px;
+            padding: 6px 12px;
+        }
+
+        .modal-plantas-tips-texto:hover {
+            background-color: var(--verde);
+            transform: translateY(0px);
+        }
+
+        .modal-close-btn {
+            top: 10px;
+            right: 10px;
+            width: 35px;
+            height: 35px;
+            font-size: 18px;
+        }
+
+    }
+
+    @media (max-width: 1366px) {
+        body {}
+    }
+
+    .scrollview {
+        height: 300px;
+        overflow-y: scroll;
+        background-color: var(--preto);
+        padding: 10px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--cinza) var(--preto);
+        background-color: var(--cinza-escuro);
+    }
+
+    .scrollview::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .scrollview::-webkit-scrollbar-track {
+        background: var(--cinza-escuro);
+    }
+
+    .scrollview::-webkit-scrollbar-thumb {
+        background-color: var(--cinza);
+        border-radius: 10px;
+    }
+
+}
+
+.perfil-esconder {
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .perfil-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .perfil-textos {
+        width: 450px;
+        margin: 0 auto; /* <=== Centraliza horizontalmente */
+    }
+
+    .perfil-logo {
+        width: 10%;
+    }
+
+    .perfil-titulo {
+        font-size: 55px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        user-select: none;
+        color: var(--branco);
+    }
+
+    .perfil-subtitulo {
+        margin-top: -15px;
+        font-size: 20px;
+        font-weight: 400;
+        padding-bottom: 5px;
+        width: 100%;
+        color: var(--cinza-claro);
+        border-bottom: 1px solid var(--branco);
+        user-select: none;
+    }
+
+    .perfil-titulo-input {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--branco);
+        user-select: none;
+        margin-bottom: -5px;
+        display: block;
+    }
+
+    .perfil-inputs {
+        width: 100%; /* Agora ocupa 100% do pai */
+        padding: 10px;
+        margin-top: 8px;
+        border: none;
+        border-radius: 3px;
+        background-color: var(--cinza);
+        color: var(--branco);
+        font-size: 16px;
+        transition: 0.3s;
+    }
+
+    .perfil-inputs:focus {
+        outline: none;
+    }
+
+    .div-perfil-inputs {
+        width: 450px;
+        margin: 0 auto; /* <=== Centraliza */
+    }
+
+    .div-perfil-btn {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        width: 450px;
+        margin: 0 auto; /* <=== Centraliza */
+    }
+
+    .perfil-btn-login {
+        padding: 10px 0;
+        width: 100%; /* <=== Garante que o botão preencha a div */
+        margin-top: 20px;
+        margin-bottom: -5px;
+        border-radius: 3px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+
+        background-color: var(--verde);
+        color: var(--branco);
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .perfil-btn-login:hover {
+        background-color: var(--verde-escuro);
+        transition: all linear 0.3s;
+    }
+
+    .div-login-remember {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px !important;
+        width: 450px;
+        margin: 0 auto; /* <=== Centraliza */
+    }
+
+    .div-login-remember-text {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .div-login-remember-checkbox {
+        cursor: pointer;
+        accent-color: var(--cinza-claro);
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 10px;
+    }
+
+    .div-login-increva-se {
+        width: 450px;
+        margin-top: 20px;
+        margin: 20px auto 0 auto; /* <=== Centraliza */
+    }
+
+    .div-login-increva-se-texto {
+        margin-left: 10px;
+    }
+
+    .login-div-imagem {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .login-div-imagem-img {
+        width: 40%;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+
+    @media (max-width: 768px) {
+        .perfil-container {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .login-div-imagem-img{
+            width: 50%;
+        }
+
+        .perfil-textos {
+            width: 80%;
+            margin: 0 auto; /* <=== Mantém centralizado */
+        }
+
+        .perfil-subtitulo {
+            width: 95%;
+        }
+
+        .perfil-logo {
+            width: 15%;
+        }
+
+        .div-perfil-inputs,
+        .div-login-remember,
+        .div-perfil-btn,
+        .div-login-increva-se {
+            width: 100%;     /* Ajusta para tela menor */
+            max-width: 450px;
+            margin: 0 auto;  /* <=== Centraliza todos */
+        }
+
+        .div-login-increva-se{
+            margin-top: 20px;
+        }
+    }
+}
+
+
+.P-esconder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+
+    flex-direction: column;
+}
+
+.enfeite {
+    width: 895px;
+    height: 100px;
+    background-color: var(--verde);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.Pdiv {
+    width: 895px;
+    background-color: var(--preto);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    position: relative;
+    /* Importante para o posicionamento da imagem */
+    padding-top: 60px;
+    /* Dá espaço para o conteúdo abaixo da imagem */
+    padding-bottom: 30px;
+}
+
+.fotoperfil {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 7px solid var(--preto);
+    z-index: 10;
+
+    position: absolute;
+    top: -60px;
+    /* Sobe metade da altura da imagem */
+    left: 30px;
+    /* Fixa à esquerda, como estava antes */
+    z-index: 10;
+}
+
+.fotoP {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    /* transition: all linear 0.2s; */
+}
+
+.fotoP:hover {
+    filter: brightness(50%);
+    /* Deixa 15% mais escuro */
+
+    cursor: pointer;
+}
+
+.icone-editar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    padding: 8px;
+    font-size: 30px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    /* evita bloquear clique na imagem */
+}
+
+.fotoperfil:hover .icone-editar {
+    opacity: 1;
+}
+
+.infomarcoes {
+    margin-top: 20px;
+    background-color: var(--cinza-escuro);
+    border-radius: 10px;
+    margin-left: 17px;
+    margin-right: 17px;
+    padding: 25px 30px;
+    color: var(--branco);
+    font-size: 15px;
+
+}
+
+.tituloP {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    margin-left: 100px;
+}
+
+.conteudoP {
+    margin-left: 100px;
+    font-size: 15px;
+    color: var(--branco);
+}
+
+.campo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.campo label {
+    font-weight: bold;
+}
+
+.campo span {
+    margin-top: 4px;
+    display: block;
+}
+
+.btn-edit {
+    background-color: var(--preto);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.logout {
+    display: flex;
+    column-gap: 10px;
+
+    transition: all linear 0.1s;
+}
+
+.logout:hover {
+    column-gap: 15px;
+    cursor: pointer;
+}
+
+.iconLogout {
+    font-size: 20px;
+}
+
+.btn-edit:hover {
+    background-color: var(--cinza);
+}
+
+@media (max-width: 900px) {
+
+    .Pdiv,
+    .enfeite {
+        width: 95%;
+    }
+}

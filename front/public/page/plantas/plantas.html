@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Plantas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="shortcut icon" href="../../assets/img/Favicon.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../../components/menu/charts/plantCharts.js"></script>
+    <script src="../../components/menu/charts/telacheiaCharts.js"></script>
+    <style>
+        /* Apenas o necessário para o layout responsivo */
+        .plantas-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .plantas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        #plantModal {
+            display: none;
+            /* Garante que o modal comece invisível */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="plantas-grid" id="listaPlantas">
+        <!-- Plantas serão carregadas aqui -->
+    </div>
+
+    <div class="modal-plantas-esconder">
+
+        <div class="modal-plantas-esconder scrollview" id="plantModal">
+            <div class="modal-overlay">
+                <div class="modal-plantas-container">
+                    <button class="modal-close-btn" id="modalCloseBtn">
+                        <p><strong>X</strong></p>
+                    </button>
+                    <div class="modal-plantas-cabecalho">
+                        <div class="modal-plantas-cabecalho-content">
+                            <img src="../../assets/img/Favicon.png" alt="Ícone da Planta"
+                                class="modal-plantas-icon-cabecalho" id="modalPlantIcon">
+                            <div class="modal-plantas-info-cabecalho">
+                                <h1 class="modal-plantas-nome-usual" id="modalPlantName"></h1>
+                                <p class="modal-plantas-nome-cientifico" id="modalScientificName"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-plantas-conteudo">
+                        <div class="modal-plantas-tips">
+                            <h2 class="modal-plantas-tips-titulo" style="margin-bottom: 7px;">Descrição</h2>
+                            <p class="modal-plantas-info-descricao" style="margin-left: 15px;" id="modalDescricao"></p>
+                        </div>
+
+                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Informações</h2>
+
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo">Família</h2>
+                            <p class="modal-plantas-info-descricao" id="modalFamilia"></p>
+                        </div>
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo">Clima</h2>
+                            <p class="modal-plantas-info-descricao" id="modalClima"></p>
+                        </div>
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo">Altura Média</h2>
+                            <p class="modal-plantas-info-descricao" id="modalAltura"></p>
+                        </div>
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo">Toxicidade</h2>
+                            <p class="modal-plantas-info-descricao" id="modalToxicidade"></p>
+                        </div>
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo">Efeitos Tóxicos</h2>
+                            <p class="modal-plantas-info-descricao" id="modalEfeitos"></p>
+                        </div>
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo">Genero</h2>
+                            <p class="modal-plantas-info-descricao" id="modalGenero"></p>
+                        </div>
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo">Luminosidade</h2>
+                            <p class="modal-plantas-info-descricao" id="modalLight"></p>
+                        </div>
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo">Rega</h2>
+                            <p class="modal-plantas-info-descricao" id="modalWater"></p>
+                        </div>
+                        <div class="modal-plantas-tips">
+                            <h2 class="modal-plantas-tips-titulo">Dicas de Cultivo</h2>
+                            <div class="modal-plantas-tips-container" id="modalTips">
+                                <!-- Dicas serão inseridas aqui via JavaScript -->
+                            </div>
+                        </div>
+
+                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Gráficos</h2>
+
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Temperatura</h2>
+                            <canvas id="graficoTemperatura" width="400" height="200"></canvas>
+                        </div>
+
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Umidade</h2>
+                            <canvas id="graficoUmidade" width="400" height="200"></canvas>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="fullscreenChartContainer"
+            style="display: none; position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center;">
+            <canvas id="fullscreenChart" width="800" height="500"></canvas>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            let todasPlantas = [];
+
+            function abrirModalPlanta(planta) {
+                $('#modalPlantName').text(planta.nome_comum || 'Nome não disponível');
+                $('#modalScientificName').text(planta.nome_cientifico || 'Nome científico não disponível');
+                $('#modalPlantIcon').attr('src', '../../assets/img/Favicon.png');
+                $('#modalGenero').text(planta.genero || 'Não informado');
+                $('#modalLight').text(planta.luz || 'Não informado');
+                $('#modalWater').text(planta.agua || 'Não informado');
+                $('#modalDescricao').text(planta.descricao || 'Não informado');
+
+                // Novos campos
+                $('#modalFamilia').text(planta.familia || 'Não informado');
+                $('#modalClima').text(planta.clima || 'Não informado');
+                $('#modalAltura').text(planta.altura_media || 'Não informado');
+                $('#modalToxicidade').text(planta.toxicidade || 'Não informado');
+                $('#modalEfeitos').text(planta.efeitos_toxicos || 'Não informado');
+
+                // Dicas
+                const dicas = [
+                    ...(planta.curiosidades || [])
+                ].filter(Boolean);
+
+                $('#modalTips').empty();
+                dicas.forEach(dica => {
+                    $('#modalTips').append(`<span class="modal-plantas-tips-texto">${dica}</span>`);
+                });
+
+                $('#plantModal').show();
+
+                // Destroi gráficos anteriores, se existirem (evita sobreposição no Chart.js)
+                if (window.chartTemperatura) window.chartTemperatura.destroy();
+                if (window.chartUmidade) window.chartUmidade.destroy();
+
+                // Cria os novos gráficos com os dados da planta
+                const ctxTemp = document.getElementById('graficoTemperatura').getContext('2d');
+                const ctxUmi = document.getElementById('graficoUmidade').getContext('2d');
+
+                window.chartTemperatura = renderGraficoTemperatura(ctxTemp, planta.dadosTemperatura || []);
+                window.chartUmidade = renderGraficoUmidade(ctxUmi, planta.dadosUmidade || []);
+
+            }
+
+            $('#modalCloseBtn').click(function () {
+                $('#plantModal').hide();
+            });
+
+            $('#plantModal').click(function (e) {
+                if (!$(e.target).closest('.modal-plantas-container').length) {
+                    $('#plantModal').hide();
+                }
+            });
+
+            $.get("http://localhost:3000/plantasInfo", function (plantas) {
+                todasPlantas = plantas;
+                $('#listaPlantas').empty();
+
+                plantas.forEach(function (planta) {
+                    const plantaHTML = `
+                    <div class="plantas-esconder">                    
+                        <div class="plantas-container" data-id="${planta.id}">
+                            <div class="div-plantas-imagem">
+                                <img src="../../assets/img/Favicon.png" 
+                                     alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
+                            </div>
+                            <div class="plantas-info mt-2">
+                                <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
+                                <p class="plantas-nome-cientifico text-muted mb-0">
+                                    <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    $('#listaPlantas').append(plantaHTML);
+                });
+
+                $('.plantas-container').click(function () {
+                    const plantaId = $(this).data('id');
+                    const plantaSelecionada = todasPlantas.find(p => p.id == plantaId);
+                    if (plantaSelecionada) {
+                        abrirModalPlanta(plantaSelecionada);
+                    }
+                });
+            })
+                .fail(function () {
+                    $('#listaPlantas').html(`
+                    <div class="col-12 text-center">
+                        <p class="text-danger">Erro ao carregar plantas</p>
+                    </div>
+                `);
+                });
+        });
+    </script>
+</body>
+
+</html>

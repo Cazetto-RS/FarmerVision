@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Agrovision - Tecnologia de precisão transformando a agricultura sustentável">
+    <title>Home - Seja Bem-vindo! | Agrovision</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="shortcut icon" href="../assets/img/Favicon.png" type="image/png">
+    <link rel="preload" href="../assets/img/vaso.png" as="image">
+</head>
+
+<style>
+    /* Desativa qualquer tipo de rolagem na página */
+    html,
+    body {
+        overflow: hidden !important;
+        /* Remove scroll vertical e horizontal */
+        height: 100% !important;
+        /* Garante que o body não ultrapasse a viewport */
+        width: 100% !important;
+        overscroll-behavior: none;
+        /* Bloqueia gestos de overscroll em mobile */
+        touch-action: none;
+        /* Bloqueia gestos de toque */
+        position: fixed;
+        /* Impede o movimento da página */
+    }
+
+    /* Remove overscroll para navegadores que suportam */
+    body {
+        -ms-overflow-style: none;
+        /* Internet Explorer 10+ */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+        /* Chrome, Safari, Opera */
+    }
+</style>
+
+<body class="home-page">
+    <div class="home-esconde">
+        <main class="home">
+            <div class="home__container">
+                <div class="home__content">
+                    <section class="home__info">
+                        <div class="home__branding">
+                            <img src="../assets/img/Logo 1.png" alt="Agrovision" class="home__logo" width="200"
+                                height="80">
+                        </div>
+
+                        <h1 class="home__title">
+                            Experimente<br>
+                            o futuro
+                        </h1>
+
+                        <p class="home__description">
+                            Descubra como a tecnologia de precisão está transformando a agricultura
+                            sustentável, unindo inovação, cuidado ambiental e produtividade em um só projeto.
+                        </p>
+
+                        <button class="home__cta" aria-label="Iniciar experiência com a Agrovision" onclick="location.href = '/plantas'">
+                            Vamos começar!
+                        </button>
+                    </section>
+
+                    <figure class="home__visual">
+                        <img src="../assets/img/vaso.png" alt="Planta em vaso demonstrando tecnologia agrícola"
+                            class="home__plant" width="600" height="600">
+                    </figure>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

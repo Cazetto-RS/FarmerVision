@@ -1,0 +1,8 @@
+-Plantas Ornamentais e de Interior (ID 1 até ID 24)
+-Plantas Medicinais e Aromáticas (ID 25 até ID 26)
+-Hortaliças e Legumes (ID 27 até ID 41)
+-Frutas e Frutíferas (ID 42 até ID 55)
+-Grãos e Cereais (ID 56 até ID 67)
+-Plantas Tóxicas/Decorativas Diversas (ID 68 até ID 75)
+-Suculentas e Cactáceas (ID 76 até ID 83)
+-Condimentos e Ervas Culinárias (ID 84 até ID 96)

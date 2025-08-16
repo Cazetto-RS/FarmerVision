@@ -1,0 +1,202 @@
+{
+  "plantasInfo": [
+    {
+      "id": "1",
+      "nome_comum": "Babosa",
+      "nome_cientifico": "Aloe vera",
+      "familia": "Asphodelaceae",
+      "genero": "Aloe",
+      "descricao": "Planta suculenta com folhas espessas, conhecida por suas propriedades cicatrizantes e hidratantes.",
+      "curiosidades": [
+        "Usada em tratamentos de queimaduras.",
+        "Popular em cosméticos.",
+        "Fácil de cultivar em casa."
+      ],
+      "reino": "Plantae",
+      "divisao": "Magnoliophyta",
+      "classe": "Liliopsida",
+      "ordem": "Asparagales",
+      "luz": "Sol pleno",
+      "solo": "Bem drenado e arenoso",
+      "agua": "Pouca rega, solo seco entre irrigações",
+      "temperatura": "15°C a 30°C",
+      "ph_solo": "6.0 a 7.5",
+      "usos": "Medicinal, cosmético, ornamental",
+      "partes_utilizadas": "Folhas",
+      "toxicidade": "Levemente tóxica para animais",
+      "efeitos_toxicos": "Vômitos e diarreia em cães e gatos",
+      "imagem_principal": "https://exemplo.com/imagens/aloe-vera.jpg",
+      "galeria": [
+        "https://exemplo.com/imagens/aloe-vera-1.jpg",
+        "https://exemplo.com/imagens/aloe-vera-2.jpg"
+      ],
+      "clima": "Tropical e subtropical",
+      "altura_media": "60 cm",
+      "tempo_de_cultivo": "8 a 12 meses para uso medicinal",
+      "floracao": "Primavera",
+      "dadosUmidade": [
+        25,
+        44,
+        30,
+        36,
+        47
+      ],
+      "dadosTemperatura": [
+        20,
+        21,
+        19,
+        17,
+        20
+      ]
+    },
+    {
+      "id": "2",
+      "nome_comum": "Hortelã",
+      "nome_cientifico": "Mentha spicata",
+      "familia": "Lamiaceae",
+      "genero": "Mentha",
+      "descricao": "Planta aromática muito utilizada em chás e na culinária, com propriedades digestivas.",
+      "curiosidades": [
+        "Excelente para problemas digestivos.",
+        "Repelente natural de insetos.",
+        "Cresce rapidamente em vasos."
+      ],
+      "reino": "Plantae",
+      "divisao": "Magnoliophyta",
+      "classe": "Magnoliopsida",
+      "ordem": "Lamiales",
+      "luz": "Meia sombra",
+      "solo": "Úmido e fértil",
+      "agua": "Rega frequente",
+      "temperatura": "10°C a 25°C",
+      "ph_solo": "6.0 a 7.5",
+      "usos": "Culinário, medicinal, aromático",
+      "partes_utilizadas": "Folhas",
+      "toxicidade": "Não tóxica",
+      "efeitos_toxicos": "Nenhum conhecido",
+      "imagem_principal": "https://exemplo.com/imagens/hortela.jpg",
+      "galeria": [
+        "https://exemplo.com/imagens/hortela-1.jpg",
+        "https://exemplo.com/imagens/hortela-2.jpg"
+      ],
+      "clima": "Temperado",
+      "altura_media": "30-50 cm",
+      "tempo_de_cultivo": "3-6 meses",
+      "floracao": "Verão"
+    },
+    {
+      "id": "3",
+      "nome_comum": "Lavanda",
+      "nome_cientifico": "Lavandula angustifolia",
+      "familia": "Lamiaceae",
+      "genero": "Lavandula",
+      "descricao": "Planta ornamental e aromática, muito usada em perfumaria e para relaxamento.",
+      "curiosidades": [
+        "Ajuda a combater a insônia.",
+        "Atrai polinizadores.",
+        "Usada em aromaterapia."
+      ],
+      "reino": "Plantae",
+      "divisao": "Magnoliophyta",
+      "classe": "Magnoliopsida",
+      "ordem": "Lamiales",
+      "luz": "Sol pleno",
+      "solo": "Bem drenado",
+      "agua": "Pouca rega",
+      "temperatura": "15°C a 30°C",
+      "ph_solo": "6.5 a 7.5",
+      "usos": "Ornamental, aromático, medicinal",
+      "partes_utilizadas": "Flores",
+      "toxicidade": "Levemente tóxica para animais",
+      "efeitos_toxicos": "Pode causar náuseas em animais",
+      "imagem_principal": "https://exemplo.com/imagens/lavanda.jpg",
+      "galeria": [
+        "https://exemplo.com/imagens/lavanda-1.jpg",
+        "https://exemplo.com/imagens/lavanda-2.jpg"
+      ],
+      "clima": "Mediterrâneo",
+      "altura_media": "60-90 cm",
+      "tempo_de_cultivo": "1-2 anos",
+      "floracao": "Verão"
+    },
+    {
+      "id": "4",
+      "nome_comum": "Manjericão",
+      "nome_cientifico": "Ocimum basilicum",
+      "familia": "Lamiaceae",
+      "genero": "Ocimum",
+      "descricao": "Erva aromática muito utilizada na culinária italiana e em pratos mediterrâneos.",
+      "curiosidades": [
+        "Principal ingrediente do pesto.",
+        "Repelente natural de mosquitos.",
+        "Fácil de cultivar em casa."
+      ],
+      "reino": "Plantae",
+      "divisao": "Magnoliophyta",
+      "classe": "Magnoliopsida",
+      "ordem": "Lamiales",
+      "luz": "Sol pleno",
+      "solo": "Fértil e bem drenado",
+      "agua": "Rega regular",
+      "temperatura": "18°C a 27°C",
+      "ph_solo": "6.0 a 7.5",
+      "usos": "Culinário, medicinal",
+      "partes_utilizadas": "Folhas",
+      "toxicidade": "Não tóxica",
+      "efeitos_toxicos": "Nenhum conhecido",
+      "imagem_principal": "https://exemplo.com/imagens/manjericao.jpg",
+      "galeria": [
+        "https://exemplo.com/imagens/manjericao-1.jpg",
+        "https://exemplo.com/imagens/manjericao-2.jpg"
+      ],
+      "clima": "Tropical",
+      "altura_media": "30-60 cm",
+      "tempo_de_cultivo": "3-4 meses",
+      "floracao": "Verão"
+    },
+    {
+      "id": "5",
+      "nome_comum": "Suculenta",
+      "nome_cientifico": "Echeveria elegans",
+      "familia": "Crassulaceae",
+      "genero": "Echeveria",
+      "descricao": "Planta ornamental que armazena água em suas folhas, ideal para jardins de baixa manutenção.",
+      "curiosidades": [
+        "Resistente à seca.",
+        "Muito usada em arranjos decorativos.",
+        "Fácil propagação por folhas."
+      ],
+      "reino": "Plantae",
+      "divisao": "Magnoliophyta",
+      "classe": "Magnoliopsida",
+      "ordem": "Saxifragales",
+      "luz": "Sol pleno",
+      "solo": "Bem drenado",
+      "agua": "Pouca rega",
+      "temperatura": "10°C a 30°C",
+      "ph_solo": "6.0 a 7.5",
+      "usos": "Ornamental",
+      "partes_utilizadas": "Folhas",
+      "toxicidade": "Não tóxica",
+      "efeitos_toxicos": "Nenhum conhecido",
+      "imagem_principal": "https://exemplo.com/imagens/suculenta.jpg",
+      "galeria": [
+        "https://exemplo.com/imagens/suculenta-1.jpg",
+        "https://exemplo.com/imagens/suculenta-2.jpg"
+      ],
+      "clima": "Árido",
+      "altura_media": "10-20 cm",
+      "tempo_de_cultivo": "6-12 meses",
+      "floracao": "Primavera"
+    }
+  ],
+  "usuario": [
+    {
+      "id": "09c3",
+      "nome": "Rafael Sandei Cazetto",
+      "telefone": "(23) +23 2323-2323",
+      "email": "rafasandei17@gmail.com",
+      "senha": "123456"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erro 404 - Página não encontrada</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="shortcut icon" href="../assets/img/Favicon.png" type="png">
+</head>
+
+<body>
+    <div class="erro-esconder">
+        <div class="erro-container">
+            <h1 class="erro-title">Opa, parece que você está indo rápido demais!</h1>
+            <p class="erro-subtitle">O que acha de irmos um pouco mais devagar?</p>
+    
+            <div class="erro-caixa">
+                <div class="erro-code2">
+                    <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
+                    <div class="bola2" style="background-color: #F0971C;"></div>
+                    <div class="bola3" style="background-color: #C21B12;"></div>
+                </div>
+            </div>
+    
+            <div class="erro-caixa">
+                <div class="erro-code">
+                    <h2 class="erro-code-text">404 ;(</h2>
+                </div>
+            </div>
+    
+            <p class="erro-message">A página que você tentou acessar não existe no nosso site. <br> Mas você pode começar um novo caminho voltando para nossa página <br>inicial, o que acha? </p>
+    
+            <button class="erro-button" id="btnRedirecionar">Voltar para casa</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btnRedirecionar').addEventListener('click', function() {
+            window.location.href = "./index.html"; 
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/components/menu/menu.css">
+
+<div class="btn-expandir">
+  <i class="bi bi-play-fill seta" id="btn-exp"></i>
+</div>
+
+<nav class="nav-lateral">
+
+  <img src="../../assets/img/Logo 2.png" alt="" class="icone-logo">
+  <ul style="padding-left: 0px;">
+
+    <li class="item-menu ativo">
+      <a href="/">
+        <span class="icone"><i class="bi bi-house-door-fill"></i></span>
+        <span class="txt-link">Home</span>
+      </a>
+    </li>
+
+    <li class="item-menu">
+      <a href="/plantas">
+        <span class="icone"><i class="bi bi-tree-fill"></i></span>
+        <span class="txt-link">Plantas</span>
+      </a>
+    </li>
+
+    <li class="item-menu">
+      <a href="/login">
+        <span class="icone"><i class="bi bi-person-fill"></i></span>
+        <span class="txt-link">Perfil</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<script>
+  const menuItem = document.querySelectorAll('.item-menu');
+  const btnExp = document.querySelector('#btn-exp');
+  const menuSide = document.querySelector('.nav-lateral');
+  const btnExpandir = document.querySelector('.btn-expandir');
+
+  // Expande/recolhe o menu
+  btnExp.addEventListener('click', function () {
+    menuSide.classList.toggle('expandir');
+    btnExpandir.classList.toggle('expandir');
+  });
+
+  // Define automaticamente o item ativo com base na URL
+  const currentPath = window.location.pathname;
+
+  menuItem.forEach(item => {
+    const link = item.querySelector('a');
+    if (link && link.getAttribute('href') === currentPath) {
+      item.classList.add('ativo');
+    } else {
+      item.classList.remove('ativo');
+    }
+  });
+</script>

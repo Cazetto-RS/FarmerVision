@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="../../assets/css/cadastro.css">
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.682);
+        }
+
+        .modal-conteudo {
+            background-color: #151515;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.488);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal-fechar {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-fechar:hover,
+        .modal-fechar:focus {
+            color: black;
+        }
+
+        .overflow-auto {
+            overflow-x: hidden !important;
+
+            overflow-y: hidden !important;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <style>
+        html,
+        body {
+            overflow: hidden !important;
+            height: 100% !important;
+            width: 100% !important;
+            overscroll-behavior: none;
+            touch-action: none;
+            position: fixed;
+        }
+
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="perfil-esconder">
+        <div class="perfil-container">
+            <div class="perfil-textos">
+                <img src="../../assets/img/Favicon.png" alt="Logo Agrovision" class="perfil-logo">
+                <h1 class="perfil-titulo">Login</h1>
+                <p class="perfil-subtitulo">Seja bem-vindo de volta!</p>
+
+                <form id="form-login" class="login-form">
+
+                    <div class="login-div-imagem">
+                        <img class="login-div-imagem-img" src="../../assets/img/FotoP.png" alt="">
+                    </div>
+
+                    <div class="div-perfil-inputs">
+                        <label for="email" class="perfil-titulo-input">E-mail ou Senha</label>
+                        <input type="email" class="perfil-inputs" id="identificador" placeholder="@gmail.com" required>
+                    </div>
+
+                    <div class="div-perfil-inputs">
+                        <label for="password" class="perfil-titulo-input">Senha</label>
+                        <input type="password" class="perfil-inputs" id="senha" placeholder="••••" required
+                            minlength="6">
+                    </div>
+
+                    <div class="div-login-remember">
+                        <input class="div-login-remember-checkbox" type="checkbox" name="" id="">
+                        <p class="div-login-remember-text">Manter conectado</p>
+                    </div>
+
+                    <div class="div-perfil-btn">
+                        <input type="button" class="perfil-btn-login" id="btn-login" value="Entrar">
+                        <!-- <a href="/cadastro" class="perfil-btn-login">Cadastrar</a> -->
+                    </div>
+                    <div class="div-login-increva-se">
+                        <p class="div-login-increva-se-texto">Não tem uma conta? <a href="/cadastro"
+                                style="color: #7AB317;">Inscreva-se!</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

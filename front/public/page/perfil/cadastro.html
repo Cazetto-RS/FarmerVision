@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="../../assets/css/cadastro.css">
+</head>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-conteudo {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 30px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 400px;
+        text-align: center;
+        color: #333;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .modal-fechar {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .modal-fechar:hover,
+    .modal-fechar:focus {
+        color: black;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .overflow-auto {
+        overflow-x: hidden !important;
+
+        overflow-y: hidden !important;
+    }
+</style>
+
+<style>
+    html,
+    body {
+        overflow: hidden !important;
+        height: 100% !important;
+        width: 100% !important;
+        overscroll-behavior: none;
+        touch-action: none;
+        position: fixed;
+    }
+
+    body {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+
+<body>
+    <div class="perfil-esconder">
+        <div class="perfil-container">
+            <div class="perfil-textos">
+                <img src="../../assets/img/Favicon.png" alt="Logo Agrovision" class="perfil-logo">
+                <h1 class="perfil-titulo">Cadastro</h1>
+                <p class="perfil-subtitulo">Crie uma nova conta e conheça a evolução!</p>
+
+                <form id="form-cadastro">
+                    <div class="div-perfil-inputs">
+                        <label for="name" class="perfil-titulo-input">Nome Completo</label>
+                        <input type="text" placeholder="Fulano Sicrano" class="perfil-inputs" id="name" required>
+                    </div>
+
+                    <div class="div-perfil-inputs">
+                        <label for="telefone" class="perfil-titulo-input">Telefone</label>
+                        <input type="tel" class="perfil-inputs" placeholder="(XX) +XX XXXX-XXXX" id="telefone" required>
+                    </div>
+
+                    <div class="div-perfil-inputs">
+                        <label for="email" class="perfil-titulo-input">E-mail</label>
+                        <input type="email" class="perfil-inputs" placeholder="@gmail.com" id="email" required>
+                    </div>
+
+                    <div class="div-perfil-inputs">
+                        <label for="password" class="perfil-titulo-input">Senha</label>
+                        <input type="password" class="perfil-inputs" placeholder="••••" id="password" required
+                            minlength="6">
+                    </div>
+
+                    <div class="div-perfil-inputs">
+                        <label for="password-verify" class="perfil-titulo-input">Confirme sua Senha</label>
+                        <input type="password" class="perfil-inputs" placeholder="••••" id="password-verify" required
+                            minlength="6">
+                    </div>
+
+                    <div class="div-perfil-btn">
+                        <button type="submit" class="perfil-btn-login" id="btn-cadastro">Cadastrar</button>
+                    </div>
+
+                    <div class="div-login-increva-se">
+                        <p class="div-login-increva-se-texto">Já tem uma conta? <a href="/login"
+                                style="color: #7AB317;">Entre agora!</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    const telefoneInput = document.getElementById('telefone');
+
+    telefoneInput.addEventListener('input', function (e) {
+        let valor = e.target.value;
+
+        // Remove tudo que não for número
+        valor = valor.replace(/\D/g, '');
+
+        if (valor.length > 12) valor = valor.slice(0, 12);
+
+        if (valor.length <= 2) {
+            valor = '(' + valor;
+        } else if (valor.length <= 4) {
+            valor = '(' + valor.slice(0, 2) + ') +' + valor.slice(2);
+        } else if (valor.length <= 8) {
+            valor = '(' + valor.slice(0, 2) + ') +' + valor.slice(2, 4) + ' ' + valor.slice(4);
+        } else {
+            valor = '(' + valor.slice(0, 2) + ') +' + valor.slice(2, 4) + ' ' + valor.slice(4, 8) + '-' + valor.slice(8);
+        }
+
+        e.target.value = valor;
+    });
+
+    document.getElementById('form-cadastro').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const nome = document.getElementById('name').value;
+        const telefone = document.getElementById('telefone').value;
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('password').value;
+        const confirmarSenha = document.getElementById('password-verify').value;
+
+        if (senha !== confirmarSenha) {
+            document.getElementById('modal-erro').style.display = 'block';
+            return;
+        }
+
+        // Atenção aqui: campo 'password' conforme backend
+        const novoUsuario = {
+            nome,
+            telefone,
+            email,
+            password: senha
+        };
+
+        try {
+            const resposta = await fetch('http://localhost:3000/usuarios/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(novoUsuario)
+            });
+
+            if (resposta.ok) {
+                alert('Cadastro realizado com sucesso!');
+                window.location.href = '/login'; // ou outra página que queira
+            } else {
+                const erroData = await resposta.json();
+                alert('Erro ao cadastrar: ' + (erroData.error || 'Tente novamente.'));
+            }
+        } catch (erro) {
+            console.error('Erro na requisição:', erro);
+            alert('Erro ao conectar com o servidor.');
+        }
+    });
+</script>
+
+</html>

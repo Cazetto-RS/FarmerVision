@@ -1,0 +1,17 @@
+{
+  "name": "api_info_plantas",
+  "version": "1.0.0",
+  "description": "Api para coleta e exibição de informações sobre plantas",
+  "main": "db/server.js",
+  "scripts": {
+    "start": "node db/server.js"
+  },
+  "author": "RIN Corporation",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "json-server": "^1.0.0-beta.3",
+    "mysql2": "^3.14.3"
+  }
+}
