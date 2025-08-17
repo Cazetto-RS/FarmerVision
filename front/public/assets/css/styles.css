@@ -490,6 +490,107 @@ img {
     }
 }
 
+.plantas-btn-esconder {
+    .plantas-btn-add {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--verde);
+        color: white;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .plantas-btn-add:hover {
+        background-color: var(--verde-escuro);
+        transform: scale(1.1);
+    }
+
+    .plantas-btn-add::after {
+        content: "↑";
+    }
+}
+
+.plantas-modal-add-esconder {
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+    }
+
+    .modal-plantas-add-container {
+        position: relative;
+        background-color: var(--preto);
+        width: 500px;
+        max-width: 100%;
+        height: 400px;
+        border-radius: 15px;
+        overflow: hidden;
+        animation: modalFadeIn 0.3s ease-out;
+        overflow: hidden;
+        overflow-x: hidden;
+    }
+
+        /* Botão de fechar */
+    .modal-close-add-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: var(--branco);
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-close-add-btn:hover {
+        background: var(--verde-escuro);
+    }
+
+        /* Cabeçalho */
+    .modal-plantas-add-cabecalho {
+        background: var(--verde);
+        width: 100%;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+    }
+
+    .modal-plantas-add-cabecalho-content {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        width: 100%;
+    }
+
+    .modal-plantas-add-icon-cabecalho {
+        width: 50%;
+        padding: 15px;
+        object-fit: contain;
+    }
+}
 
 .modal-plantas-esconder {
 
@@ -820,7 +921,8 @@ img {
 
     .perfil-textos {
         width: 450px;
-        margin: 0 auto; /* <=== Centraliza horizontalmente */
+        margin: 0 auto;
+        /* <=== Centraliza horizontalmente */
     }
 
     .perfil-logo {
@@ -857,7 +959,8 @@ img {
     }
 
     .perfil-inputs {
-        width: 100%; /* Agora ocupa 100% do pai */
+        width: 100%;
+        /* Agora ocupa 100% do pai */
         padding: 10px;
         margin-top: 8px;
         border: none;
@@ -874,7 +977,8 @@ img {
 
     .div-perfil-inputs {
         width: 450px;
-        margin: 0 auto; /* <=== Centraliza */
+        margin: 0 auto;
+        /* <=== Centraliza */
     }
 
     .div-perfil-btn {
@@ -882,12 +986,14 @@ img {
         justify-content: center;
         gap: 15px;
         width: 450px;
-        margin: 0 auto; /* <=== Centraliza */
+        margin: 0 auto;
+        /* <=== Centraliza */
     }
 
     .perfil-btn-login {
         padding: 10px 0;
-        width: 100%; /* <=== Garante que o botão preencha a div */
+        width: 100%;
+        /* <=== Garante que o botão preencha a div */
         margin-top: 20px;
         margin-bottom: -5px;
         border-radius: 3px;
@@ -913,7 +1019,8 @@ img {
         gap: 10px;
         margin-top: 20px !important;
         width: 450px;
-        margin: 0 auto; /* <=== Centraliza */
+        margin: 0 auto;
+        /* <=== Centraliza */
     }
 
     .div-login-remember-text {
@@ -932,7 +1039,8 @@ img {
     .div-login-increva-se {
         width: 450px;
         margin-top: 20px;
-        margin: 20px auto 0 auto; /* <=== Centraliza */
+        margin: 20px auto 0 auto;
+        /* <=== Centraliza */
     }
 
     .div-login-increva-se-texto {
@@ -962,13 +1070,14 @@ img {
             padding: 20px 0;
         }
 
-        .login-div-imagem-img{
+        .login-div-imagem-img {
             width: 50%;
         }
 
         .perfil-textos {
             width: 80%;
-            margin: 0 auto; /* <=== Mantém centralizado */
+            margin: 0 auto;
+            /* <=== Mantém centralizado */
         }
 
         .perfil-subtitulo {
@@ -983,12 +1092,14 @@ img {
         .div-login-remember,
         .div-perfil-btn,
         .div-login-increva-se {
-            width: 100%;     /* Ajusta para tela menor */
+            width: 100%;
+            /* Ajusta para tela menor */
             max-width: 450px;
-            margin: 0 auto;  /* <=== Centraliza todos */
+            margin: 0 auto;
+            /* <=== Centraliza todos */
         }
 
-        .div-login-increva-se{
+        .div-login-increva-se {
             margin-top: 20px;
         }
     }

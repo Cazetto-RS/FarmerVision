@@ -9,6 +9,27 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
+<style>
+  html,
+  body {
+    overflow: hidden !important;
+    height: 100% !important;
+    width: 100% !important;
+    overscroll-behavior: none;
+    touch-action: none;
+    position: fixed;
+  }
+
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
 <body>
   <div class="P-esconder">
     <div>
@@ -27,42 +48,32 @@
           <div class="campo">
             <div>
               <label>ID</label>
-              <span>13245</span>
+              <span id="userId">carregado...</span>
             </div>
           </div>
 
           <div class="campo">
             <div>
               <label>E-mail</label>
-              <span>user.agrovision@gmail.com</span>
+              <span id="userEmail">carregado...</span>
             </div>
           </div>
 
           <div class="campo">
             <div>
-              <label>Name</label>
-              <span>User</span>
+              <label>Nome</label>
+              <span id="userNome">carregado...</span>
             </div>
-            <button class="btn-edit">Edit</button>
           </div>
 
           <div class="campo">
             <div>
-              <label>Phone</label>
-              <span>+55 (15) 98813-3452</span>
+              <label>Telefone</label>
+              <span id="userTelefone">carregado...</span>
             </div>
-            <button class="btn-edit">Edit</button>
           </div>
 
-          <div class="campo">
-            <div>
-              <label>Password</label>
-              <span>***************</span>
-            </div>
-            <button class="btn-edit">Edit</button>
-          </div>
-
-          <div class="logout">
+          <div class="logout" id="logoutBtn">
             <label style="cursor: pointer;">Logout</label>
             <i class="bi bi-box-arrow-right iconLogout"></i>
           </div>
@@ -71,5 +82,30 @@
     </div>
   </div>
 </body>
+
+<script>
+  // 1. Pega os dados do Local Storage
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const token = localStorage.getItem('token');
+
+  // 2. Verifica se os dados existem
+  if (!user.id || !token) {
+    alert('Dados não encontrados! Redirecionando para login...');
+    window.location.href = 'login'; // Alerte para sua página de login
+  }
+
+  // 3. Preenche os dados na tela (usando 'home' para o nome, como no seu exemplo)
+  document.getElementById('userId').textContent = user.id || 'Não informado';
+  document.getElementById('userEmail').textContent = user.email || 'Não informado';
+  document.getElementById('userNome').textContent = user.nome || 'Não informado'; // Note que é 'home'
+  document.getElementById('userTelefone').textContent = user.telefone || 'Não informado';
+
+  // 4. Logout simplificado
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login'; // Alerte para sua página de login
+  });
+</script>
 
 </html>

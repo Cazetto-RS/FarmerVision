@@ -23,4 +23,38 @@ router.post('/add', (req, res) => {
     });
 });
 
+// Login
+router.post('/login', (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'E-mail e senha são obrigatórios!' });
+    }
+
+    const sql = 'SELECT * FROM usuarios WHERE email = ? AND password = ?';
+    db.query(sql, [email, password], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        if (results.length === 0) {
+            return res.status(401).json({ error: 'Credenciais inválidas!' });
+        }
+
+        const usuario = results[0];
+
+        // Aqui criamos um token simples
+        const token = `${usuario.id}_${Date.now()}`;
+
+        res.json({
+            message: 'Login realizado com sucesso!',
+            token,
+            user: {
+                id: usuario.id,
+                nome: usuario.nome,
+                email: usuario.email,
+                telefone: usuario.telefone
+            }
+        });
+    });
+});
+
 module.exports = router;
