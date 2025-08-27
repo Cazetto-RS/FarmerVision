@@ -16,7 +16,10 @@
       "divisao": "Magnoliophyta",
       "classe": "Liliopsida",
       "ordem": "Asparagales",
-      "luz": "Sol pleno",
+      "luz": {
+        "info": "Sol pleno",
+        "value": 10
+      },
       "solo": "Bem drenado e arenoso",
       "agua": "Pouca rega, solo seco entre irrigações",
       "temperatura": "15°C a 30°C",
@@ -100,7 +103,10 @@
       "divisao": "Magnoliophyta",
       "classe": "Magnoliopsida",
       "ordem": "Lamiales",
-      "luz": "Sol pleno",
+      "luz": {
+        "info": "Sol pleno",
+        "value": 10
+      },
       "solo": "Bem drenado",
       "agua": "Pouca rega",
       "temperatura": "15°C a 30°C",
@@ -135,7 +141,10 @@
       "divisao": "Magnoliophyta",
       "classe": "Magnoliopsida",
       "ordem": "Lamiales",
-      "luz": "Sol pleno",
+      "luz": {
+        "info": "Sol pleno",
+        "value": 10
+      },
       "solo": "Fértil e bem drenado",
       "agua": "Rega regular",
       "temperatura": "18°C a 27°C",
@@ -170,7 +179,10 @@
       "divisao": "Magnoliophyta",
       "classe": "Magnoliopsida",
       "ordem": "Saxifragales",
-      "luz": "Sol pleno",
+      "luz": {
+        "info": "Sol pleno",
+        "value": 10
+      },
       "solo": "Bem drenado",
       "agua": "Pouca rega",
       "temperatura": "10°C a 30°C",

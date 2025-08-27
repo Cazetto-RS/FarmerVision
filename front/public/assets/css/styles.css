@@ -513,7 +513,7 @@ img {
     }
 
     .plantas-btn-add::after {
-        content: "↑";
+        content: "+";
     }
 }
 

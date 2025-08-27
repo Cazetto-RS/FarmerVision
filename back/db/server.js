@@ -5,9 +5,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Importa as rotas de usuários
+// Rotas de usuários
 const usuariosRoutes = require('./routes/usuarios');
 app.use('/usuarios', usuariosRoutes);
+
+// Rotas de plantas
+const plantasRoutes = require('./routes/plantas');
+app.use('/plantas', plantasRoutes);
 
 // Inicia o servidor na porta 3000
 app.listen(3000, () => {
