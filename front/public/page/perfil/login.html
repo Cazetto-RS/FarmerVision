@@ -148,8 +148,10 @@
 
             if (res.ok) {
                 // Salva no localStorage
+                alert("Login realizado com sucesso!");
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("user", JSON.stringify(data.user));
+                window.location.href = "/perfil";
 
             } else {
                 alert(data.error);

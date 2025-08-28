@@ -166,6 +166,7 @@
         $(document).ready(function () {
 
             let todasPlantas = [];
+            const usuarioId = JSON.parse(localStorage.getItem("user")).id;
 
             function abrirModalPlanta(planta) {
                 $('#modalPlantName').text(planta.nome_comum || 'Nome não disponível');
@@ -218,39 +219,29 @@
                 }
             });
 
+            // 🔹 1) Buscar TODAS as plantas -> para o modal ADD
             $.get("http://localhost:3000/plantas/plantas", function (plantas) {
                 todasPlantas = plantas;
-
-                $('#listaPlantas').empty();
-                $('#listaPlantasAdd').empty(); // limpa o modal antes de preencher
+                $('#listaPlantasAdd').empty();
 
                 plantas.forEach(function (planta) {
                     const plantaHTML = `
-                        <div class="plantas-esconder">                    
-                            <div class="plantas-container" data-id="${planta.id}">
-                                <div class="div-plantas-imagem">
-                                    <img src="../../assets/img/Favicon.png" 
-                                        alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
-                                </div>
-                                <div class="plantas-info mt-2">
-                                    <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
-                                    <p class="plantas-nome-cientifico text-muted mb-0">
-                                        <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
-                                    </p>
-                                </div>
-                            </div>
+                <div class="plantas-esconder">                    
+                    <div class="plantas-container" data-id="${planta.id}">
+                        <div class="div-plantas-imagem">
+                            <img src="../../assets/img/Favicon.png" 
+                                alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
                         </div>
-                        `;
-                    // $('#listaPlantas').append(plantaHTML);     // lista principal
-                    $('#listaPlantasAdd').append(plantaHTML); // lista dentro do modal
-                });
-
-                $('#listaPlantas .plantas-container').click(function () {
-                    const plantaId = $(this).data('id');
-                    const plantaSelecionada = todasPlantas.find(p => p.id == plantaId);
-                    if (plantaSelecionada) {
-                        abrirModalPlanta(plantaSelecionada);
-                    }
+                        <div class="plantas-info mt-2">
+                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
+                            <p class="plantas-nome-cientifico text-muted mb-0">
+                                <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+                    $('#listaPlantasAdd').append(plantaHTML); // lista TODAS no modal
                 });
             })
                 .fail(function () {
@@ -260,6 +251,44 @@
                     </div>
                 `);
                 });
+
+            $.get("http://localhost:3000/buscarPlantas/usuario/" + usuarioId, function (plantasUsuario) {
+                $('#listaPlantas').empty();
+
+                if (plantasUsuario.length === 0) {
+                    $('#listaPlantas').html(`<p class="text-muted">Nenhuma planta cadastrada ainda.</p>`);
+                    return;
+                }
+
+                plantasUsuario.forEach(function (planta) {
+                    const plantaHTML = `
+                <div class="plantas-esconder">                    
+                    <div class="plantas-container" data-id="${planta.id}">
+                        <div class="div-plantas-imagem">
+                            <img src="../../assets/img/Favicon.png" 
+                                alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
+                        </div>
+                        <div class="plantas-info mt-2">
+                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
+                            <p class="plantas-nome-cientifico text-muted mb-0">
+                                <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+                    $('#listaPlantas').append(plantaHTML);
+                });
+
+                // evento de abrir modal
+                $('#listaPlantas .plantas-container').click(function () {
+                    const plantaId = $(this).data('id');
+                    const plantaSelecionada = plantasUsuario.find(p => p.id == plantaId);
+                    if (plantaSelecionada) {
+                        abrirModalPlanta(plantaSelecionada);
+                    }
+                });
+            });
         });
     </script>
 
