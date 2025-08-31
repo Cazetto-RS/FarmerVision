@@ -25,7 +25,7 @@
     </li>
 
     <li class="item-menu">
-      <a href="/login">
+      <a href="#" id="linkPerfil">
         <span class="icone"><i class="bi bi-person-fill"></i></span>
         <span class="txt-link">Perfil</span>
       </a>
@@ -54,6 +54,22 @@
       item.classList.add('ativo');
     } else {
       item.classList.remove('ativo');
+    }
+  });
+
+
+  // Redireciona Perfil dependendo do login
+  document.getElementById("linkPerfil").addEventListener("click", function (e) {
+    e.preventDefault(); // evita seguir o href="#"
+
+    const user = localStorage.getItem("user");
+
+    if (user) {
+      // Usuário logado → vai para perfil
+      window.location.href = "/perfil";
+    } else {
+      // Não logado → vai para login
+      window.location.href = "/login";
     }
   });
 </script>

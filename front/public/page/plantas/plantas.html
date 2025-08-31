@@ -162,12 +162,13 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         $(document).ready(function () {
-
             let todasPlantas = [];
             const usuarioId = JSON.parse(localStorage.getItem("user")).id;
 
+            // --- Função para abrir modal de detalhes ---
             function abrirModalPlanta(planta) {
                 $('#modalPlantName').text(planta.nome_comum || 'Nome não disponível');
                 $('#modalScientificName').text(planta.nome_cientifico || 'Nome científico não disponível');
@@ -177,7 +178,6 @@
                 $('#modalWater').text(planta.agua || 'Não informado');
                 $('#modalDescricao').text(planta.descricao || 'Não informado');
 
-                // Novos campos
                 $('#modalFamilia').text(planta.familia || 'Não informado');
                 $('#modalClima').text(planta.clima || 'Não informado');
                 $('#modalAltura').text(planta.altura_media || 'Não informado');
@@ -185,73 +185,45 @@
                 $('#modalEfeitos').text(planta.efeitos_toxicos || 'Não informado');
 
                 // Dicas
-                const dicas = [
-                    ...(planta.curiosidades || [])
-                ].filter(Boolean);
-
                 $('#modalTips').empty();
-                dicas.forEach(dica => {
+                (planta.curiosidades || []).forEach(dica => {
                     $('#modalTips').append(`<span class="modal-plantas-tips-texto">${dica}</span>`);
                 });
 
                 $('#plantModal').show();
 
-                // Destroi gráficos anteriores, se existirem (evita sobreposição no Chart.js)
+                // Resetar gráficos
                 if (window.chartTemperatura) window.chartTemperatura.destroy();
                 if (window.chartUmidade) window.chartUmidade.destroy();
 
-                // Cria os novos gráficos com os dados da planta
                 const ctxTemp = document.getElementById('graficoTemperatura').getContext('2d');
                 const ctxUmi = document.getElementById('graficoUmidade').getContext('2d');
 
                 window.chartTemperatura = renderGraficoTemperatura(ctxTemp, planta.dadosTemperatura || []);
                 window.chartUmidade = renderGraficoUmidade(ctxUmi, planta.dadosUmidade || []);
-
             }
 
-            $('#modalCloseBtn').click(function () {
-                $('#plantModal').hide();
-            });
-
-            $('#plantModal').click(function (e) {
+            // --- Fechar modal de detalhes ---
+            $('#modalCloseBtn').click(() => $('#plantModal').hide());
+            $('#plantModal').click(e => {
                 if (!$(e.target).closest('.modal-plantas-container').length) {
                     $('#plantModal').hide();
                 }
             });
 
-            // 🔹 1) Buscar TODAS as plantas -> para o modal ADD
+            // --- 1) Buscar TODAS as plantas -> para o modal ADD ---
             $.get("http://localhost:3000/plantas/plantas", function (plantas) {
                 todasPlantas = plantas;
-                $('#listaPlantasAdd').empty();
+                renderizarListaAdd(todasPlantas);
+            }).fail(function () {
+                $('#listaPlantas').html(`
+            <div class="col-12 text-center">
+                <p class="text-danger">Erro ao carregar plantas</p>
+            </div>
+        `);
+            });
 
-                plantas.forEach(function (planta) {
-                    const plantaHTML = `
-                <div class="plantas-esconder">                    
-                    <div class="plantas-container" data-id="${planta.id}">
-                        <div class="div-plantas-imagem">
-                            <img src="../../assets/img/Favicon.png" 
-                                alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
-                        </div>
-                        <div class="plantas-info mt-2">
-                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
-                            <p class="plantas-nome-cientifico text-muted mb-0">
-                                <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            `;
-                    $('#listaPlantasAdd').append(plantaHTML); // lista TODAS no modal
-                });
-            })
-                .fail(function () {
-                    $('#listaPlantas').html(`
-                    <div class="col-12 text-center">
-                        <p class="text-danger">Erro ao carregar plantas</p>
-                    </div>
-                `);
-                });
-
+            // --- 2) Buscar plantas do usuário ---
             $.get("http://localhost:3000/buscarPlantas/usuario/" + usuarioId, function (plantasUsuario) {
                 $('#listaPlantas').empty();
 
@@ -284,33 +256,68 @@
                 $('#listaPlantas .plantas-container').click(function () {
                     const plantaId = $(this).data('id');
                     const plantaSelecionada = plantasUsuario.find(p => p.id == plantaId);
-                    if (plantaSelecionada) {
-                        abrirModalPlanta(plantaSelecionada);
-                    }
+                    if (plantaSelecionada) abrirModalPlanta(plantaSelecionada);
                 });
             });
-        });
-    </script>
 
-    <script>
+            // --- Função para renderizar lista no modal ADD ---
+            function renderizarListaAdd(lista) {
+                $('#listaPlantasAdd').empty();
+                lista.forEach(function (planta) {
+                    const plantaHTML = `
+                <div class="plantas-esconder">                    
+                    <div class="plantas-container" data-id="${planta.id}">
+                        <div class="div-plantas-imagem">
+                            <img src="../../assets/img/Favicon.png" 
+                                alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
+                        </div>
+                        <div class="plantas-info mt-2">
+                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
+                            <p class="plantas-nome-cientifico text-muted mb-0">
+                                <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+                    $('#listaPlantasAdd').append(plantaHTML);
+                });
+            }
+
+            // --- Pesquisa no modal ADD ---
+            $(document).on("input", ".modal-plantas-add-pesquisa-input", function () {
+                const termo = $(this).val().toLowerCase();
+                const filtradas = todasPlantas.filter(planta =>
+                    (planta.nome_comum && planta.nome_comum.toLowerCase().includes(termo)) ||
+                    (planta.nome_cientifico && planta.nome_cientifico.toLowerCase().includes(termo))
+                );
+                renderizarListaAdd(filtradas);
+            });
+        });
+
+        // --- Controle do modal ADD ---
         const btnAbrirAdd = document.getElementById("btnAbrirAdd");
         const modalAdd = document.getElementById("modalAdd");
         const fecharAdd = document.getElementById("fecharAdd");
 
+        // abrir
         btnAbrirAdd.addEventListener("click", () => {
             modalAdd.style.display = "flex";
         });
 
-        fecharAdd.addEventListener("click", () => {
+        // fechar (no botão todo)
+        document.querySelector(".modal-close-add-btn").addEventListener("click", () => {
             modalAdd.style.display = "none";
         });
 
+        // fechar clicando fora
         window.addEventListener("click", (e) => {
             if (e.target === modalAdd) {
                 modalAdd.style.display = "none";
             }
         });
     </script>
+    
 </body>
 
 </html>
