@@ -32,10 +32,42 @@
             display: none;
             /* Garante que o modal comece invisível */
         }
+
+        #WarningSemConta {
+            z-index: 1;
+        }
     </style>
 </head>
 
 <body>
+    <div class="logout-plantas-esconder" id="WarningSemConta" style="display: none;">
+        <div class="logout-plantas-container">
+            <h1 class="logout-plantas-title">Opa, parece que você não está logado em nenhuma conta!</h1>
+            <p class="logout-plantas-subtitle">O que acha de irmos um pouco mais devagar?</p>
+
+            <div class="logout-plantas-caixa">
+                <div class="logout-plantas-code2">
+                    <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
+                    <div class="bola2" style="background-color: #F0971C;"></div>
+                    <div class="bola3" style="background-color: #C21B12;"></div>
+                </div>
+            </div>
+
+            <div class="logout-plantas-caixa">
+                <div class="logout-plantas-code">
+                    <img src="../../assets/img/noUser.png" alt="" class="logout-plantas-icon">
+                </div>
+            </div>
+
+            <p class="logout-plantas-message">Você precisa estar logado em uma conta para que assim <br> possa
+                visualizar e adicionar suas plantas! Faça login, ou então, <br> caso não tenha uma conta, se cadastre!
+            </p>
+
+            <button class="logout-plantas-btn-login" id="btnRedirecionarLogin">Fazer login</button>
+            <button class="logout-plantas-btn-cadastro" id="btnRedirecionarCadastro">Se cadastrar</button>
+        </div>
+    </div>
+
     <div class="plantas-grid" id="listaPlantas">
         <!-- Plantas serão carregadas aqui -->
     </div>
@@ -164,7 +196,29 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+    </script>
+
+    <script>
         $(document).ready(function () {
+
+            const user = localStorage.getItem("user");
+
+            if (!user) {
+                // Usuário NÃO está logado → mostra aviso
+                $("#WarningSemConta").css("display", "flex");
+                return; // não executa o resto
+            } else {
+                // Usuário logado → garante que o aviso some
+                $("#WarningSemConta").css("display", "none");
+            }
+
+            document.getElementById('btnRedirecionarLogin').addEventListener('click', function () {
+                window.location.href = "./login";
+            });
+            document.getElementById('btnRedirecionarCadastro').addEventListener('click', function () {
+                window.location.href = "./cadastro";
+            });
+
             let todasPlantas = [];
             const usuarioId = JSON.parse(localStorage.getItem("user")).id;
 
@@ -317,7 +371,7 @@
             }
         });
     </script>
-    
+
 </body>
 
 </html>
