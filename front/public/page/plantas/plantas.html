@@ -201,26 +201,61 @@
     <script>
         $(document).ready(function () {
 
-            const user = localStorage.getItem("user");
-
-            if (!user) {
+            const usuario = JSON.parse(localStorage.getItem("user"));
+            if (!usuario) {
                 // Usuário NÃO está logado → mostra aviso
                 $("#WarningSemConta").css("display", "flex");
                 return; // não executa o resto
             } else {
-                // Usuário logado → garante que o aviso some
                 $("#WarningSemConta").css("display", "none");
             }
 
-            document.getElementById('btnRedirecionarLogin').addEventListener('click', function () {
-                window.location.href = "./login";
-            });
-            document.getElementById('btnRedirecionarCadastro').addEventListener('click', function () {
-                window.location.href = "./cadastro";
-            });
-
+            const usuarioId = usuario.id;
             let todasPlantas = [];
-            const usuarioId = JSON.parse(localStorage.getItem("user")).id;
+
+            // --- Função para adicionar planta ao usuário ---
+            function addUserPlanta(plantaId) {
+                console.log("usuarioId:", usuarioId);
+                console.log("plantaId:", plantaId);
+                $.post("http://localhost:3000/usuariosPlantas/add", { usuario_id: usuarioId, planta_id: plantaId }, function (res) {
+                    if (res.message) {
+                        alert("Planta adicionada com sucesso!");
+
+                        // Atualiza lista do usuário no front
+                        const novaPlanta = todasPlantas.find(p => p.id == plantaId);
+                        if (novaPlanta) {
+                            const plantaHTML = `
+                    <div class="plantas-esconder">                    
+                        <div class="plantas-container" data-id="${novaPlanta.id}">
+                            <div class="div-plantas-imagem">
+                                <img src="../../assets/img/Favicon.png" 
+                                    alt="${novaPlanta.nome_comum}" class="plantas-imagem img-fluid">
+                            </div>
+                            <div class="plantas-info mt-2">
+                                <h5 class="plantas-nome-usual mb-1">${novaPlanta.nome_comum || 'Sem nome'}</h5>
+                                <p class="plantas-nome-cientifico text-muted mb-0">
+                                    <em>${novaPlanta.nome_cientifico || 'Sem nome científico'}</em>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                            $('#listaPlantas').append(plantaHTML);
+
+                            // Evento de abrir modal para a nova planta
+                            $('#listaPlantas .plantas-container').last().click(function () {
+                                abrirModalPlanta(novaPlanta);
+                            });
+                        }
+
+                        // Fecha modal ADD
+                        modalAdd.style.display = "none";
+
+                    } else {
+                        alert("Erro ao adicionar planta.");
+                    }
+                });
+            }
 
             // --- Função para abrir modal de detalhes ---
             function abrirModalPlanta(planta) {
@@ -257,7 +292,7 @@
                 window.chartUmidade = renderGraficoUmidade(ctxUmi, planta.dadosUmidade || []);
             }
 
-            // --- Fechar modal de detalhes ---
+            // --- Fechar modal detalhes ---
             $('#modalCloseBtn').click(() => $('#plantModal').hide());
             $('#plantModal').click(e => {
                 if (!$(e.target).closest('.modal-plantas-container').length) {
@@ -265,22 +300,17 @@
                 }
             });
 
-            // --- 1) Buscar TODAS as plantas -> para o modal ADD ---
+            // --- Buscar TODAS as plantas para modal ADD ---
             $.get("http://localhost:3000/plantas/plantas", function (plantas) {
                 todasPlantas = plantas;
                 renderizarListaAdd(todasPlantas);
             }).fail(function () {
-                $('#listaPlantas').html(`
-            <div class="col-12 text-center">
-                <p class="text-danger">Erro ao carregar plantas</p>
-            </div>
-        `);
+                $('#listaPlantas').html(`<div class="col-12 text-center"><p class="text-danger">Erro ao carregar plantas</p></div>`);
             });
 
-            // --- 2) Buscar plantas do usuário ---
+            // --- Buscar plantas do usuário ---
             $.get("http://localhost:3000/buscarPlantas/usuario/" + usuarioId, function (plantasUsuario) {
                 $('#listaPlantas').empty();
-
                 if (plantasUsuario.length === 0) {
                     $('#listaPlantas').html(`<p class="text-muted">Nenhuma planta cadastrada ainda.</p>`);
                     return;
@@ -288,25 +318,25 @@
 
                 plantasUsuario.forEach(function (planta) {
                     const plantaHTML = `
-                <div class="plantas-esconder">                    
-                    <div class="plantas-container" data-id="${planta.id}">
-                        <div class="div-plantas-imagem">
-                            <img src="../../assets/img/Favicon.png" 
-                                alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
-                        </div>
-                        <div class="plantas-info mt-2">
-                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
-                            <p class="plantas-nome-cientifico text-muted mb-0">
-                                <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
-                            </p>
-                        </div>
+            <div class="plantas-esconder">                    
+                <div class="plantas-container" data-id="${planta.id}">
+                    <div class="div-plantas-imagem">
+                        <img src="../../assets/img/Favicon.png" 
+                            alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
+                    </div>
+                    <div class="plantas-info mt-2">
+                        <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
+                        <p class="plantas-nome-cientifico text-muted mb-0">
+                            <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
+                        </p>
                     </div>
                 </div>
+            </div>
             `;
                     $('#listaPlantas').append(plantaHTML);
                 });
 
-                // evento de abrir modal
+                // Evento de abrir modal
                 $('#listaPlantas .plantas-container').click(function () {
                     const plantaId = $(this).data('id');
                     const plantaSelecionada = plantasUsuario.find(p => p.id == plantaId);
@@ -314,29 +344,35 @@
                 });
             });
 
-            // --- Função para renderizar lista no modal ADD ---
+            // --- Renderizar lista no modal ADD ---
             function renderizarListaAdd(lista) {
                 $('#listaPlantasAdd').empty();
                 lista.forEach(function (planta) {
                     const plantaHTML = `
-                <div class="plantas-esconder">                    
-                    <div class="plantas-container" data-id="${planta.id}">
-                        <div class="div-plantas-imagem">
-                            <img src="../../assets/img/Favicon.png" 
-                                alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
-                        </div>
-                        <div class="plantas-info mt-2">
-                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
-                            <p class="plantas-nome-cientifico text-muted mb-0">
-                                <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
-                            </p>
-                        </div>
+            <div class="plantas-esconder">                    
+                <div class="plantas-container" data-id="${planta.id}">
+                    <div class="div-plantas-imagem">
+                        <img src="../../assets/img/Favicon.png" 
+                            alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
+                    </div>
+                    <div class="plantas-info mt-2">
+                        <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
+                        <p class="plantas-nome-cientifico text-muted mb-0">
+                            <em>${planta.nome_cientifico || 'Sem nome científico'}</em>
+                        </p>
                     </div>
                 </div>
+            </div>
             `;
                     $('#listaPlantasAdd').append(plantaHTML);
                 });
             }
+
+            // --- Clique no card do modal ADD adiciona planta ---
+            $(document).on('click', '#listaPlantasAdd .plantas-container', function () {
+                const plantaId = $(this).data('id');
+                addUserPlanta(plantaId);
+            });
 
             // --- Pesquisa no modal ADD ---
             $(document).on("input", ".modal-plantas-add-pesquisa-input", function () {
@@ -347,28 +383,16 @@
                 );
                 renderizarListaAdd(filtradas);
             });
-        });
 
-        // --- Controle do modal ADD ---
-        const btnAbrirAdd = document.getElementById("btnAbrirAdd");
-        const modalAdd = document.getElementById("modalAdd");
-        const fecharAdd = document.getElementById("fecharAdd");
+            // --- Controle do modal ADD ---
+            const btnAbrirAdd = document.getElementById("btnAbrirAdd");
+            const modalAdd = document.getElementById("modalAdd");
+            const fecharAdd = document.getElementById("fecharAdd");
 
-        // abrir
-        btnAbrirAdd.addEventListener("click", () => {
-            modalAdd.style.display = "flex";
-        });
+            btnAbrirAdd.addEventListener("click", () => modalAdd.style.display = "flex");
+            document.querySelector(".modal-close-add-btn").addEventListener("click", () => modalAdd.style.display = "none");
+            window.addEventListener("click", (e) => { if (e.target === modalAdd) modalAdd.style.display = "none"; });
 
-        // fechar (no botão todo)
-        document.querySelector(".modal-close-add-btn").addEventListener("click", () => {
-            modalAdd.style.display = "none";
-        });
-
-        // fechar clicando fora
-        window.addEventListener("click", (e) => {
-            if (e.target === modalAdd) {
-                modalAdd.style.display = "none";
-            }
         });
     </script>
 
