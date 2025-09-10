@@ -26,6 +26,14 @@ const rotas = [
     {
         'path': '/perfil',
         'component': '/page/perfil/perfil.html'
+    },
+    {
+        'path': '/termosDeServico',
+        'component': '/page/politica/termosServicos.html'
+    },
+    {
+        'path': '/politicaDePrivacidade',
+        'component': '/page/politica/politicaPrivacidade.html'
     }
 ];
 
