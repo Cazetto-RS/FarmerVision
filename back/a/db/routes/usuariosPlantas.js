@@ -5,6 +5,7 @@ const db = require("../db");
 // Adicionar planta à conta do usuário
 router.post("/add", (req, res) => {
     const { usuarioid, plantaid } = req.body;
+    console.log(usuarioid, plantaid);
 
     if (!usuarioid || !plantaid) {
         return res.status(400).json({ error: "Usuário e planta são obrigatórios" });
