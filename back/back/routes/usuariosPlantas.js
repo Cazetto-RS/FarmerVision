@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/UserPlantas/:id',usuarioPlantas.consultarPorId)
 router.get('/UserPlantas', usuarioPlantas.consultarTodos);
-router.get('/UserPlantas/:id',usuarioPlantas.deletar)
-router.get('/UserPlantas', usuarioPlantas.cadastrar);
+router.delete('/UserPlantas/:id',usuarioPlantas.deletar)
+router.post('/UserPlantas', usuarioPlantas.cadastrar);
 
 export default router;

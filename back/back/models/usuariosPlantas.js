@@ -31,25 +31,47 @@ export const consultarPorId = async (id) => {
     }
 };
 
-export const cadastrar = async (usuario) => {
+export const cadastrar = async ({ usuario_id, planta_id }) => {
     let cx;
-    try {        
-        const {nome,telefone,email,password} = usuario;
-        const cmdSql = 'INSERT INTO usuario_plantas (usuario_id, planta_id) VALUES (?, ?, ?, ?);';
+    try {
         cx = await pool.getConnection();
-        const hashSenha = await bcrypt.hash(password, 10);
-        await cx.query(cmdSql, [nome,telefone,email,hashSenha]);
 
+        // 1. Verifica se o usuário existe
+        const [usuario] = await cx.query(
+            'SELECT id FROM usuarios WHERE id = ?',
+            [usuario_id]
+        );
+        if (usuario.length === 0) {
+            throw new Error("Usuário não encontrado");
+        }
+
+        // 2. Verifica se a planta existe
+        const [planta] = await cx.query(
+            'SELECT id FROM plantas WHERE id = ?',
+            [planta_id]
+        );
+        if (planta.length === 0) {
+            throw new Error("Planta não encontrada");
+        }
+
+        // 3. Insere na tabela de ligação
+        const cmdSql = 'INSERT INTO usuario_plantas (usuario_id, planta_id) VALUES (?, ?)';
+        await cx.query(cmdSql, [usuario_id, planta_id]);
+
+        // 4. Busca o registro recém-criado
         const [result] = await cx.query('SELECT LAST_INSERT_ID() as lastId');
         const lastId = result[0].lastId;
- 
-        const [dados, meta_dados] = await cx.query('SELECT usuario_id, planta_id FROM usuario_plantas WHERE id = ?;', [lastId]);
-        return dados;
-    } 
-    catch (error) {
+
+        const [dados] = await cx.query(
+            'SELECT * FROM usuario_plantas WHERE id = ?',
+            [lastId]
+        );
+
+        return dados[0];
+    } catch (error) {
         throw error;
     } finally {
-        if (cx) cx.release(); // Libere a conexão após o uso
+        if (cx) cx.release();
     }
 };
 

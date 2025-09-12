@@ -26,15 +26,22 @@ export const consultarPorId = async (req, res) => {
   }
 };
 
-export const cadastrar = async (req, res)=>{
+export const cadastrar = async (req, res) => {
     try {
-        const usuarioPlanta = req.body; 
-        const novaPlantaUsuario = await UsuarioPlantas.cadastrar(usuarioPlanta);
-        res.status(201).json(novaPlantaUsuario);
+        const { usuario_id, planta_id } = req.body;
+
+        if (!usuario_id || !planta_id) {
+            return res.status(400).json({ error: "usuario_id e planta_id são obrigatórios" });
+        }
+
+        const data = await UsuarioPlantas.cadastrar({ usuario_id, planta_id });
+        res.status(201).json(data);
+
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 export const deletar = async (req, res)=>{
     try {
