@@ -1,12 +1,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="/components/menu/menu.css">
+<link rel="stylesheet" href="./menu.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
 <div class="btn-expandir">
   <i class="bi bi-play-fill seta" id="btn-exp"></i>
 </div>
 
 <nav class="nav-lateral">
-
   <img src="../../assets/img/Logo 2.png" alt="" class="icone-logo">
   <ul style="padding-left: 0px;">
 
@@ -30,14 +32,43 @@
         <span class="txt-link">Perfil</span>
       </a>
     </li>
+
+    <li class="item-menu">
+      <a href="#" id="Outros">
+        <span class="icone"><i class="bi bi-plus-circle-fill"></i></span>
+        <span class="txt-link">Outros</span>
+        <span class="iconesize" style="margin-left: 70px;"><i class="bi bi-arrow-down-short"></i></span>
+      </a>
+    </li>
+
+    <div class="dropdown">
+      <li class="dropdown-item">
+        <a href="/termosDeServico" id="TServico">
+          <span class="txt-link-dropdown">Termos de serviço</span>
+        </a>
+      </li>
+
+      <li class="dropdown-item">
+        <a href="/politicaDePrivacidade" id="PPrivacidade">
+          <span class="txt-link-dropdown">Política de privacidade</span>
+        </a>
+      </li>
+    </div>
   </ul>
 </nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+  integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+  integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
 
 <script>
   const menuItem = document.querySelectorAll('.item-menu');
   const btnExp = document.querySelector('#btn-exp');
   const menuSide = document.querySelector('.nav-lateral');
   const btnExpandir = document.querySelector('.btn-expandir');
+  const outros = document.getElementById("Outros");
+  const dropdown = document.querySelector(".dropdown");
 
   // Expande/recolhe o menu
   btnExp.addEventListener('click', function () {
@@ -57,7 +88,6 @@
     }
   });
 
-
   // Redireciona Perfil dependendo do login
   document.getElementById("linkPerfil").addEventListener("click", function (e) {
     e.preventDefault(); // evita seguir o href="#"
@@ -71,5 +101,10 @@
       // Não logado → vai para login
       window.location.href = "/login";
     }
+  });
+
+  outros.addEventListener("click", function (e) {
+    e.preventDefault();
+    dropdown.classList.toggle("show");
   });
 </script>

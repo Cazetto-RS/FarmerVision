@@ -1,25 +1,25 @@
 :root {
-    --verde: #7AB317;
-    --verde-escuro: #4d720e;
-    --verde-amarelado: #CEA80F;
-    --verde-amarelado-escuro: #9e810c;
+  --verde: #7AB317;
+  --verde-escuro: #4d720e;
+  --verde-amarelado: #CEA80F;
+  --verde-amarelado-escuro: #9e810c;
 
-    --amarelo: #F0971C;
-    --amarelo-escuro: #b97516;
-    --amarelo-avermelhado: #CC3E18;
-    --amarelo-avermelhado-escuro: #922e12;
+  --amarelo: #F0971C;
+  --amarelo-escuro: #b97516;
+  --amarelo-avermelhado: #CC3E18;
+  --amarelo-avermelhado-escuro: #922e12;
 
-    --vermelho: #C21B12;
-    --vermelho-escuro: #8b160f;
+  --vermelho: #C21B12;
+  --vermelho-escuro: #8b160f;
 
-    --azul: #11baac;
-    --azul-escuro: #0c9287;
+  --azul: #11baac;
+  --azul-escuro: #0c9287;
 
-    --branco: #F6EEE0;
-    --cinza-claro: #5a5a5a;
-    --cinza: #373636;
-    --cinza-escuro: #151515;
-    --preto: #0B0B0B;
+  --branco: #F6EEE0;
+  --cinza-claro: #5a5a5a;
+  --cinza: #373636;
+  --cinza-escuro: #151515;
+  --preto: #0B0B0B;
 }
 
 * {
@@ -30,9 +30,13 @@
 
 body {
   height: 100vh;
-  background-color: var(--cinza-escuro);
+  background-color: var(--cinza-escuro) !important;
 
   font-family: 'Inter', Arial, sans-serif;
+}
+
+a:link {
+  text-decoration: none;
 }
 
 nav.nav-lateral {
@@ -59,7 +63,7 @@ nav.nav-lateral.expandir {
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  
+
   z-index: 999;
   margin-left: 0px;
 
@@ -74,7 +78,7 @@ nav.nav-lateral.expandir {
   margin-left: 240px;
 }
 
-.btn-expandir > i {
+.btn-expandir>i {
   color: var(--branco);
   font-size: 28px;
   cursor: pointer;
@@ -102,7 +106,7 @@ ul li.ativo::before {
   background-color: var(--verde);
 }
 
-.seta{
+.seta {
   background-color: var(--preto);
 
   padding: 10px;
@@ -119,19 +123,28 @@ ul li.item-menu a {
   color: var(--branco);
   text-decoration: none;
   font-size: 18px;
-  padding: 16px 10px;
   display: flex;
   align-items: center;
   transition: background 0.2s ease;
 }
 
-ul li.item-menu a .icone > i {
+.item-menu {
+  padding: 16px 10px;
+}
+
+ul li.item-menu a .icone>i {
   font-size: 24px;
   margin-left: 10px;
   transition: transform 0.3s ease;
 }
 
-ul li.item-menu:hover a .icone > i {
+.iconesize {
+  font-size: 22px;
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+ul li.item-menu:hover a .icone>i {
   transform: scale(1.2);
 }
 
@@ -147,9 +160,47 @@ nav.nav-lateral.expandir .txt-link {
   opacity: 1;
 }
 
-.icone-logo{
+.icone-logo {
   width: 75%;
   margin-bottom: 25px;
   margin-top: -20px;
-  margin-left: 10px ;
+  margin-left: 10px;
+}
+
+.dropdown {
+  display: block; /* garante que o div seja visível quando expandir */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: max-height 0.4s ease, opacity 0.1s ease, transform 0.4s ease;
+  margin-top: 0px;
+}
+
+.dropdown.show {
+  max-height: 500px; /* grande o suficiente para conter os itens */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  padding-bottom: 10px;
+  color: var(--branco);
+  text-decoration: none;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: var(--cinza);
+  transform: scale(1.02);
+}
+
+.txt-link-dropdown {
+  margin-left: 25px;
+  color: var(--branco);
+  font-size: 18px;
+  text-decoration: none;
 }
