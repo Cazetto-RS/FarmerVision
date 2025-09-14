@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cadastro</title>
     <link rel="stylesheet" href="../../assets/css/cadastro.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
 
 <style>
@@ -100,28 +101,33 @@
                         <label for="name" class="perfil-titulo-input">Nome Completo</label>
                         <input type="text" placeholder="Fulano Sicrano" class="perfil-inputs" id="name" required>
                     </div>
+                    <label class="perfil-descricao-input" id="NomeAviso"></label>
 
                     <div class="div-perfil-inputs">
                         <label for="telefone" class="perfil-titulo-input">Telefone</label>
                         <input type="tel" class="perfil-inputs" placeholder="(XX) +XX XXXX-XXXX" id="telefone" required>
                     </div>
+                    <label class="perfil-descricao-input" id="FoneAviso"></label>
 
                     <div class="div-perfil-inputs">
                         <label for="email" class="perfil-titulo-input">E-mail</label>
                         <input type="email" class="perfil-inputs" placeholder="@gmail.com" id="email" required>
                     </div>
+                    <label class="perfil-descricao-input" id="EmailAviso"></label>
 
                     <div class="div-perfil-inputs">
                         <label for="password" class="perfil-titulo-input">Senha</label>
                         <input type="password" class="perfil-inputs" placeholder="••••" id="password" required
                             minlength="6">
                     </div>
+                    <label class="perfil-descricao-input" id="SenhaAviso"></label>
 
                     <div class="div-perfil-inputs">
                         <label for="password-verify" class="perfil-titulo-input">Confirme sua Senha</label>
                         <input type="password" class="perfil-inputs" placeholder="••••" id="password-verify" required
                             minlength="6">
                     </div>
+                    <label class="perfil-descricao-input" id="RSenhaAviso"></label>
 
                     <div class="div-perfil-btn">
                         <button type="submit" class="perfil-btn-login" id="btn-cadastro">Cadastrar</button>
@@ -138,72 +144,169 @@
 </body>
 
 <script>
-    const telefoneInput = document.getElementById('telefone');
+    const nome = document.getElementById('name');
+    const telefone = document.getElementById('telefone');
+    const email = document.getElementById('email');
+    const senha = document.getElementById('password');
+    const confirmarSenha = document.getElementById('password-verify');
 
-    telefoneInput.addEventListener('input', function (e) {
-        let valor = e.target.value;
+    const nomeAviso = document.getElementById('NomeAviso');
+    const foneAviso = document.getElementById('FoneAviso');
+    const emailAviso = document.getElementById('EmailAviso');
+    const senhaAviso = document.getElementById('SenhaAviso');
+    const rSenhaAviso = document.getElementById('RSenhaAviso');
 
-        // Remove tudo que não for número
-        valor = valor.replace(/\D/g, '');
+    const btncadastro = document.getElementById('btn-cadastro');
 
-        if (valor.length > 12) valor = valor.slice(0, 12);
+    const MIN_NAME = 3;
+    const MIN_PASSWORD = 6;
+    const MIN_PHONE = 10;
 
-        if (valor.length <= 2) {
-            valor = '(' + valor;
-        } else if (valor.length <= 4) {
-            valor = '(' + valor.slice(0, 2) + ') +' + valor.slice(2);
-        } else if (valor.length <= 8) {
-            valor = '(' + valor.slice(0, 2) + ') +' + valor.slice(2, 4) + ' ' + valor.slice(4);
-        } else {
-            valor = '(' + valor.slice(0, 2) + ') +' + valor.slice(2, 4) + ' ' + valor.slice(4, 8) + '-' + valor.slice(8);
+    [nomeAviso, foneAviso, emailAviso, senhaAviso, rSenhaAviso].forEach(l => l.style.display = 'none');
+
+    function showAviso(labelEl, message) {
+        labelEl.textContent = message;
+        labelEl.style.display = 'block';
+    }
+
+    function hideAviso(labelEl) {
+        labelEl.style.display = 'none';
+    }
+
+    function hasMinCharsTrim(inputEl, min) {
+        return inputEl.value.trim().length >= min;
+    }
+
+    function validateNome() {
+        if (hasMinCharsTrim(nome, MIN_NAME)) { hideAviso(nomeAviso); return true; }
+        showAviso(nomeAviso, `Nome precisa ter pelo menos ${MIN_NAME} caracteres.`);
+        return false;
+    }
+
+    function validateEmail() {
+        // aproveita a validação nativa do input[type="email"]
+        if (email.checkValidity()) { hideAviso(emailAviso); return true; }
+        showAviso(emailAviso, 'Insira um e-mail válido.');
+        return false;
+    }
+
+    function validateSenha() {
+        // NÃO usamos .trim() para senha — espaços podem ser significativos
+        if (senha.value.length >= MIN_PASSWORD) { hideAviso(senhaAviso); return true; }
+        showAviso(senhaAviso, `Senha precisa ter ao menos ${MIN_PASSWORD} caracteres.`);
+        return false;
+    }
+
+    function validateConfirmSenha() {
+        if (confirmarSenha.value === senha.value && senha.value.length >= MIN_PASSWORD) {
+            hideAviso(rSenhaAviso);
+            return true;
         }
+        showAviso(rSenhaAviso, 'As senhas não coincidem.');
+        return false;
+    }
 
-        e.target.value = valor;
+    function validateTelefone() {
+        const digits = telefone.value.replace(/\D/g, '');
+        if (digits.length >= MIN_PHONE) { hideAviso(foneAviso); return true; }
+        showAviso(foneAviso, `Telefone deve ter pelo menos ${MIN_PHONE} dígitos.`);
+        return false;
+    }
+
+    function isFormValid() {
+        return validateNome()
+            && validateTelefone()
+            && validateEmail()
+            && validateSenha()
+            && validateConfirmSenha();
+    }
+
+    function toggleSubmit() {
+        btncadastro.disabled = !isFormValid();
+    }
+
+    nome.addEventListener('input', () => { validateNome(); toggleSubmit(); });
+    telefone.addEventListener('input', () => { validateTelefone(); toggleSubmit(); });
+    email.addEventListener('input', () => { validateEmail(); toggleSubmit(); });
+    senha.addEventListener('input', () => { validateSenha(); if (confirmarSenha.value) validateConfirmSenha(); toggleSubmit(); });
+    confirmarSenha.addEventListener('input', () => { validateConfirmSenha(); toggleSubmit(); });
+
+    document.getElementById('form-cadastro').addEventListener('submit', function (e) {
+        if (!isFormValid()) {
+            e.preventDefault();
+            // garante que todos os avisos apareçam
+            validateNome(); validateTelefone(); validateEmail(); validateSenha(); validateConfirmSenha();
+            alert('Corrija os campos destacados antes de enviar.');
+        }
     });
 
-    document.getElementById('form-cadastro').addEventListener('submit', async function (event) {
-        event.preventDefault();
+    toggleSubmit();
 
-        const nome = document.getElementById('name').value;
-        const telefone = document.getElementById('telefone').value;
-        const email = document.getElementById('email').value;
-        const senha = document.getElementById('password').value;
-        const confirmarSenha = document.getElementById('password-verify').value;
+    telefone.addEventListener('input', (e) => {
+        let valor = e.target.value.replace(/\D/g, ''); // só números
+        if (valor.length > 12) valor = valor.slice(0, 12); // limite de dígitos
 
-        if (senha !== confirmarSenha) {
-            document.getElementById('modal-erro').style.display = 'block';
-            return;
+        let formatado = '';
+
+        if (valor.length > 0) {
+            formatado = `(${valor.slice(0, 2)}`; // DDD
+        }
+        if (valor.length > 2) {
+            formatado += `) +${valor.slice(2, 4)}`; // código do país
+        }
+        if (valor.length > 4) {
+            formatado += ` ${valor.slice(4, 8)}`; // primeira parte
+        }
+        if (valor.length > 8) {
+            formatado += `-${valor.slice(8)}`; // segunda parte
         }
 
-        // Atenção aqui: campo 'password' conforme backend
-        const novoUsuario = {
-            nome,
-            telefone,
-            email,
-            password: senha
-        };
-
-        try {
-            const resposta = await fetch('http://localhost:3000/usuarios/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(novoUsuario)
-            });
-
-            if (resposta.ok) {
-                alert('Cadastro realizado com sucesso!');
-                window.location.href = '/login'; // ou outra página que queira
-            } else {
-                const erroData = await resposta.json();
-                alert('Erro ao cadastrar: ' + (erroData.error || 'Tente novamente.'));
-            }
-        } catch (erro) {
-            console.error('Erro na requisição:', erro);
-            alert('Erro ao conectar com o servidor.');
-        }
+        e.target.value = formatado;
     });
+
+    // document.getElementById('form-cadastro').addEventListener('submit', async function (event) {
+    //     event.preventDefault();
+
+    //     const nome = document.getElementById('name').value;
+    //     const telefone = document.getElementById('telefone').value;
+    //     const email = document.getElementById('email').value;
+    //     const senha = document.getElementById('password').value;
+    //     const confirmarSenha = document.getElementById('password-verify').value;
+
+    //     if (senha !== confirmarSenha) {
+    //         document.getElementById('modal-erro').style.display = 'block';
+    //         return;
+    //     }
+
+    //     // Atenção aqui: campo 'password' conforme backend
+    //     const novoUsuario = {
+    //         nome,
+    //         telefone,
+    //         email,
+    //         password: senha
+    //     };
+
+    //     try {
+    //         const resposta = await fetch('http://localhost:3000/usuarios/add', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(novoUsuario)
+    //         });
+
+    //         if (resposta.ok) {
+    //             alert('Cadastro realizado com sucesso!');
+    //             window.location.href = '/login'; // ou outra página que queira
+    //         } else {
+    //             const erroData = await resposta.json();
+    //             alert('Erro ao cadastrar: ' + (erroData.error || 'Tente novamente.'));
+    //         }
+    //     } catch (erro) {
+    //         console.error('Erro na requisição:', erro);
+    //         alert('Erro ao conectar com o servidor.');
+    //     }
+    // });
 </script>
 
 </html>
