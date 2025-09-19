@@ -31,6 +31,19 @@ export const consultarPorId = async (id) => {
     }
 };
 
+export const consultarPorEmail = async (email) => {
+    let cx;
+    try {
+        cx = await pool.getConnection();
+        // Aqui precisa trazer a senha também!
+        const cmdSql = 'SELECT id,nome,telefone,email,password FROM usuarios WHERE email = ?;';
+        const [dados] = await cx.query(cmdSql, [email]);
+        return dados; // array de usuários
+    } finally {
+        if (cx) cx.release();
+    }
+};
+
 export const cadastrar = async (usuario) => {
     let cx;
     try {        
@@ -67,4 +80,16 @@ export const deletar = async (id) => {
     finally {
         if (cx) cx.release(); // Libere a conexão após o uso
     }
+};
+
+export const login = async (email, password) => {
+    const usuarios = await consultarPorEmail(email);
+    const usuario = usuarios[0]; // pega o primeiro
+    if (!usuario) return null;
+
+    const senhaValida = await bcrypt.compare(password, usuario.password);
+    if (!senhaValida) return null;
+
+    delete usuario.password; // não retorna a senha
+    return usuario;
 };
