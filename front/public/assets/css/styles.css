@@ -420,6 +420,9 @@ img {
 }
 
 .plantas-esconder {
+    display: flex;
+    justify-content: center;
+
     .plantas-container {
         display: flex;
         align-items: center;
@@ -432,6 +435,7 @@ img {
         flex-wrap: wrap;
         /* permite quebrar linha */
         gap: 20px;
+        padding-left: 140px;
         /* espaço entre as plantas */
     }
 
@@ -496,6 +500,11 @@ img {
 
         .plantas-info {
             margin-left: 20px;
+        }
+
+        .plantas-grid {
+            padding-left: 0px;
+            justify-content: center;
         }
     }
 }
