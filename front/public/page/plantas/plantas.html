@@ -69,8 +69,10 @@
         </div>
     </div>
 
-    <div class="plantas-grid" id="listaPlantas">
-        <!-- Plantas serão carregadas aqui -->
+    <div class="plantas-esconder">
+        <div class="plantas-grid" id="listaPlantas">
+            <!-- Plantas serão carregadas aqui -->
+        </div>
     </div>
 
     <div class="plantas-btn-esconder">
@@ -220,6 +222,71 @@
             }
         });
 
+
+        // Buscar todas as plantas da API
+        // fetch('http://localhost:3000/plantas')
+        //     .then(response => response.json())
+        //     .then(plantas => renderizarPlantas(plantas))
+        //     .catch(error => {
+        //         document.getElementById('listaPlantasAdd').innerHTML = '<p class="text-danger">Erro ao carregar plantas</p>';
+        //         console.error(error);
+        // });
+
+        // function renderizarPlantas(plantas) {
+        //     const listaPlantas = document.getElementById('listaPlantasAdd');
+        //     listaPlantas.innerHTML = ''; // Limpa antes de adicionar
+
+        //     plantas.forEach(planta => {
+        //         const plantaHTML = `
+        //         <div class="plantas-esconder">
+        //             <div class="plantas-container" data-id="${planta.id}">
+        //                 <div class="div-plantas-imagem">
+        //                     <img src="../../assets/img/Favicon.png"
+        //                         alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
+        //                 </div>
+        //                 <div class="plantas-info mt-2">
+        //                     <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
+        //                     <p class="plantas-nome-cientifico text-muted mb-0">
+        //                         <em>${planta.nome_cientifico || 'ome científico'}</em>
+        //                     </p>
+        //                 </div>
+        //             </div>
+        //         <div>
+        //     `;
+        //         listaPlantas.innerHTML += plantaHTML;
+        //     });
+        // }
+
+        fetch('http://localhost:3000/plantas')
+            .then(response => response.json())
+            .then(plantas => renderizarPlantas(plantas))
+            .catch(error => {
+                document.getElementById('listaPlantas').innerHTML = '<p class="text-danger">Erro ao carregar plantas</p>';
+                console.error(error);
+        });
+
+        function renderizarPlantas(plantas) {
+            const listaPlantas = document.getElementById('listaPlantas');
+            listaPlantas.innerHTML = ''; // Limpa antes de adicionar
+
+            plantas.forEach(planta => {
+                const plantaHTML = `
+                    <div class="plantas-container" data-id="${planta.id}">
+                        <div class="div-plantas-imagem">
+                            <img src="../../assets/img/Favicon.png"
+                                alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
+                        </div>
+                        <div class="plantas-info mt-2">
+                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || 'Sem nome'}</h5>
+                            <p class="plantas-nome-cientifico text-muted mb-0">
+                                <em>${planta.nome_cientifico || 'ome científico'}</em>
+                            </p>
+                        </div>
+                    </div>
+            `;
+                listaPlantas.innerHTML += plantaHTML;
+            });
+        }
     </script>
 
     <script>
