@@ -263,50 +263,56 @@
 
         e.target.value = formatado;
     });
+</script>
 
-    // document.getElementById('form-cadastro').addEventListener('submit', async function (event) {
-    //     event.preventDefault();
+<script>
+document.getElementById('form-cadastro').addEventListener('submit', async function (event) {
+    event.preventDefault();
 
-    //     const nome = document.getElementById('name').value;
-    //     const telefone = document.getElementById('telefone').value;
-    //     const email = document.getElementById('email').value;
-    //     const senha = document.getElementById('password').value;
-    //     const confirmarSenha = document.getElementById('password-verify').value;
+    if (!isFormValid()) {
+        alert('Corrija os campos destacados antes de enviar.');
+        return;
+    }
 
-    //     if (senha !== confirmarSenha) {
-    //         document.getElementById('modal-erro').style.display = 'block';
-    //         return;
-    //     }
+    const nome = document.getElementById('name').value.trim();
+    const telefone = document.getElementById('telefone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('password').value;
+    const confirmarSenha = document.getElementById('password-verify').value;
 
-    //     // Atenção aqui: campo 'password' conforme backend
-    //     const novoUsuario = {
-    //         nome,
-    //         telefone,
-    //         email,
-    //         password: senha
-    //     };
+    if (senha !== confirmarSenha) {
+        alert('As senhas não coincidem.');
+        return;
+    }
 
-    //     try {
-    //         const resposta = await fetch('http://localhost:3000/usuarios/add', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(novoUsuario)
-    //         });
+    // Campos conforme backend
+    const novoUsuario = {
+        nome,
+        telefone,
+        email,
+        password: senha
+    };
 
-    //         if (resposta.ok) {
-    //             alert('Cadastro realizado com sucesso!');
-    //             window.location.href = '/login'; // ou outra página que queira
-    //         } else {
-    //             const erroData = await resposta.json();
-    //             alert('Erro ao cadastrar: ' + (erroData.error || 'Tente novamente.'));
-    //         }
-    //     } catch (erro) {
-    //         console.error('Erro na requisição:', erro);
-    //         alert('Erro ao conectar com o servidor.');
-    //     }
-    // });
+    try {
+        const resposta = await fetch('http://localhost:3000/usuario/cadastrar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(novoUsuario)
+        });
+
+        const data = await resposta.json();
+
+        if (resposta.ok && data) {
+            alert('Cadastro realizado com sucesso!');
+            window.location.href = '/login';
+        } else {
+            alert('Erro ao cadastrar: ' + (data.mensagem || 'Tente novamente.'));
+        }
+    } catch (erro) {
+        console.error('Erro na requisição:', erro);
+        alert('Erro ao conectar com o servidor.');
+    }
+});
 </script>
 
 </html>

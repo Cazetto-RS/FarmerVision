@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Tempo de geração: 05/08/2025 às 10:31
+-- Tempo de geração: 19/09/2025 às 15:10
 -- Versão do servidor: 8.0.30
 -- Versão do PHP: 8.3.4
 
@@ -69,6 +69,26 @@ INSERT INTO `plantas` (`id`, `nome_comum`, `nome_cientifico`, `familia`, `genero
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `sessoes`
+--
+
+CREATE TABLE `sessoes` (
+  `usuario` int NOT NULL,
+  `token` varchar(255) DEFAULT NULL,
+  `validade` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `sessoes`
+--
+
+INSERT INTO `sessoes` (`usuario`, `token`, `validade`) VALUES
+(4, '19621e4a316c435c49fc2469dd3bb67125df9219d382ae9f0c157218752650fc09afe1cf7e268006ef1b1f6519bda1f150cc7b94882f3859778ae7a31917959e', '2025-09-20 23:05:56'),
+(6, '04981122320f0a758b4c40622d5408d940e048c79385aa2a0b360c74f1827c8c7a66f151e0d0e10e8e58667d2d6171bb50574517f9a1b91204bdf27f9f86e71e', '2025-09-20 23:11:49');
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `usuarios`
 --
 
@@ -85,7 +105,12 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `telefone`, `email`, `password`) VALUES
-(1, 'Rafael', '+55 15 98813-0769', 'rafasandei17@gmail.com', 'PasswordAdmin');
+(1, 'Rafael Sandei Cazetto', '+55 15 98813-0769', 'rafasandei17@gmail.com', '$2b$10$V2BACNr0ml4YBYEFlrIXbeLV1kzAdaUS4Gc9NoGE7HXj8i1p95koa'),
+(2, 'Icaro Cau', '+55 15 99120-9505', 'icarotsss@gmail.com', '$2b$10$V2BACNr0ml4YBYEFlrIXbeLV1kzAdaUS4Gc9NoGE7HXj8i1p95koa'),
+(3, 'Nicholas Rodrigues Pereira', '(55) +15 9881-3076', 'nicholasrodrigues@gmail.com', '$2b$10$V2BACNr0ml4YBYEFlrIXbeLV1kzAdaUS4Gc9NoGE7HXj8i1p95koa'),
+(4, 'teste', '+55 15 11111-1111', 'teste3gmail.com', '$2b$10$/GiUgBVNIJIYBNSLn3omb.XtRZQa9qnrAZmj5J82YpfxaiPn0MwAu'),
+(5, 'teste', '+55 15 11111-1111', 'teste4gmail.com', '$2b$10$pO4bZHJr1KLDtrvgpFqYK.02RDKDKAgTh1KY1abdlHHB31VLlgFPK'),
+(6, 'teste token', '+55 15 11111-1111', 'testeTokengmail.com', '$2b$10$/sUrNh5/jafBNPesQXks2eEgBdK6RiPujGkJ5/.aa4ofHvbTMoJoC');
 
 -- --------------------------------------------------------
 
@@ -118,6 +143,12 @@ ALTER TABLE `plantas`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices de tabela `sessoes`
+--
+ALTER TABLE `sessoes`
+  ADD PRIMARY KEY (`usuario`);
+
+--
 -- Índices de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -146,7 +177,7 @@ ALTER TABLE `plantas`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `usuario_plantas`
@@ -157,6 +188,12 @@ ALTER TABLE `usuario_plantas`
 --
 -- Restrições para tabelas despejadas
 --
+
+--
+-- Restrições para tabelas `sessoes`
+--
+ALTER TABLE `sessoes`
+  ADD CONSTRAINT `sessoes_ibfk_1` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
 
 --
 -- Restrições para tabelas `usuario_plantas`

@@ -134,28 +134,35 @@
 </body>
 
 <script>
-    document.getElementById('btn-login').addEventListener('click', function(e) {
-    e.preventDefault();
+    document.getElementById('btn-login').addEventListener('click', function (e) {
+        e.preventDefault();
 
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('senha').value;
 
-    fetch('http://localhost:3000/usuario/logar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.sucesso) {
-            localStorage.setItem('user', JSON.stringify(data.usuario));
-            window.location.href = '/plantas';
-        } else {
-            alert('Login inválido!');
-        }
-    })
-    .catch(() => alert('Erro ao conectar ao servidor.'));
-});
+        fetch('http://localhost:3000/usuario/logar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
+            .then(res => res.json())
+            .then(data => {
+                // Se existir token na resposta, consideramos login válido
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+
+                    // Garante que salva apenas o necessário do usuário
+                    if (data.usuario) {
+                        localStorage.setItem('user', JSON.stringify(data.usuario));
+                    }
+
+                    window.location.href = '/plantas';
+                } else {
+                    alert(data.mensagem || 'Email ou senha inválidos!');
+                }
+            })
+            .catch(() => alert('Erro ao conectar ao servidor.'));
+    });
 </script>
 
 </html>
