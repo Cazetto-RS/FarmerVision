@@ -73,6 +73,7 @@ export const login = async (req, res) => {
         }
 
         const usuario = await Usuario.login(email, password); // <-- aqui corrige
+        
         if (!usuario) {
             return res.status(401).json({ error: "Credenciais inválidas" });
         }

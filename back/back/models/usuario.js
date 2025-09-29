@@ -36,7 +36,8 @@ export const consultarPorEmail = async (email) => {
     try {
         cx = await pool.getConnection();
         // Aqui precisa trazer a senha também!
-        const cmdSql = 'SELECT id,nome,telefone,email,password FROM usuarios WHERE email = ?;';
+        const cmdSql = 'SELECT id, nome, telefone, email, password FROM usuarios WHERE email = ?;';
+        console.log(email);
         const [dados] = await cx.query(cmdSql, [email]);
         return dados; // array de usuários
     } finally {
@@ -84,6 +85,7 @@ export const deletar = async (id) => {
 
 export const login = async (email, password) => {
     const usuarios = await consultarPorEmail(email);
+    console.log(usuarios);
     const usuario = usuarios[0]; // pega o primeiro
     if (!usuario) return null;
 

@@ -5,7 +5,8 @@
   "main": "back/server/server.js",
   "type": "module",
   "scripts": {
-    "start": "node back/server/server.js"
+    "start": "node .",
+    "dev": "nodemon ."
   },
   "author": "RIN Corporation",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "json-server": "^1.0.0-beta.3",
-    "mysql2": "^3.14.3"
+    "mysql2": "^3.14.3",
+    "nodemon": "^3.1.10"
   }
 }

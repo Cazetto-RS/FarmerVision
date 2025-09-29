@@ -146,7 +146,9 @@
             body: JSON.stringify({ email, password })
         })
             .then(res => res.json())
-            .then(data => {
+            .then(result => {
+                const data = result.data;
+
                 // Se existir token na resposta, consideramos login válido
                 if (data.token) {
                     localStorage.setItem('token', data.token);
@@ -166,3 +168,12 @@
 </script>
 
 </html>
+
+<!-- {
+    "message":"Login realizado com sucesso",
+    "data":{
+        "token":"6.ad824b12b828a84b63c4babac7345a5551774e5e2149072adecb6cf3af25e3090b439781f8799eeada5429129804c95d1c605b183bbf2063e5b749c40dd49266",
+        "expiracao":"2025-10-01T05:54:50.000Z",
+        "usuario":{"id":6,"nome":"teste token","telefone":"+55 15 11111-1111","email":"testeTokengmail.com"}
+    }
+} -->
