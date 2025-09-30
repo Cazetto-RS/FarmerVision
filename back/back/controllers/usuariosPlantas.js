@@ -16,7 +16,7 @@ export const consultarPorId = async (req, res) => {
     const data = await UsuarioPlantas.consultarPorId(id);
 
     if (!data || data.length === 0) {
-      return res.status(404).json({ message: "Planta do usuario não encontrada" });
+      return res.status(404).json({ message: "Usuario não encontrado ou não possui plantas" });
     }
 
     res.json(data[0]); // retorna apenas o objeto do usuário

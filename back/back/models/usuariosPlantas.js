@@ -19,13 +19,26 @@ export const consultarPorId = async (id) => {
     let cx;
     try {
         cx = await pool.getConnection();
-        const cmdSql = 'SELECT * FROM usuario_plantas WHERE id = ?;';
+        const cmdSql = `
+            SELECT 
+                usuario_plantas.*, 
+                usuarios.*, 
+                plantas.*
+            FROM 
+                usuario_plantas
+            JOIN 
+                usuarios ON usuario_plantas.usuario_id = usuarios.id
+            JOIN 
+                plantas ON usuario_plantas.planta_id = plantas.id
+            WHERE 
+                usuario_plantas.usuario_id = ?;
+        `;
         const [dados, meta_dados] = await cx.query(cmdSql, [id]);
         return dados;
-    } 
+    }
     catch (error) {
         throw error;
-    } 
+    }
     finally {
         if (cx) cx.release(); // Libere a conexão após o uso
     }
@@ -82,10 +95,10 @@ export const deletar = async (id) => {
         cx = await pool.getConnection();
         const [dados, meta_dados] = await cx.query(cmdSql, [id]);
         return dados;
-    } 
+    }
     catch (error) {
         throw error;
-    } 
+    }
     finally {
         if (cx) cx.release(); // Libere a conexão após o uso
     }

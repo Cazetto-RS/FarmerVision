@@ -129,6 +129,11 @@
                     </div>
                     <label class="perfil-descricao-input" id="RSenhaAviso"></label>
 
+                    <div class="div-cadastro-TPLT">
+                        <input class="div-cadastro-checkbox" type="checkbox" name="" id="">
+                        <p class="div-cadastro-text">Eu aceito os <a href="/termosDeServico" class="div-cadastro-text-link">termos de serviço</a> e as <a href="/politicaDePrivacidade" class="div-cadastro-text-link">políticas de privacidade</a></p>
+                    </div>
+
                     <div class="div-perfil-btn">
                         <button type="submit" class="perfil-btn-login" id="btn-cadastro">Cadastrar</button>
                     </div>
@@ -266,53 +271,53 @@
 </script>
 
 <script>
-document.getElementById('form-cadastro').addEventListener('submit', async function (event) {
-    event.preventDefault();
+    document.getElementById('form-cadastro').addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-    if (!isFormValid()) {
-        alert('Corrija os campos destacados antes de enviar.');
-        return;
-    }
-
-    const nome = document.getElementById('name').value.trim();
-    const telefone = document.getElementById('telefone').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const senha = document.getElementById('password').value;
-    const confirmarSenha = document.getElementById('password-verify').value;
-
-    if (senha !== confirmarSenha) {
-        alert('As senhas não coincidem.');
-        return;
-    }
-
-    // Campos conforme backend
-    const novoUsuario = {
-        nome,
-        telefone,
-        email,
-        password: senha
-    };
-
-    try {
-        const resposta = await fetch('http://localhost:3000/usuario/cadastrar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(novoUsuario)
-        });
-
-        const data = await resposta.json();
-
-        if (resposta.ok && data) {
-            alert('Cadastro realizado com sucesso!');
-            window.location.href = '/login';
-        } else {
-            alert('Erro ao cadastrar: ' + (data.mensagem || 'Tente novamente.'));
+        if (!isFormValid()) {
+            alert('Corrija os campos destacados antes de enviar.');
+            return;
         }
-    } catch (erro) {
-        console.error('Erro na requisição:', erro);
-        alert('Erro ao conectar com o servidor.');
-    }
-});
+
+        const nome = document.getElementById('name').value.trim();
+        const telefone = document.getElementById('telefone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const senha = document.getElementById('password').value;
+        const confirmarSenha = document.getElementById('password-verify').value;
+
+        if (senha !== confirmarSenha) {
+            alert('As senhas não coincidem.');
+            return;
+        }
+
+        // Campos conforme backend
+        const novoUsuario = {
+            nome,
+            telefone,
+            email,
+            password: senha
+        };
+
+        try {
+            const resposta = await fetch('http://localhost:3000/usuario/cadastrar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(novoUsuario)
+            });
+
+            const data = await resposta.json();
+
+            if (resposta.ok && data) {
+                alert('Cadastro realizado com sucesso!');
+                window.location.href = '/login';
+            } else {
+                alert('Erro ao cadastrar: ' + (data.mensagem || 'Tente novamente.'));
+            }
+        } catch (erro) {
+            console.error('Erro na requisição:', erro);
+            alert('Erro ao conectar com o servidor.');
+        }
+    });
 </script>
 
 </html>

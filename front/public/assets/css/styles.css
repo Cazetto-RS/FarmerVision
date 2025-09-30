@@ -835,6 +835,38 @@ img {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.div-cadastro-TPLT {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px !important;
+    width: 450px;
+    margin: 0 auto;
+    /* <=== Centraliza */
+}
+
+.div-cadastro-text {
+    font-size: 16px;
+    margin: 0;
+}
+
+.div-cadastro-text-link{
+    color: var(--verde);
+    text-decoration: underline;
+}
+
+.div-cadastro-text-link:hover{
+    color: var(--verde-escuro);
+}
+
+.div-cadastro-checkbox {
+    cursor: pointer;
+    accent-color: var(--cinza-claro);
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .logout-plantas-container {
