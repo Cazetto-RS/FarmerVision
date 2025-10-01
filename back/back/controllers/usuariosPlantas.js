@@ -1,9 +1,9 @@
 import * as UsuarioPlantas from '../models/usuariosPlantas.js'
-
+import * as Response from '../utils/responses.js';
 export const consultarTodos = async (req, res) => {
     try {
         const data = await UsuarioPlantas.consultarTodos();
-        res.json(data); // retorna todos os usuários como JSON
+        return Response.success(res,{data: data})
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
@@ -18,8 +18,7 @@ export const consultarPorId = async (req, res) => {
     if (!data || data.length === 0) {
       return res.status(404).json({ message: "Usuario não encontrado ou não possui plantas" });
     }
-
-    res.json(data[0]); // retorna apenas o objeto do usuário
+    return Response.success(res,{data: data});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });

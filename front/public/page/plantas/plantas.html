@@ -199,6 +199,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        
+
         /* -------------------------
         Modal de adicionar planta
         --------------------------*/
@@ -219,16 +221,45 @@
         /* -------------------------
         Carregar plantas do usuário
         --------------------------*/
-        const userId = 1;
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const token = localStorage.getItem('token');
 
-        fetch(`http://localhost:3000/UserPlantas/1`)
-            .then(response => response.json())
-            .then(plantas => renderizarPlantas(plantas))
-            .catch(error => {
-                document.getElementById('listaPlantas').innerHTML =
-                    '<p class="text-danger">Erro ao carregar plantas</p>';
-                console.error(error);
+        const testeId = 1
+
+        // Se não estiver logado → redireciona
+        if (!user.id || !token) {
+            alert("Você precisa estar logado para acessar suas plantas!");
+            window.location.href = "/login";
+        }
+
+        
+
+        // Busca as plantas do usuário logado
+        const buscarPlantasPorUser = (user_id)=>{
+            const url_req =  `http://localhost:3000/UserPlantas/${user_id}}`;
+            const adicionais = {
+                headers: { "Authorization": `Bearer ${token}` }
+            };
+            fetch(url_req, adicionais)
+                .then(response => {
+                    if(!response.ok){
+                         throw "Nenhum dado para a exibição!!!";
+                    }
+                    return response.json()
+                })
+                .then(data => {
+                    renderizarPlantas(data.data);
+
+                })
+                .catch(error => {
+                    document.getElementById('listaPlantas').innerHTML =
+                        '<p class="text-danger">Erro: '+error+'</p>';
+                    //console.error(error);
             });
+        }
+
+        buscarPlantasPorUser(user.id);
+
 
         function renderizarPlantas(plantas) {
             const listaPlantas = document.getElementById('listaPlantas');
@@ -241,19 +272,19 @@
 
             plantas.forEach(planta => {
                 const plantaHTML = `
-                <div class="plantas-container" data-id="${planta.id}">
-                    <div class="div-plantas-imagem">
-                        <img src="../../assets/img/Favicon.png"
-                            alt="${planta.nome_comum}" class="plantas-imagem img-fluid">
+                    <div class="plantas-container" data-id="${planta.id}">
+                        <div class="div-plantas-imagem">
+                            <img src="../../assets/img/Favicon.png"
+                                alt="${planta.nome_comum || planta.nome}" class="plantas-imagem img-fluid">
+                        </div>
+                        <div class="plantas-info mt-2">
+                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || planta.nome || 'Sem nome'}</h5>
+                            <p class="plantas-nome-cientifico text-muted mb-0">
+                                <em>${planta.nome_cientifico || planta.familia || 'Não informado'}</em>
+                            </p>
+                        </div>
                     </div>
-                    <div class="plantas-info mt-2">
-                        <h5 class="plantas-nome-usual mb-1">${planta.nome_comum , 'Sem nome'}</h5>
-                        <p class="plantas-nome-cientifico text-muted mb-0">
-                            <em>${planta.nome_cientifico || 'Nome científico não informado'}</em>
-                        </p>
-                    </div>
-                </div>
-            `;
+                `;
                 listaPlantas.innerHTML += plantaHTML;
             });
         }
