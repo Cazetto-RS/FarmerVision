@@ -34,6 +34,10 @@ const rotas = [
     {
         'path': '/politicaDePrivacidade',
         'component': '/page/politica/politicaPrivacidade.html'
+    },
+    {
+        'path': '/reqLogin',
+        'component': '/components/reutilizaveis/reqLogin.html'
     }
 ];
 

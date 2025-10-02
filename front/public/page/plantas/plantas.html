@@ -41,153 +41,155 @@
 </head>
 
 <body>
-    <div class="logout-plantas-esconder" id="WarningSemConta" style="display: none;">
-        <div class="logout-plantas-container">
-            <h1 class="logout-plantas-title">Opa, parece que você não está logado em nenhuma conta!</h1>
-            <p class="logout-plantas-subtitle">O que acha de irmos um pouco mais devagar?</p>
-
-            <div class="logout-plantas-caixa">
-                <div class="logout-plantas-code2">
-                    <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
-                    <div class="bola2" style="background-color: #F0971C;"></div>
-                    <div class="bola3" style="background-color: #C21B12;"></div>
-                </div>
-            </div>
-
-            <div class="logout-plantas-caixa">
-                <div class="logout-plantas-code">
-                    <img src="../../assets/img/noUser.png" alt="" class="logout-plantas-icon">
-                </div>
-            </div>
-
-            <p class="logout-plantas-message">Você precisa estar logado em uma conta para que assim <br> possa
-                visualizar e adicionar suas plantas! Faça login, ou então, <br> caso não tenha uma conta, se cadastre!
-            </p>
-
-            <button class="logout-plantas-btn-login" id="btnRedirecionarLogin">Fazer login</button>
-            <button class="logout-plantas-btn-cadastro" id="btnRedirecionarCadastro">Se cadastrar</button>
-        </div>
-    </div>
-
-    <div class="plantas-esconder">
-        <div class="plantas-grid" id="listaPlantas">
-            <!-- Plantas serão carregadas aqui -->
-        </div>
-    </div>
-
-    <div class="plantas-btn-esconder">
-        <button class="plantas-btn-add" id="btnAbrirAdd"></button>
-    </div>
-
-    <div class="plantas-modal-add-esconder" id="modalAdd">
-        <div class="modal-overlay">
-            <div class="modal-plantas-add-container">
-                <button class="modal-close-add-btn" id="fecharAdd">
-                    <p><strong>X</strong></p>
-                </button>
-                <div class="modal-plantas-add-cabecalho">
-                    <div class="modal-plantas-cabecalho-add-content">
-                        <div class="modal-plantas-add-info-cabecalho">
-                            <h1 class="modal-plantas-add-titulo">Adicionar nova planta</h1>
-                        </div>
+    <div class="plantas-esconder-geral">
+        <div class="logout-plantas-esconder" id="WarningSemConta" style="display: none;">
+            <div class="logout-plantas-container">
+                <h1 class="logout-plantas-title">Opa, parece que você não está logado em nenhuma conta!</h1>
+                <p class="logout-plantas-subtitle">O que acha de irmos um pouco mais devagar?</p>
+    
+                <div class="logout-plantas-caixa">
+                    <div class="logout-plantas-code2">
+                        <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
+                        <div class="bola2" style="background-color: #F0971C;"></div>
+                        <div class="bola3" style="background-color: #C21B12;"></div>
                     </div>
                 </div>
-                <div class="modal-plantas-add-conteudo">
-                    <div class="modal-plantas-add-pesquisa">
-                        <i class="bi bi-search" style="align-content: center; margin-right: 15px;"></i>
-                        <input type="text" class="modal-plantas-add-pesquisa-input" placeholder="Pesquisar...">
-                    </div>
-                    <div class="modal-plantas-add-rolagem">
-                        <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
-                            <!-- as plantas iram aparecer aqui (é  ideia pelo menos kkkk) -->
-                        </div>
+    
+                <div class="logout-plantas-caixa">
+                    <div class="logout-plantas-code">
+                        <img src="../../assets/img/noUser.png" alt="" class="logout-plantas-icon">
                     </div>
                 </div>
+    
+                <p class="logout-plantas-message">Você precisa estar logado em uma conta para que assim <br> possa
+                    visualizar e adicionar suas plantas! Faça login, ou então, <br> caso não tenha uma conta, se cadastre!
+                </p>
+    
+                <button class="logout-plantas-btn-login" id="btnRedirecionarLogin">Fazer login</button>
+                <button class="logout-plantas-btn-cadastro" id="btnRedirecionarCadastro">Se cadastrar</button>
             </div>
         </div>
-    </div>
-
-    <div class="modal-plantas-esconder" style="display: none;">
-
-        <div class="modal-plantas-esconder scrollview" id="plantModal">
+    
+        <div class="plantas-esconder">
+            <div class="plantas-grid" id="listaPlantas">
+                <!-- Plantas serão carregadas aqui -->
+            </div>
+        </div>
+    
+        <div class="plantas-btn-esconder">
+            <button class="plantas-btn-add" id="btnAbrirAdd"></button>
+        </div>
+    
+        <div class="plantas-modal-add-esconder" id="modalAdd">
             <div class="modal-overlay">
-                <div class="modal-plantas-container">
-                    <button class="modal-close-btn" id="modalCloseBtn">
+                <div class="modal-plantas-add-container">
+                    <button class="modal-close-add-btn" id="fecharAdd">
                         <p><strong>X</strong></p>
                     </button>
-                    <div class="modal-plantas-cabecalho">
-                        <div class="modal-plantas-cabecalho-content">
-                            <img src="../../assets/img/Favicon.png" alt="Ícone da Planta"
-                                class="modal-plantas-icon-cabecalho" id="modalPlantIcon">
-                            <div class="modal-plantas-info-cabecalho">
-                                <h1 class="modal-plantas-nome-usual" id="modalPlantName"></h1>
-                                <p class="modal-plantas-nome-cientifico" id="modalScientificName"></p>
+                    <div class="modal-plantas-add-cabecalho">
+                        <div class="modal-plantas-cabecalho-add-content">
+                            <div class="modal-plantas-add-info-cabecalho">
+                                <h1 class="modal-plantas-add-titulo">Adicionar nova planta</h1>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-plantas-conteudo">
-                        <div class="modal-plantas-tips">
-                            <h2 class="modal-plantas-tips-titulo" style="margin-bottom: 7px;">Descrição</h2>
-                            <p class="modal-plantas-info-descricao" style="margin-left: 15px;" id="modalDescricao"></p>
+                    <div class="modal-plantas-add-conteudo">
+                        <div class="modal-plantas-add-pesquisa">
+                            <i class="bi bi-search" style="align-content: center; margin-right: 15px;"></i>
+                            <input type="text" class="modal-plantas-add-pesquisa-input" placeholder="Pesquisar...">
                         </div>
-
-                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Informações</h2>
-
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo">Família</h2>
-                            <p class="modal-plantas-info-descricao" id="modalFamilia"></p>
-                        </div>
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo">Clima</h2>
-                            <p class="modal-plantas-info-descricao" id="modalClima"></p>
-                        </div>
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo">Altura Média</h2>
-                            <p class="modal-plantas-info-descricao" id="modalAltura"></p>
-                        </div>
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo">Toxicidade</h2>
-                            <p class="modal-plantas-info-descricao" id="modalToxicidade"></p>
-                        </div>
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo">Efeitos Tóxicos</h2>
-                            <p class="modal-plantas-info-descricao" id="modalEfeitos"></p>
-                        </div>
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo">Genero</h2>
-                            <p class="modal-plantas-info-descricao" id="modalGenero"></p>
-                        </div>
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo">Luminosidade</h2>
-                            <p class="modal-plantas-info-descricao" id="modalLight"></p>
-                        </div>
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo">Rega</h2>
-                            <p class="modal-plantas-info-descricao" id="modalWater"></p>
-                        </div>
-                        <div class="modal-plantas-tips">
-                            <h2 class="modal-plantas-tips-titulo">Dicas de Cultivo</h2>
-                            <div class="modal-plantas-tips-container" id="modalTips">
-                                <!-- Dicas serão inseridas aqui via JavaScript -->
+                        <div class="modal-plantas-add-rolagem">
+                            <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
+                                <!-- as plantas iram aparecer aqui (é  ideia pelo menos kkkk) -->
                             </div>
                         </div>
-
-                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Gráficos</h2>
-
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Temperatura</h2>
-                            <canvas id="graficoTemperatura" width="400" height="200"></canvas>
-                        </div>
-
-                        <div class="modal-plantas-info-item">
-                            <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Umidade</h2>
-                            <canvas id="graficoUmidade" width="400" height="200"></canvas>
-                        </div>
-
                     </div>
                 </div>
             </div>
         </div>
+    
+        <div class="modal-plantas-esconder" style="display: none;">
+    
+            <div class="modal-plantas-esconder scrollview" id="plantModal">
+                <div class="modal-overlay">
+                    <div class="modal-plantas-container">
+                        <button class="modal-close-btn" id="modalCloseBtn">
+                            <p><strong>X</strong></p>
+                        </button>
+                        <div class="modal-plantas-cabecalho">
+                            <div class="modal-plantas-cabecalho-content">
+                                <img src="../../assets/img/Favicon.png" alt="Ícone da Planta"
+                                    class="modal-plantas-icon-cabecalho" id="modalPlantIcon">
+                                <div class="modal-plantas-info-cabecalho">
+                                    <h1 class="modal-plantas-nome-usual" id="modalPlantName"></h1>
+                                    <p class="modal-plantas-nome-cientifico" id="modalScientificName"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-plantas-conteudo">
+                            <div class="modal-plantas-tips">
+                                <h2 class="modal-plantas-tips-titulo" style="margin-bottom: 7px;">Descrição</h2>
+                                <p class="modal-plantas-info-descricao" style="margin-left: 15px;" id="modalDescricao"></p>
+                            </div>
+    
+                            <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Informações</h2>
+    
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Família</h2>
+                                <p class="modal-plantas-info-descricao" id="modalFamilia"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Clima</h2>
+                                <p class="modal-plantas-info-descricao" id="modalClima"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Altura Média</h2>
+                                <p class="modal-plantas-info-descricao" id="modalAltura"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Toxicidade</h2>
+                                <p class="modal-plantas-info-descricao" id="modalToxicidade"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Efeitos Tóxicos</h2>
+                                <p class="modal-plantas-info-descricao" id="modalEfeitos"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Genero</h2>
+                                <p class="modal-plantas-info-descricao" id="modalGenero"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Luminosidade</h2>
+                                <p class="modal-plantas-info-descricao" id="modalLight"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Rega</h2>
+                                <p class="modal-plantas-info-descricao" id="modalWater"></p>
+                            </div>
+                            <div class="modal-plantas-tips">
+                                <h2 class="modal-plantas-tips-titulo">Dicas de Cultivo</h2>
+                                <div class="modal-plantas-tips-container" id="modalTips">
+                                    <!-- Dicas serão inseridas aqui via JavaScript -->
+                                </div>
+                            </div>
+    
+                            <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Gráficos</h2>
+    
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Temperatura</h2>
+                                <canvas id="graficoTemperatura" width="400" height="200"></canvas>
+                            </div>
+    
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Umidade</h2>
+                                <canvas id="graficoUmidade" width="400" height="200"></canvas>
+                            </div>
+    
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
 
         <div id="fullscreenChartContainer"
             style="display: none; position: fixed; top: 0; left: 0;
@@ -228,11 +230,8 @@
 
         // Se não estiver logado → redireciona
         if (!user.id || !token) {
-            alert("Você precisa estar logado para acessar suas plantas!");
-            window.location.href = "/login";
-        }
-
-        
+            window.location.href = "/reqLogin";
+        }       
 
         // Busca as plantas do usuário logado
         const buscarPlantasPorUser = (user_id)=>{
