@@ -46,7 +46,7 @@
             <div class="logout-plantas-container">
                 <h1 class="logout-plantas-title">Opa, parece que você não está logado em nenhuma conta!</h1>
                 <p class="logout-plantas-subtitle">O que acha de irmos um pouco mais devagar?</p>
-    
+
                 <div class="logout-plantas-caixa">
                     <div class="logout-plantas-code2">
                         <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
@@ -54,32 +54,33 @@
                         <div class="bola3" style="background-color: #C21B12;"></div>
                     </div>
                 </div>
-    
+
                 <div class="logout-plantas-caixa">
                     <div class="logout-plantas-code">
                         <img src="../../assets/img/noUser.png" alt="" class="logout-plantas-icon">
                     </div>
                 </div>
-    
+
                 <p class="logout-plantas-message">Você precisa estar logado em uma conta para que assim <br> possa
-                    visualizar e adicionar suas plantas! Faça login, ou então, <br> caso não tenha uma conta, se cadastre!
+                    visualizar e adicionar suas plantas! Faça login, ou então, <br> caso não tenha uma conta, se
+                    cadastre!
                 </p>
-    
+
                 <button class="logout-plantas-btn-login" id="btnRedirecionarLogin">Fazer login</button>
                 <button class="logout-plantas-btn-cadastro" id="btnRedirecionarCadastro">Se cadastrar</button>
             </div>
         </div>
-    
+
         <div class="plantas-esconder">
             <div class="plantas-grid" id="listaPlantas">
                 <!-- Plantas serão carregadas aqui -->
             </div>
         </div>
-    
+
         <div class="plantas-btn-esconder">
             <button class="plantas-btn-add" id="btnAbrirAdd"></button>
         </div>
-    
+
         <div class="plantas-modal-add-esconder" id="modalAdd">
             <div class="modal-overlay">
                 <div class="modal-plantas-add-container">
@@ -107,10 +108,9 @@
                 </div>
             </div>
         </div>
-    
-        <div class="modal-plantas-esconder" style="display: none;">
-    
-            <div class="modal-plantas-esconder scrollview" id="plantModal">
+
+        <div class="modal-plantas-esconder" id="plantModal">
+            <div class="scrollview">
                 <div class="modal-overlay">
                     <div class="modal-plantas-container">
                         <button class="modal-close-btn" id="modalCloseBtn">
@@ -129,11 +129,12 @@
                         <div class="modal-plantas-conteudo">
                             <div class="modal-plantas-tips">
                                 <h2 class="modal-plantas-tips-titulo" style="margin-bottom: 7px;">Descrição</h2>
-                                <p class="modal-plantas-info-descricao" style="margin-left: 15px;" id="modalDescricao"></p>
+                                <p class="modal-plantas-info-descricao" style="margin-left: 15px;" id="modalDescricao">
+                                </p>
                             </div>
-    
-                            <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Informações</h2>
-    
+
+                            <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Informações Básicas</h2>
+
                             <div class="modal-plantas-info-item">
                                 <h2 class="modal-plantas-info-titulo">Família</h2>
                                 <p class="modal-plantas-info-descricao" id="modalFamilia"></p>
@@ -147,14 +148,6 @@
                                 <p class="modal-plantas-info-descricao" id="modalAltura"></p>
                             </div>
                             <div class="modal-plantas-info-item">
-                                <h2 class="modal-plantas-info-titulo">Toxicidade</h2>
-                                <p class="modal-plantas-info-descricao" id="modalToxicidade"></p>
-                            </div>
-                            <div class="modal-plantas-info-item">
-                                <h2 class="modal-plantas-info-titulo">Efeitos Tóxicos</h2>
-                                <p class="modal-plantas-info-descricao" id="modalEfeitos"></p>
-                            </div>
-                            <div class="modal-plantas-info-item">
                                 <h2 class="modal-plantas-info-titulo">Genero</h2>
                                 <p class="modal-plantas-info-descricao" id="modalGenero"></p>
                             </div>
@@ -166,30 +159,63 @@
                                 <h2 class="modal-plantas-info-titulo">Rega</h2>
                                 <p class="modal-plantas-info-descricao" id="modalWater"></p>
                             </div>
-                            <div class="modal-plantas-tips">
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Usos</h2>
+                                <p class="modal-plantas-info-descricao" id="modalUsos"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Tempo de cultivo</Table>
+                                </h2>
+                                <p class="modal-plantas-info-descricao" id="modalTempCultivo"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Floração</h2>
+                                <p class="modal-plantas-info-descricao" id="modalFloracao"></p>
+                            </div>
+
+                            <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Informações Avançadas
+                            </h2>
+
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Divisão</h2>
+                                <p class="modal-plantas-info-descricao" id="modalDivisao"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Classe</h2>
+                                <p class="modal-plantas-info-descricao" id="modalClasse"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Toxicidade</h2>
+                                <p class="modal-plantas-info-descricao" id="modalToxicidade"></p>
+                            </div>
+                            <div class="modal-plantas-info-item">
+                                <h2 class="modal-plantas-info-titulo">Efeitos Tóxicos</h2>
+                                <p class="modal-plantas-info-descricao" id="modalEfeitos"></p>
+                            </div>
+                            <!-- <div class="modal-plantas-tips">
                                 <h2 class="modal-plantas-tips-titulo">Dicas de Cultivo</h2>
                                 <div class="modal-plantas-tips-container" id="modalTips">
-                                    <!-- Dicas serão inseridas aqui via JavaScript -->
+
                                 </div>
-                            </div>
-    
-                            <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Gráficos</h2>
-    
+                            </div> -->
+
+                            <!-- <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Gráficos</h2>
+
                             <div class="modal-plantas-info-item">
                                 <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Temperatura</h2>
                                 <canvas id="graficoTemperatura" width="400" height="200"></canvas>
                             </div>
-    
+
                             <div class="modal-plantas-info-item">
                                 <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Umidade</h2>
                                 <canvas id="graficoUmidade" width="400" height="200"></canvas>
-                            </div>
-    
+                            </div> -->
+
                         </div>
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
 
         <div id="fullscreenChartContainer"
             style="display: none; position: fixed; top: 0; left: 0;
@@ -201,7 +227,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        
+
 
         /* -------------------------
         Modal de adicionar planta
@@ -231,18 +257,18 @@
         // Se não estiver logado → redireciona
         if (!user.id || !token) {
             window.location.href = "/reqLogin";
-        }       
+        }
 
         // Busca as plantas do usuário logado
-        const buscarPlantasPorUser = (user_id)=>{
-            const url_req =  `http://localhost:3000/UserPlantas/${user_id}}`;
+        const buscarPlantasPorUser = (user_id) => {
+            const url_req = `http://localhost:3000/UserPlantas/${user_id}`;
             const adicionais = {
                 headers: { "Authorization": `Bearer ${token}` }
             };
             fetch(url_req, adicionais)
                 .then(response => {
-                    if(!response.ok){
-                         throw "Nenhum dado para a exibição!!!";
+                    if (!response.ok) {
+                        throw "Nenhum dado para a exibição!!!";
                     }
                     return response.json()
                 })
@@ -252,9 +278,9 @@
                 })
                 .catch(error => {
                     document.getElementById('listaPlantas').innerHTML =
-                        '<p class="text-danger">Erro: '+error+'</p>';
+                        '<p class="text-danger">Erro: ' + error + '</p>';
                     //console.error(error);
-            });
+                });
         }
 
         buscarPlantasPorUser(user.id);
@@ -284,9 +310,45 @@
                         </div>
                     </div>
                 `;
-                listaPlantas.innerHTML += plantaHTML;
+                listaPlantas.insertAdjacentHTML('beforeend', plantaHTML);
+
+                const novoCard = listaPlantas.lastElementChild;
+                novoCard.addEventListener('click', () => abrirModalPlanta(planta));
             });
         }
+
+        /* -------------------------
+        Carregar modal da planta
+        --------------------------*/
+        // Função para abrir modal da planta
+        function abrirModalPlanta(planta) {
+            // Preenche os campos do modal com os dados da planta
+            document.getElementById('modalPlantName').textContent = planta.nome_comum || planta.nome || 'Sem nome';
+            document.getElementById('modalScientificName').textContent = planta.nome_cientifico || 'Não informado';
+            document.getElementById('modalDescricao').textContent = planta.descricao || 'Sem descrição';
+            document.getElementById('modalFamilia').textContent = planta.familia || 'Não informado';
+            document.getElementById('modalClima').textContent = planta.clima || 'Não informado';
+            document.getElementById('modalAltura').textContent = planta.altura_media_cm + " cm" || 'Não informado';
+            document.getElementById('modalToxicidade').textContent = planta.toxicidade || 'Não informado';
+            document.getElementById('modalEfeitos').textContent = planta.efeitos_toxicos || 'Não informado';
+            document.getElementById('modalGenero').textContent = planta.genero || 'Não informado';
+            document.getElementById('modalLight').textContent = planta.luz || 'Não informado';
+            document.getElementById('modalWater').textContent = planta.agua || 'Não informado';
+            document.getElementById('modalUsos').textContent = planta.usos || 'Não informado';
+            document.getElementById('modalTempCultivo').textContent = planta.tempo_de_cultivo_dias + " dias" || 'Não informado';
+            document.getElementById('modalFloracao').textContent = planta.floracao || 'Não informado';
+            document.getElementById('modalDivisao').textContent = planta.divisao || 'Não informado';
+            document.getElementById('modalClasse').textContent = planta.classe || 'Não informado';
+
+            // Exibe o modal
+            document.getElementById('plantModal').style.display = 'block';
+        }
+
+        // Fecha o modal
+        document.getElementById('modalCloseBtn').addEventListener('click', () => {
+            document.getElementById('plantModal').style.display = 'none';
+        });
+
     </script>
 
 </body>

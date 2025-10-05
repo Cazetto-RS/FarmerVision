@@ -920,6 +920,8 @@ img {
 
 .modal-plantas-esconder {
 
+    display: none; 
+
     /* Estilos base */
     * {
         box-sizing: border-box;
@@ -949,7 +951,7 @@ img {
         height: 900px;
         border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        /* box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); */
         animation: modalFadeIn 0.3s ease-out;
         overflow: scroll;
         overflow-x: hidden;
@@ -1030,6 +1032,7 @@ img {
 
     /* Conteúdo */
     .modal-plantas-conteudo {
+        background-color: var(--cinza-escuro);
         padding: 25px 30px;
         display: flex;
         flex-direction: column;
@@ -1038,7 +1041,7 @@ img {
     }
 
     .modal-plantas-info-item {
-        background-color: var(--cinza-escuro);
+        background-color: var(--preto);
         padding: 18px 20px;
         border-radius: 10px;
         transition: transform 0.3s ease;
