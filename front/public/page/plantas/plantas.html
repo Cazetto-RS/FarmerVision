@@ -81,7 +81,7 @@
             <button class="plantas-btn-add" id="btnAbrirAdd"></button>
         </div>
 
-        <div class="plantas-modal-add-esconder" id="modalAdd">
+        <div class="plantas-modal-add-esconder plantas-esconder" id="modalAdd">
             <div class="modal-overlay">
                 <div class="modal-plantas-add-container">
                     <button class="modal-close-add-btn" id="fecharAdd">
@@ -232,19 +232,19 @@
         /* -------------------------
         Modal de adicionar planta
         --------------------------*/
-        const btnAbrirAdd = document.getElementById("btnAbrirAdd");
-        const modalAdd = document.getElementById("modalAdd");
-        const btnFecharAdd = document.getElementById("fecharAdd");
+        // const btnAbrirAdd = document.getElementById("btnAbrirAdd");
+        // const modalAdd = document.getElementById("modalAdd");
+        // const btnFecharAdd = document.getElementById("fecharAdd");
 
-        if (btnAbrirAdd && modalAdd && btnFecharAdd) {
-            btnAbrirAdd.addEventListener("click", () => {
-                modalAdd.style.display = (modalAdd.style.display === "block") ? "none" : "block";
-            });
+        // if (btnAbrirAdd && modalAdd && btnFecharAdd) {
+        //     btnAbrirAdd.addEventListener("click", () => {
+        //         modalAdd.style.display = (modalAdd.style.display === "block") ? "none" : "block";
+        //     });
 
-            btnFecharAdd.addEventListener("click", () => {
-                modalAdd.style.display = "none";
-            });
-        }
+        //     btnFecharAdd.addEventListener("click", () => {
+        //         modalAdd.style.display = "none";
+        //     });
+        // }
 
         /* -------------------------
         Carregar plantas do usuário
@@ -347,6 +347,83 @@
         // Fecha o modal
         document.getElementById('modalCloseBtn').addEventListener('click', () => {
             document.getElementById('plantModal').style.display = 'none';
+        });
+
+        /* -------------------------
+  Buscar e exibir TODAS as plantas (rota /plantas)
+--------------------------*/
+        function buscarTodasPlantas() {
+            fetch("http://localhost:3000/plantas")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro ao buscar as plantas");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    renderizarTodasPlantas(data);
+                })
+                .catch(error => {
+                    console.error("Erro ao carregar plantas:", error);
+                    document.getElementById("listaPlantasAdd").innerHTML =
+                        "<p style='color:red;'>Erro ao carregar plantas.</p>";
+                });
+        }
+
+        function renderizarTodasPlantas(plantas) {
+            const listaPlantasAdd = document.getElementById("listaPlantasAdd");
+            listaPlantasAdd.innerHTML = ""; // limpa antes de adicionar
+
+            if (!plantas || plantas.length === 0) {
+                listaPlantasAdd.innerHTML = "<p>Nenhuma planta encontrada no banco.</p>";
+                return;
+            }
+
+            plantas.forEach(planta => {
+                const plantaHTML = `
+                    <div class="plantas-container" data-id="${planta.id}">
+                        <div class="div-plantas-imagem">
+                            <img src="../../assets/img/Favicon.png"
+                                alt="${planta.nome_comum || planta.nome}" class="plantas-imagem img-fluid">
+                        </div>
+                        <div class="plantas-info mt-2">
+                            <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || planta.nome || 'Sem nome'}</h5>
+                            <p class="plantas-nome-cientifico text-muted mb-0">
+                                <em>${planta.nome_cientifico || planta.familia || 'Não informado'}</em>
+                            </p>
+                        </div>
+                    </div>
+                `;
+                listaPlantasAdd.insertAdjacentHTML("beforeend", plantaHTML);
+            });
+        }
+
+
+        const btnAbrirAdd = document.getElementById("btnAbrirAdd");
+        const modalAdd = document.getElementById("modalAdd");
+
+        // abrir / fechar botão (ao clicar no +)
+        btnAbrirAdd.addEventListener("click", () => {
+            const isOpen = modalAdd.style.display === "block";
+            modalAdd.style.display = isOpen ? "none" : "block";
+            if (!isOpen) buscarTodasPlantas(); // recarrega quando abrir
+        });
+
+        // garantir que o botão 'fechar' do modal funciona - delegação segura
+        document.addEventListener('click', (e) => {
+            // botão de fechar específico (id="fecharAdd")
+            if (e.target.closest('#fecharAdd')) {
+                modalAdd.style.display = 'none';
+            }
+        });
+
+        // fecha o modal clicando no overlay (fora do conteúdo)
+        modalAdd.addEventListener('click', (e) => {
+            // seu markup tem <div id="modalAdd"><div class="modal-overlay">...</div></div>
+            // se o clique for exatamente no overlay, fecha
+            if (e.target.classList.contains('modal-overlay') || e.target === modalAdd) {
+                modalAdd.style.display = 'none';
+            }
         });
 
     </script>

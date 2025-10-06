@@ -27,7 +27,10 @@ export const consultarPorId = async (req, res) => {
 
 export const cadastrar = async (req, res) => {
     try {
-        const { usuario_id, planta_id } = req.body;
+        const {planta_id } = req.body;
+        const usuario_id = req.loginId;
+
+        console.log(planta_id, usuario_id)
 
         if (!usuario_id || !planta_id) {
             return res.status(400).json({ error: "usuario_id e planta_id são obrigatórios" });
