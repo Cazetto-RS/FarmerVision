@@ -539,7 +539,7 @@ img {
 
 .plantas-modal-add-esconder {
 
-    /* display: none; */
+    display: none;
 
     .modal-overlay {
         position: fixed;
@@ -627,6 +627,10 @@ img {
         object-fit: contain;
     }
 
+    .plantas-modal-add-sonda{
+        display: none;
+    }
+
     .modal-plantas-add-titulo {
         font-size: 20px;
         margin: 0;
@@ -654,6 +658,15 @@ img {
         margin-bottom: 0;
     }
 
+    .modal-plantas-add-semSonda:hover{
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .adicionar-sonda-mac, .adicionar-sonda-qrcode {
+        display: none;
+    }
+
     .modal-plantas-add-btn {
         background-color: var(--preto);
         border: none;
@@ -665,6 +678,10 @@ img {
         transition: all 0.3s ease;
         width: 420px;
         margin-top: 10px;
+    }
+
+    .modal-plantas-add-btn:hover{
+        background-color: var(--verde);
     }
 
     .modal-plantas-add-btn-sonda {

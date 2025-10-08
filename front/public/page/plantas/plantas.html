@@ -38,35 +38,35 @@
         <button class="plantas-btn-add" id="btnAbrirAdd"></button>
     </div>
 
-    <!-- <div class="plantas-modal-add-esconder plantas-esconder" id="modalAdd">
-            <div class="modal-overlay">
-                <div class="modal-plantas-add-container">
-                    <button class="modal-close-add-btn" id="fecharAdd">
-                        <p><strong>X</strong></p>
-                    </button>
-                    <div class="modal-plantas-add-cabecalho">
-                        <div class="modal-plantas-cabecalho-add-content">
-                            <div class="modal-plantas-add-info-cabecalho">
-                                <h1 class="modal-plantas-add-titulo">Adicionar nova planta</h1>
-                            </div>
+    <div class="plantas-modal-add-esconder plantas-esconder" id="modalAdd">
+        <div class="modal-overlay">
+            <div class="modal-plantas-add-container">
+                <button class="modal-close-add-btn" id="fecharAdd">
+                    <p><strong>X</strong></p>
+                </button>
+                <div class="modal-plantas-add-cabecalho">
+                    <div class="modal-plantas-cabecalho-add-content">
+                        <div class="modal-plantas-add-info-cabecalho">
+                            <h1 class="modal-plantas-add-titulo">Adicionar nova planta</h1>
                         </div>
                     </div>
-                    <div class="modal-plantas-add-conteudo">
-                        <div class="modal-plantas-add-pesquisa">
-                            <i class="bi bi-search" style="align-content: center; margin-right: 15px;"></i>
-                            <input type="text" class="modal-plantas-add-pesquisa-input" placeholder="Pesquisar...">
-                        </div>
-                        <div class="modal-plantas-add-rolagem">
-                            <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
+                </div>
+                <div class="modal-plantas-add-conteudo">
+                    <div class="modal-plantas-add-pesquisa">
+                        <i class="bi bi-search" style="align-content: center; margin-right: 15px;"></i>
+                        <input type="text" class="modal-plantas-add-pesquisa-input" placeholder="Pesquisar...">
+                    </div>
+                    <div class="modal-plantas-add-rolagem">
+                        <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
 
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
+    </div>
 
-    <div class="plantas-modal-add-esconder plantas-esconder" id="modalAdd">
+    <div class="plantas-modal-add-esconder plantas-esconder" id="modalAddSonda">
         <div class="modal-overlay">
             <div class="modal-plantas-add-container-pag2">
                 <button class="modal-close-add-btn" id="fecharAdd">
@@ -83,13 +83,25 @@
                     <div class="modal-plantas-add-rolagem">
                         <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
                             <button class="modal-plantas-add-btn" id="addQrCode">Adicionar sonda via Qr Code</button>
-                            <button class="modal-plantas-add-btn" id="addCode">Adicionar sonda via Codigo</button>
+                            <button class="modal-plantas-add-btn" id="addMac">Adicionar sonda via Codigo</button>
                             <p class="modal-plantas-add-semSonda" id="noAdd">Continuar sem sonda</p>
                         </div>
 
-                        <div class="modal-plantas-add-pesquisa-pag2">
-                            <input type="text" class="modal-plantas-add-pesquisa-input-pag2" placeholder="Adicionar MAC da placa...">
-                            <button class="modal-plantas-add-btn-sonda" id="addQrCode">Adicionar</button>
+                        <div class="adicionar-sonda-mac">
+                            <div class="modal-plantas-add-pesquisa-pag2" id="adicionar-sonda-mac">
+                                <input type="text" class="modal-plantas-add-pesquisa-input-pag2"
+                                    placeholder="Adicionar MAC da placa...">
+                                <button class="modal-plantas-add-btn-sonda" id="addQrCode">Adicionar</button>
+                            </div>
+                        </div>
+
+                        <div class="adicionar-sonda-qrcode">
+                            <div class="modal-plantas-add-pesquisa-pag2 adicionar-sonda-qrcode"
+                                id="adicionar-sonda-qrcode">
+                                <input type="text" class="modal-plantas-add-pesquisa-input-pag2"
+                                    placeholder="Adicionar MAC da placa...">
+                                <button class="modal-plantas-add-btn-sonda" id="addQrCode">Adicionar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -394,6 +406,7 @@
         // botão de fechar específico (id="fecharAdd")
         if (e.target.closest('#fecharAdd')) {
             modalAdd.style.display = 'none';
+            AbrirAddSonda.style.display = 'none';
         }
     });
 
@@ -406,6 +419,43 @@
         }
     });
 
+    const AbrirAddSonda = document.getElementById("modalAddSonda");
 
+    // Use event delegation: the plant cards are added dynamically, so attach a single listener to their container(s).
+    const listaPlantasContainer = document.getElementById('listaPlantas');
+    const listaPlantasAddContainer = document.getElementById('listaPlantasAdd');
+
+    function toggleAddSonda() {
+        const isOpen = AbrirAddSonda.style.display === "block";
+        if (isOpen) {
+            AbrirAddSonda.style.display = "none";
+        } else {
+            // ao abrir AbrirAddSonda, garante que modalAdd suma
+            if (modalAdd && modalAdd.style.display === "block") {
+                modalAdd.style.display = "none";
+            }
+            AbrirAddSonda.style.display = "block";
+        }
+    }
+
+    if (listaPlantasContainer) {
+        listaPlantasContainer.addEventListener('click', (e) => {
+            if (e.target.closest('.plantas-container')) {
+                toggleAddSonda();
+            }
+        });
+    }
+
+    if (listaPlantasAddContainer) {
+        listaPlantasAddContainer.addEventListener('click', (e) => {
+            if (e.target.closest('.plantas-container')) {
+                toggleAddSonda();
+            }
+        });
+    }
+
+</script>
+
+<script>
 
 </script>
