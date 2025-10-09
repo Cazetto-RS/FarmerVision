@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "html5-qrcode": "^2.3.8",
     "react-pro-sidebar": "^1.1.0"
   }
 }

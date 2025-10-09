@@ -94,17 +94,118 @@
   });
 
   // Redireciona Perfil dependendo do login
-  document.getElementById("linkPerfil").addEventListener("click", function (e) {
+  document.getElementById("linkPerfil").addEventListener("click", async function (e) {
     e.preventDefault(); // evita seguir o href="#"
 
-    const user = localStorage.getItem("user");
+    const userStr = localStorage.getItem("user");
 
-    if (user) {
-      // Usuário logado → vai para perfil
-      window.location.href = "/perfil";
-    } else {
+    if (!userStr) {
       // Não logado → vai para login
       window.location.href = "/login";
+      return;
+    }
+
+    // Usuário logado → abre o perfil como "modal" (carrega o fragmento de perfil.html)
+    try {
+      const resp = await fetch("/page/perfil/perfil.html");
+      if (!resp.ok) throw new Error("Falha ao carregar perfil");
+      const htmlText = await resp.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlText, "text/html");
+
+      // procura o container principal da página de perfil
+      const perfilNode = doc.querySelector(".P-esconder");
+      if (!perfilNode) throw new Error("Conteúdo de perfil não encontrado");
+
+      // cria overlay para mostrar o perfil como modal
+      const overlay = document.createElement("div");
+      overlay.id = "perfil-overlay-wrapper";
+      Object.assign(overlay.style, {
+        position: "fixed",
+        inset: "0",
+        background: "rgba(0,0,0,0.6)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: "99999",
+        overflowY: "auto",
+        padding: "20px",
+      });
+
+      // clona o conteúdo do perfil (removendo comportamento "position: fixed" se houver)
+      const cloned = perfilNode.cloneNode(true);
+      cloned.style.position = "relative";
+      cloned.style.maxHeight = "90vh";
+      cloned.style.overflow = "auto";
+      cloned.style.background = "transparent";
+
+      // adiciona um botão de fechar no canto superior direito
+      const closeBtn = document.createElement("button");
+      closeBtn.setAttribute("aria-label", "Fechar perfil");
+      closeBtn.innerHTML = "✕";
+      Object.assign(closeBtn.style, {
+        position: "fixed",
+        top: "18px",
+        right: "18px",
+        zIndex: "100000",
+        fontSize: "24px",
+        background: "transparent",
+        border: "none",
+        color: "#fff",
+        cursor: "pointer",
+      });
+
+      // anexa elementos
+      overlay.appendChild(cloned);
+      overlay.appendChild(closeBtn);
+      document.body.appendChild(overlay);
+
+      // Fecha o menu lateral caso esteja aberto (quando o perfil é exibido como modal)
+      if (menuSide && menuSide.classList.contains('expandir')) {
+        menuSide.classList.remove('expandir');
+      }
+      if (btnExpandir && btnExpandir.classList.contains('expandir')) {
+        btnExpandir.classList.remove('expandir');
+      }
+
+      // inicializa os campos do perfil (já que o script interno de perfil.html pode não executar ao inserir via fetch)
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const token = localStorage.getItem('token');
+
+      const idSpan = overlay.querySelector('#userId');
+      if (idSpan) idSpan.textContent = user.id || 'Não informado';
+      const emailSpan = overlay.querySelector('#userEmail');
+      if (emailSpan) emailSpan.textContent = user.email || 'Não informado';
+      const nomeSpan = overlay.querySelector('#userNome');
+      if (nomeSpan) nomeSpan.textContent = user.nome || 'Não informado';
+      const telefoneSpan = overlay.querySelector('#userTelefone');
+      if (telefoneSpan) telefoneSpan.textContent = user.telefone || 'Não informado';
+
+      // logout dentro do modal
+      const logoutBtn = overlay.querySelector('#logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+        });
+      }
+
+      // fechar ao clicar no botão
+      closeBtn.addEventListener('click', () => {
+        if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      });
+
+      // fechar ao clicar fora do conteúdo (clicando no overlay)
+      overlay.addEventListener('click', (ev) => {
+        if (ev.target === overlay) {
+          if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }
+      });
+
+    } catch (err) {
+      console.error('Erro ao abrir perfil:', err);
+      alert('Erro ao abrir perfil: ' + (err.message || err));
     }
   });
 

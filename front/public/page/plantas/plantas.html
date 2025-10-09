@@ -69,7 +69,7 @@
     <div class="plantas-modal-add-esconder plantas-esconder" id="modalAddSonda">
         <div class="modal-overlay">
             <div class="modal-plantas-add-container-pag2">
-                <button class="modal-close-add-btn" id="fecharAdd">
+                <button class="modal-close-add-btn" id="fecharAddSonda">
                     <p><strong>X</strong></p>
                 </button>
                 <div class="modal-plantas-add-cabecalho">
@@ -87,19 +87,17 @@
                             <p class="modal-plantas-add-semSonda" id="noAdd">Continuar sem sonda</p>
                         </div>
 
-                        <div class="adicionar-sonda-mac">
-                            <div class="modal-plantas-add-pesquisa-pag2" id="adicionar-sonda-mac">
+                        <div class="adicionar-sonda-mac" id="adicionar-sonda-mac">
+                            <div class="modal-plantas-add-pesquisa-pag2">
                                 <input type="text" class="modal-plantas-add-pesquisa-input-pag2"
                                     placeholder="Adicionar MAC da placa...">
                                 <button class="modal-plantas-add-btn-sonda" id="addQrCode">Adicionar</button>
                             </div>
                         </div>
 
-                        <div class="adicionar-sonda-qrcode">
-                            <div class="modal-plantas-add-pesquisa-pag2 adicionar-sonda-qrcode"
-                                id="adicionar-sonda-qrcode">
-                                <input type="text" class="modal-plantas-add-pesquisa-input-pag2"
-                                    placeholder="Adicionar MAC da placa...">
+                        <div class="adicionar-sonda-qrcode" id="adicionar-sonda-qrcode">
+                            <div class="modal-plantas-add-pesquisa-pag2 adicionar-sonda-qrcode">
+                                <input type="text" class="modal-plantas-add-pesquisa-input-pag2" placeholder="qr code">
                                 <button class="modal-plantas-add-btn-sonda" id="addQrCode">Adicionar</button>
                             </div>
                         </div>
@@ -211,6 +209,10 @@
                                 <canvas id="graficoUmidade" width="400" height="200"></canvas>
                             </div> -->
 
+                            <div class="modal-plantas-btn-div">
+                                <button class="modal-plantas-btn-modificações-add" id="adicionarSensor">Adicionar Sensor</button>
+                                <button class="modal-plantas-btn-modificações-delete" id="deletarPlanta">Deletar Planta</button>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -228,9 +230,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-
-
-
     const titleElement = document.getElementById("title");
     if (titleElement) {
         titleElement.textContent = "Catálogo de Plantas";
@@ -336,6 +335,74 @@
         document.getElementById('plantModal').style.display = 'none';
     });
 
+    // Adicionar sonda depois da planta ja cadastrada
+    const adicionarSensor = document.getElementById("adicionarSensor");
+    adicionarSensor.addEventListener("click", () => {
+        const isOpen = AbrirAddSonda.style.display === "block";
+        if (isOpen) {
+            AbrirAddSonda.style.display = "none";
+        } else {
+            // ao abrir AbrirAddSonda, garante que modalAdd suma
+            if (modalAdd && modalAdd.style.display === "block") {
+            }
+            AbrirAddSonda.style.display = "block";
+            document.getElementById('plantModal').style.display = 'none';
+        }
+    });
+
+    // Deletar planta do usuário
+    // Gerencia id da planta selecionada (capturado ao clicar no card)
+    let lastClickedPlantId = null;
+    const listaPlantasEl = document.getElementById('listaPlantas');
+    if (listaPlantasEl) {
+        listaPlantasEl.addEventListener('click', (e) => {
+            const card = e.target.closest('.plantas-container');
+            if (card && card.dataset && card.dataset.id) {
+                lastClickedPlantId = card.dataset.id;
+            }
+        });
+    }
+
+    const deletarPlantaBtn = document.getElementById("deletarPlanta");
+    if (deletarPlantaBtn) {
+        deletarPlantaBtn.addEventListener("click", async () => {
+            if (!confirm('Tem certeza que deseja deletar esta planta?')) return;
+
+            // prioridade: id armazenado no data-attribute do botão (defina quando abrir o modal),
+            // fallback para lastClickedPlantId e finalmente para o primeiro card disponível
+            const plantId = deletarPlantaBtn.dataset.plantId ||
+                            lastClickedPlantId ||
+                            document.querySelector('.plantas-container[data-id]')?.getAttribute('data-id');
+
+            if (!plantId) {
+                alert('ID da planta não encontrado.');
+                return;
+            }
+
+            try {
+                const resp = await fetch(`http://localhost:3000/UserPlantas/${encodeURIComponent(plantId)}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!resp.ok) {
+                    const txt = await resp.text();
+                    throw new Error(txt || 'Erro ao deletar a planta do usuário.');
+                }
+
+                // Atualiza a lista de plantas do usuário e fecha o modal
+                document.getElementById('plantModal').style.display = 'none';
+                // remove o id associado ao botão
+                delete deletarPlantaBtn.dataset.plantId;
+                buscarPlantasPorUser(user.id);
+                alert('Planta deletada com sucesso.');
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao deletar planta: ' + (err.message || err));
+            }
+        });
+    }
+
     /* -------------------------
     Buscar e exibir TODAS as plantas (rota /plantas)
     --------------------------*/
@@ -368,7 +435,7 @@
 
         plantas.forEach(planta => {
             const plantaHTML = `
-                        <div class="plantas-container" data-id="${planta.id}">
+                        <div class="plantas-container-add" data-id="${planta.id}">
                             <div class="div-plantas-imagem">
                                 <img src="../../assets/img/Favicon.png"
                                     alt="${planta.nome_comum || planta.nome}" class="plantas-imagem img-fluid">
@@ -386,6 +453,8 @@
             // Adiciona o evento de clique para exibir o id da planta e do usuário
             const novoCard = listaPlantasAdd.lastElementChild;
             novoCard.addEventListener('click', () => {
+                // guarda o id da planta para uso posterior (botão "Continuar sem sonda")
+                selectedPlantId = planta.id;
                 console.log("ID da planta:", planta.id, "ID do usuário:", user.id);
             });
         });
@@ -440,7 +509,7 @@
 
     if (listaPlantasContainer) {
         listaPlantasContainer.addEventListener('click', (e) => {
-            if (e.target.closest('.plantas-container')) {
+            if (e.target.closest('.plantas-container-add')) {
                 toggleAddSonda();
             }
         });
@@ -448,14 +517,227 @@
 
     if (listaPlantasAddContainer) {
         listaPlantasAddContainer.addEventListener('click', (e) => {
-            if (e.target.closest('.plantas-container')) {
+            if (e.target.closest('.plantas-container-add')) {
                 toggleAddSonda();
             }
+        });
+    }
+
+    const ContinuarSemSonda = document.getElementById("noAdd");
+    const adicionarSondaMac = document.getElementById("adicionar-sonda-mac");
+    const adicionarSondaQrCode = document.getElementById("adicionar-sonda-qrcode");
+    const btnAddMac = document.getElementById("addMac");
+    const btnAddQrCode = document.getElementById("addQrCode");
+
+    adicionarSondaQrCode.style.display = "none";
+
+    // Função para restaurar a UI do modal de sonda ao estado inicial
+    function resetAddSondaUI() {
+        const modal = document.getElementById("modalAddSonda");
+        const mac = document.getElementById("adicionar-sonda-mac");
+        const qr = document.getElementById("adicionar-sonda-qrcode");
+        const btnMacEl = document.getElementById("addMac");
+        const btnQrEl = document.getElementById("addQrCode");
+        const noAddEl = document.getElementById("noAdd");
+
+        if (mac) mac.style.display = "none";
+        if (qr) qr.style.display = "none";
+
+        if (btnMacEl) btnMacEl.style.display = "block";
+        if (btnQrEl) btnQrEl.style.display = "block";
+        if (noAddEl) noAddEl.style.display = "block";
+    }
+
+    // Continuar sem sonda
+    if (ContinuarSemSonda) {
+        ContinuarSemSonda.addEventListener("click", () => {
+            AbrirAddSonda.style.display = "none";
+            resetAddSondaUI();
+        });
+    }
+
+    const fecharSondaBtn = document.getElementById("fecharAddSonda");
+    if (fecharSondaBtn) {
+        fecharSondaBtn.addEventListener("click", () => {
+            AbrirAddSonda.style.display = "none";
+            resetAddSondaUI();
+        });
+    }
+
+    const noAddBtn = document.getElementById('noAdd');
+    if (noAddBtn) {
+        noAddBtn.addEventListener('click', async () => {
+            if (!selectedPlantId) {
+                alert('Selecione uma planta antes de continuar.');
+                return;
+            }
+
+            try {
+                const resp = await fetch('http://localhost:3000/UserPlantas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        usuario_id: user.id,
+                        planta_id: selectedPlantId
+                    })
+                });
+
+                if (!resp.ok) {
+                    const txt = await resp.text();
+                    throw new Error(txt || 'Erro ao adicionar a planta ao usuário.');
+                }
+
+                // opcional: atualizar a lista de plantas do usuário e fechar modais
+                AbrirAddSonda.style.display = 'none';
+                modalAdd.style.display = 'none';
+                selectedPlantId = null;
+                buscarPlantasPorUser(user.id);
+
+                // alert('Planta adicionada com sucesso.');
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao adicionar planta: ' + (err.message || err));
+            }
+        });
+    }
+
+    // Adicionar sonda via MAC
+    if (btnAddMac) {
+        btnAddMac.addEventListener("click", () => {
+            const isVisible = adicionarSondaMac.style.display === "block";
+            adicionarSondaMac.style.display = isVisible ? "none" : "block";
+
+            adicionarSondaQrCode.style.display = "none";
+            btnAddMac.style.display = isVisible ? "block" : "none";
+            // btnAddQrCode.style.display = isVisible ? "block" : "none";
+            ContinuarSemSonda.style.display = isVisible ? "block" : "none";
+        });
+    }
+    // Adicionar sonda via QR Code
+    if (btnAddQrCode) {
+        btnAddQrCode.addEventListener("click", () => {
+            const isVisible = adicionarSondaQrCode.style.display === "block";
+            adicionarSondaQrCode.style.display = isVisible ? "none" : "block";
+
+            adicionarSondaMac.style.display = "none";
+            // btnAddMac.style.display = isVisible ? "block" : "none";
+            btnAddQrCode.style.display = isVisible ? "block" : "none";
+            ContinuarSemSonda.style.display = isVisible ? "block" : "none";
         });
     }
 
 </script>
 
 <script>
+    // Inicializa variáveis
+    let QrcodeScanner = null;
+    const adicionarSondaQrEl = document.getElementById('adicionar-sonda-qrcode');
+    const AbrirAddSondaEl = document.getElementById('modalAddSonda');
 
+    adicionarSondaQrEl.style.display = 'none'; // começa oculto
+
+    // guarda o HTML original da área de QR para ser restaurado depois
+    const originalAdicionarSondaQrHTML = adicionarSondaQrEl ? adicionarSondaQrEl.innerHTML : '';
+
+    function startScanner() {
+        if (!adicionarSondaQrEl) return;
+        // evita inicializar duas vezes
+        if (QrcodeScanner) return;
+
+        // mostra a área de qr (caso esteja oculta)
+        adicionarSondaQrEl.style.display = 'block';
+
+        QrcodeScanner = new Html5QrcodeScanner('adicionar-sonda-qrcode', {
+            qrbox: { width: 250, height: 250 },
+            fps: 20
+        });
+
+        QrcodeScanner.render(success, error);
+    }
+
+    function stopScanner() {
+        if (!QrcodeScanner) return Promise.resolve();
+        // clear() retorna Promise; quando concluído, removemos a instância e restauramos o HTML original
+        return QrcodeScanner.clear()
+            .then(() => {
+                QrcodeScanner = null;
+                // restaura a área do leitor para o estado inicial
+                if (adicionarSondaQrEl) adicionarSondaQrEl.innerHTML = originalAdicionarSondaQrHTML;
+                // garante que a UI do modal volte ao estado normal
+                resetAddSondaUI();
+            })
+            .catch((err) => {
+                // falha ao parar a câmera - apenas log opcional, ainda assim restaura UI
+                console.warn('Falha ao parar o leitor QR:', err);
+                QrcodeScanner = null;
+                if (adicionarSondaQrEl) adicionarSondaQrEl.innerHTML = originalAdicionarSondaQrHTML;
+                resetAddSondaUI();
+            });
+    }
+
+    function success(result) {
+        console.log(result);
+        // para o scanner e fecha o modal, então restaura a UI ao normal
+        stopScanner().then(() => {
+            if (document.getElementById('modalAddSonda')) {
+                document.getElementById('modalAddSonda').style.display = 'none';
+            }
+            // garante que tudo volte ao estado inicial da modal
+            resetAddSondaUI();
+        });
+    }
+
+    function error(err) {
+        // Ignorar erros recorrentes de leitura
+    }
+
+    // Observa mudanças no estilo do modal de sonda para iniciar/parar a câmera corretamente
+    if (AbrirAddSondaEl) {
+        const observer = new MutationObserver(() => {
+            const disp = window.getComputedStyle(AbrirAddSondaEl).display;
+            if (disp === 'block') {
+                startScanner();
+            } else {
+                stopScanner();
+            }
+        });
+        observer.observe(AbrirAddSondaEl, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    // Também garante que, ao fechar via botões/ações existentes, a câmera seja parada e o modal restaurado
+    document.addEventListener('click', (e) => {
+        // botões que fecham o modal: botão fechar (id="fecharAdd") e "Continuar sem sonda" (id="noAdd")
+        if (e.target.closest('#fecharAdd') || e.target.closest('#noAdd')) {
+            stopScanner().then(() => {
+                if (document.getElementById('modalAddSonda')) {
+                    document.getElementById('modalAddSonda').style.display = 'none';
+                }
+                resetAddSondaUI();
+            });
+        }
+    });
+
+    // Caso a página seja descarregada, parar a câmera
+    window.addEventListener('beforeunload', () => {
+        if (QrcodeScanner) {
+            // não aguardamos a Promise aqui, apenas tentamos parar
+            QrcodeScanner.clear().catch(()=>{});
+        }
+    });
+
+    // Iniciar leitura automaticamente ao carregar a página, exibindo o modal de sonda se necessário
+    document.addEventListener('DOMContentLoaded', () => {
+        // se existir o modal de sonda, abrir e iniciar o scanner automaticamente
+        if (AbrirAddSondaEl) {
+            const currentDisplay = window.getComputedStyle(AbrirAddSondaEl).display;
+            if (currentDisplay !== 'block') {
+                AbrirAddSondaEl.style.display = 'block';
+            }
+        }
+        // tenta iniciar o scanner mesmo se o modal estiver oculto; startScanner já previne dupla inicialização
+        startScanner();
+    });
 </script>

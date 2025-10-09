@@ -134,6 +134,11 @@
 </body>
 
 <script>
+    const titleElement = document.getElementById("title");
+    if (titleElement) {
+        titleElement.textContent = "Login - Agrovision";
+    }
+
     document.getElementById('btn-login').addEventListener('click', function (e) {
         e.preventDefault();
 
