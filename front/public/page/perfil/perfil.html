@@ -48,28 +48,39 @@
           <div class="campo">
             <div>
               <label>ID</label>
-              <span id="userId">carregado...</span>
+              <div class="elementos-perfil">
+                <span id="userId">carregado...</span>
+              </div>
             </div>
           </div>
 
           <div class="campo">
             <div>
               <label>E-mail</label>
-              <span id="userEmail">carregado...</span>
+              <div class="elementos-perfil">
+                <span id="userEmail">carregado...</span>
+                <i class="bi bi-pen-fill btn-perfil-alteracoes"></i>
+              </div>
             </div>
           </div>
 
           <div class="campo">
             <div>
               <label>Nome</label>
-              <span id="userNome">carregado...</span>
+              <div class="elementos-perfil">
+                <span id="userNome">carregado...</span>
+                <i class="bi bi-pen-fill btn-perfil-alteracoes"></i>
+              </div>
             </div>
           </div>
 
           <div class="campo">
             <div>
               <label>Telefone</label>
-              <span id="userTelefone">carregado...</span>
+              <div class="elementos-perfil">
+                <span id="userTelefone">carregado...</span>
+                <i class="bi bi-pen-fill btn-perfil-alteracoes"></i>
+              </div>
             </div>
           </div>
 
@@ -83,29 +94,67 @@
   </div>
 </body>
 
-<script>
-  // 1. Pega os dados do Local Storage
+<script type="module">
+  import { openModal, closeModal } from '../../components/reutilizaveis/modal-input/modal.js';
+
+  // 1. Captura e valida o usuário
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const token = localStorage.getItem('token');
 
-  // 2. Verifica se os dados existem
   if (!user.id || !token) {
-    alert('Dados não encontrados! Redirecionando para login...');
-    window.location.href = 'login'; // Alerte para sua página de login
+    window.location.href = '/login';
   }
 
-  // 3. Preenche os dados na tela (usando 'home' para o nome, como no seu exemplo)
+  // 2. Preenche os dados
   document.getElementById('userId').textContent = user.id || 'Não informado';
   document.getElementById('userEmail').textContent = user.email || 'Não informado';
-  document.getElementById('userNome').textContent = user.nome || 'Não informado'; // Note que é 'home'
+  document.getElementById('userNome').textContent = user.nome || 'Não informado';
   document.getElementById('userTelefone').textContent = user.telefone || 'Não informado';
 
-  // 4. Logout simplificado
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = 'login'; // Alerte para sua página de login
-  });
+  // 3. Garante que não haja outros eventos no botão
+  const oldBtn = document.getElementById('logoutBtn');
+  const logoutBtn = oldBtn.cloneNode(true);
+  oldBtn.parentNode.replaceChild(logoutBtn, oldBtn);
+
+  // 4. Aplica o novo comportamento de logout com modal
+  // logoutBtn.addEventListener('click', (e) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+
+  //   // Abre o modal de confirmação
+  //   openModal('Sair da conta', `
+  //     <p>Tem certeza que deseja sair da sua conta?</p>
+  //     <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+  //       <button id="confirmLogoutBtn" class="btn btn-danger">Sim, sair</button>
+  //       <button id="cancelLogoutBtn" class="btn btn-secondary">Cancelar</button>
+  //     </div>
+  //   `);
+
+  //   // Aguarda o modal ser injetado no DOM antes de capturar os botões
+  //   setTimeout(() => {
+  //     const confirmBtn = document.getElementById('confirmLogoutBtn');
+  //     const cancelBtn = document.getElementById('cancelLogoutBtn');
+
+  //     if (confirmBtn) {
+  //       confirmBtn.addEventListener('click', () => {
+  //         // Executa o logout
+  //         localStorage.removeItem('token');
+  //         localStorage.removeItem('user');
+  //         closeModal();
+
+  //         // Feedback visual
+  //         openModal('Logout realizado', `<p>Você saiu da sua conta com sucesso.</p>`);
+  //         setTimeout(() => {
+  //           window.location.href = '/login';
+  //         }, 1200);
+  //       });
+  //     }
+
+  //     if (cancelBtn) {
+  //       cancelBtn.addEventListener('click', closeModal);
+  //     }
+  //   }, 200);
+  // });
 </script>
 
 </html>

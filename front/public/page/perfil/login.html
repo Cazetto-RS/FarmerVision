@@ -139,8 +139,81 @@
         titleElement.textContent = "Login - Agrovision";
     }
 
+    // Novas constantes e chaves para localStorage
+    const MAX_ATTEMPTS = 5;
+    const LOCKOUT_MS = 10 * 1000; // 1 minuto
+    const KEY_ATTEMPTS = 'loginAttempts';
+    const KEY_LOCKOUT = 'loginLockoutUntil';
+
+    const btnLogin = document.getElementById('btn-login');
+
+    let lockoutInterval = null;
+
+    function getAttempts() {
+        return parseInt(localStorage.getItem(KEY_ATTEMPTS) || '0', 10);
+    }
+
+    function setAttempts(n) {
+        localStorage.setItem(KEY_ATTEMPTS, String(n));
+    }
+
+    function resetAttempts() {
+        setAttempts(0);
+        localStorage.removeItem(KEY_LOCKOUT);
+    }
+
+    function setLockoutUntil(ts) {
+        localStorage.setItem(KEY_LOCKOUT, String(ts));
+    }
+
+    function getLockoutUntil() {
+        return parseInt(localStorage.getItem(KEY_LOCKOUT) || '0', 10);
+    }
+
+    function isLocked() {
+        const until = getLockoutUntil();
+        return until && Date.now() < until;
+    }
+
+    function updateLockoutState() {
+        if (lockoutInterval) {
+            clearInterval(lockoutInterval);
+            lockoutInterval = null;
+        }
+
+        if (isLocked()) {
+            btnLogin.disabled = true;
+            const update = () => {
+                const remainingMs = getLockoutUntil() - Date.now();
+                if (remainingMs <= 0) {
+                    resetAttempts();
+                    btnLogin.disabled = false;
+                    btnLogin.value = 'Entrar';
+                    clearInterval(lockoutInterval);
+                    lockoutInterval = null;
+                    return;
+                }
+                const secs = Math.ceil(remainingMs / 1000);
+                btnLogin.value = `Bloqueado (${secs}s)`;
+            };
+            update();
+            lockoutInterval = setInterval(update, 500);
+        } else {
+            btnLogin.disabled = false;
+            btnLogin.value = 'Entrar';
+        }
+    }
+
+    // Inicializa estado ao carregar a página
+    updateLockoutState();
+
     document.getElementById('btn-login').addEventListener('click', function (e) {
         e.preventDefault();
+
+        if (isLocked()) {
+            alert('Conta bloqueada. Aguarde 1 minuto antes de tentar novamente.');
+            return;
+        }
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('senha').value;
@@ -155,7 +228,10 @@
                 const data = result.data;
 
                 // Se existir token na resposta, consideramos login válido
-                if (data.token) {
+                if (data && data.token) {
+                    // limpar tentativas e bloqueio
+                    resetAttempts();
+
                     localStorage.setItem('token', data.token);
 
                     // Garante que salva apenas o necessário do usuário
@@ -165,10 +241,24 @@
 
                     window.location.href = '/plantas';
                 } else {
-                    alert(data.mensagem || 'Email ou senha inválidos!');
+                    // Falha no login: contabilizar tentativa
+                    let attempts = getAttempts() + 1;
+                    setAttempts(attempts);
+
+                    if (attempts >= MAX_ATTEMPTS) {
+                        const until = Date.now() + LOCKOUT_MS;
+                        setLockoutUntil(until);
+                        updateLockoutState();
+                        alert(`Número máximo de tentativas atingido. Bloqueado por ${LOCKOUT_MS / 1000} segundos.`);
+                    } else {
+                        const left = MAX_ATTEMPTS - attempts;
+                        alert(data && data.mensagem ? data.mensagem : `Email ou senha inválidos! Você tem ${left} tentativa(s) restante(s).`);
+                    }
                 }
             })
-            .catch(() => alert('Erro ao conectar ao servidor.'));
+            .catch(() => {
+                alert('Erro ao conectar ao servidor.');
+            });
     });
 </script>
 

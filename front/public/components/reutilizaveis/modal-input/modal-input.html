@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reusable Modal</title>
+    <link rel="stylesheet" href="../../../assets/css/styles.css" />
+    <!-- <style>
+        :root {
+            --verde: #7AB317;
+            --verde-escuro: #4d720e;
+            --verde-amarelado: #CEA80F;
+            --verde-amarelado-escuro: #9e810c;
+
+            --amarelo: #F0971C;
+            --amarelo-escuro: #b97516;
+            --amarelo-avermelhado: #CC3E18;
+            --amarelo-avermelhado-escuro: #922e12;
+
+            --vermelho: #C21B12;
+            --vermelho-escuro: #8b160f;
+
+            --azul: #11baac;
+            --azul-escuro: #0c9287;
+
+            --branco: #F6EEE0;
+            --cinza-claro: #5a5a5a;
+            --cinza: #373636;
+            --cinza-escuro: #151515;
+            --preto: #0B0B0B;
+        }
+
+        body {
+            box-sizing: border-box;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .modal-wrapper {
+            /* wrapper controls visibility externally via .modal-hidden */
+        }
+
+        /* .modal-hidden {
+            display: none;
+        } */
+
+        
+    </style> -->
+</head>
+
+<body>
+    <div class="modal-wrapper modal-hidden" id="universalModal">
+        <div class="modal-overlay">
+            <div class="modal-container">
+                <button class="modal-close-btn" id="modalCloseBtn" aria-label="Fechar modal">
+                    <strong>X</strong>
+                </button>
+
+                <div class="modal-header">
+                    <div class="modal-header-content">
+                        <div class="modal-header-info">
+                            <h1 class="modal-title" id="modalTitle">Título do Modal</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-scroll">
+                        <div class="modal-center" id="modalContent">
+                            <!-- Conteúdo dinâmico aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
