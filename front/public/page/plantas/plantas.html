@@ -1,5 +1,5 @@
 <div class="plantas-esconder-geral">
-    <div class="logout-plantas-esconder" id="WarningSemConta" style="display: none;">
+    <!-- <div class="logout-plantas-esconder" id="WarningSemConta" style="display: none;">
         <div class="logout-plantas-container">
             <h1 class="logout-plantas-title">Opa, parece que você não está logado em nenhuma conta!</h1>
             <p class="logout-plantas-subtitle">O que acha de irmos um pouco mais devagar?</p>
@@ -26,15 +26,48 @@
             <button class="logout-plantas-btn-login" id="btnRedirecionarLogin">Fazer login</button>
             <button class="logout-plantas-btn-cadastro" id="btnRedirecionarCadastro">Se cadastrar</button>
         </div>
-    </div>
+    </div> -->
 
-    <div class="logout-plantas-esconder-semplanta" id="WarningSemPlanta" >
-        <div class="logout-plantas-container-semplanta">
-            <h1 class="logout-plantas-title" style="color: #F6EEE0;">Você ainda não possui nenhuma planta cadastrada!</h1>
-            <p class="logout-plantas-subtitle">Que tal começar adicionando sua primeira planta?</p>
+    <!-- <div class="sistema-para-alinhas-tudo-semplanta">
+        <div class="logout-plantas-esconder-semplanta" >
+            <div class="logout-plantas-container-semplanta">
+                <h1 class="logout-plantas-title" style="color: #F6EEE0;">Você ainda não possui nenhuma planta
+                    cadastrada!
+                </h1>
+                <p class="logout-plantas-subtitle">Que tal começar adicionando sua primeira planta?</p>
 
-            <div class="logout-plantas-caixa">
-                <div class="logout-plantas-code2">
+                <div class="logout-plantas-caixa">
+                    <div class="logout-plantas-code2">
+                        <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
+                        <div class="bola2" style="background-color: #F0971C;"></div>
+                        <div class="bola3" style="background-color: #C21B12;"></div>
+                    </div>
+                </div>
+
+                <div class="logout-plantas-caixa">
+                    <div class="logout-plantas-code">
+                        <i class="bi bi-leaf-fill" class="logout-plantas-icon" style="margin-top: 90px;"></i>
+                    </div>
+                </div>
+
+                <p class="logout-plantas-message">
+                    Você ainda não adicionou nenhuma planta à sua conta. Adicione plantas para acompanhar informações,
+                    registrar sensores e gerenciar seu cultivo. Use "Adicionar planta" para escolher do catálogo ou
+                    "Explorar catálogo" para ver todas as plantas disponíveis.
+                </p>
+
+                <button class="logout-plantas-btn-login" id="btnCadastrarPlantaSemplanta">Adicionar planta</button>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="erro-esconder" id="WarningSemPlanta" style="display: none;">
+        <div class="erro-container">
+            <h1 class="erro-title" style="color: #F6EEE0;">Você ainda não possui nenhuma planta cadastrada!</h1>
+            <p class="erro-subtitle">Que tal começar adicionando sua primeira planta?</p>
+
+            <div class="erro-caixa">
+                <div class="erro-code2">
                     <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
                     <div class="bola2" style="background-color: #F0971C;"></div>
                     <div class="bola3" style="background-color: #C21B12;"></div>
@@ -43,7 +76,7 @@
 
             <div class="logout-plantas-caixa">
                 <div class="logout-plantas-code">
-                    <i class="bi bi-leaf-fill" class="logout-plantas-icon" style="margin-top: 90px;"></i> 
+                    <i class="bi bi-leaf-fill" class="logout-plantas-icon" style="margin-top: 90px;"></i>
                 </div>
             </div>
 
@@ -53,8 +86,7 @@
                 "Explorar catálogo" para ver todas as plantas disponíveis.
             </p>
 
-            <button class="logout-plantas-btn-login" id="btnRedirecionarLogin">Adicionar planta</button>
-            <!-- <button class="logout-plantas-btn-cadastro" id="btnRedirecionarCadastro">Explorar catálogo</button> -->
+            <button class="logout-plantas-btn-login" id="btnCadastrarPlantaSemplanta">Adicionar planta</button>
         </div>
     </div>
 
@@ -239,10 +271,12 @@
                                 <canvas id="graficoUmidade" width="400" height="200"></canvas>
                             </div> -->
 
-                            <div class="modal-plantas-btn-div">
-                                <button class="modal-plantas-btn-modificações-add" id="adicionarSensor">Adicionar Sensor</button>
-                                <button class="modal-plantas-btn-modificações-delete" id="deletarPlanta">Deletar Planta</button>
-                            </div>
+                        <div class="modal-plantas-btn-div">
+                            <button class="modal-plantas-btn-modificações-add" id="adicionarSensor">Adicionar
+                                Sensor</button>
+                            <button class="modal-plantas-btn-modificações-delete" id="deletarPlanta">Deletar
+                                Planta</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -280,6 +314,7 @@
 
     // Seleciona o input de pesquisa no modal de adicionar planta
     const modalAddSearchInput = document.querySelector('.modal-plantas-add-pesquisa-input');
+    const WarningSemPlanta = document.getElementById("WarningSemPlanta");
 
     // Busca as plantas do usuário logado
     const buscarPlantasPorUser = (user_id) => {
@@ -287,23 +322,38 @@
         const adicionais = {
             headers: { "Authorization": `Bearer ${token}` }
         };
+
         fetch(url_req, adicionais)
             .then(response => {
                 if (!response.ok) {
-                    throw "Nenhum dado para a exibição!!!";
+                    // Se o servidor não retornar plantas válidas, mostra o aviso
+                    document.getElementById("WarningSemPlanta").style.display = "flex";
+                    // Limpa a lista visual
+                    document.getElementById('listaPlantas').innerHTML = '';
+                    throw new Error("Nenhuma planta encontrada");
                 }
-                return response.json()
+                return response.json();
             })
             .then(data => {
-                renderizarPlantas(data.data);
+                const plantas = data.data || [];
 
+                // Atualiza a lista de plantas
+                renderizarPlantas(plantas);
+
+                // Se houver plantas, esconde o aviso; senão, mostra
+                const WarningSemPlanta = document.getElementById("WarningSemPlanta");
+                if (plantas.length > 0) {
+                    WarningSemPlanta.style.display = "none";
+                } else {
+                    WarningSemPlanta.style.display = "flex";
+                }
             })
             .catch(error => {
-                document.getElementById('listaPlantas').innerHTML =
-                    '<p class="text-danger">Erro: ' + error + '</p>';
-                //console.error(error);
+                console.error("Erro ao buscar plantas:", error);
+                const WarningSemPlanta = document.getElementById("WarningSemPlanta");
+                WarningSemPlanta.style.display = "flex";
             });
-    }
+    };
 
     buscarPlantasPorUser(user.id);
 
@@ -407,8 +457,8 @@
             // prioridade: id armazenado no data-attribute do botão (defina quando abrir o modal),
             // fallback para lastClickedPlantId e finalmente para o primeiro card disponível
             const plantId = deletarPlantaBtn.dataset.plantId ||
-                            lastClickedPlantId ||
-                            document.querySelector('.plantas-container[data-id]')?.getAttribute('data-id');
+                lastClickedPlantId ||
+                document.querySelector('.plantas-container[data-id]')?.getAttribute('data-id');
 
             if (!plantId) {
                 alert('ID da planta não encontrado.');
@@ -468,9 +518,9 @@
         const t = term.toLowerCase();
         return todasPlantasCache.filter(p => {
             return (p.nome_comum || '').toLowerCase().includes(t) ||
-                   (p.nome || '').toLowerCase().includes(t) ||
-                   (p.nome_cientifico || '').toLowerCase().includes(t) ||
-                   (p.familia || '').toLowerCase().includes(t);
+                (p.nome || '').toLowerCase().includes(t) ||
+                (p.nome_cientifico || '').toLowerCase().includes(t) ||
+                (p.familia || '').toLowerCase().includes(t);
         });
     }
 
@@ -478,8 +528,10 @@
         const listaPlantasAdd = document.getElementById("listaPlantasAdd");
         listaPlantasAdd.innerHTML = ""; // limpa antes de adicionar
 
+
         if (!plantas || plantas.length === 0) {
-            listaPlantasAdd.innerHTML = "<p>Nenhuma planta encontrada no banco.</p>";
+            const isOpen = WarningSemPlanta.style.display === "block";
+            WarningSemPlanta.style.display = isOpen ? "none" : "block";
             return;
         }
 
@@ -521,10 +573,23 @@
 
     const btnAbrirAdd = document.getElementById("btnAbrirAdd");
     const modalAdd = document.getElementById("modalAdd");
+    const btnCadastrarPlantaSemplanta = document.getElementById("btnCadastrarPlantaSemplanta");
 
     // abrir / fechar botão (ao clicar no +)
     if (btnAbrirAdd) {
         btnAbrirAdd.addEventListener("click", () => {
+            const isOpen = modalAdd.style.display === "block";
+            modalAdd.style.display = isOpen ? "none" : "block";
+            if (!isOpen) {
+                // limpa a pesquisa ao abrir
+                if (modalAddSearchInput) modalAddSearchInput.value = '';
+                buscarTodasPlantas(); // recarrega quando abrir
+            }
+        });
+    }
+
+    if (btnCadastrarPlantaSemplanta) {
+        btnCadastrarPlantaSemplanta.addEventListener("click", () => {
             const isOpen = modalAdd.style.display === "block";
             modalAdd.style.display = isOpen ? "none" : "block";
             if (!isOpen) {
@@ -791,7 +856,7 @@
     window.addEventListener('beforeunload', () => {
         if (QrcodeScanner) {
             // não aguardamos a Promise aqui, apenas tentamos parar
-            QrcodeScanner.clear().catch(()=>{});
+            QrcodeScanner.clear().catch(() => { });
         }
     });
 
