@@ -143,6 +143,7 @@
                 </div>
                 <div class="modal-plantas-add-conteudo">
                     <div class="modal-plantas-add-rolagem">
+  
                         <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
                             <button class="modal-plantas-add-btn" id="addQrCode">Adicionar sonda via Qr Code</button>
                             <button class="modal-plantas-add-btn" id="addMac">Adicionar sonda via Codigo</button>
@@ -163,6 +164,7 @@
                                 <button class="modal-plantas-add-btn-sonda" id="addQrCode">Adicionar</button>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -661,7 +663,7 @@
     const btnAddMac = document.getElementById("addMac");
     const btnAddQrCode = document.getElementById("addQrCode");
 
-    if (adicionarSondaQrCode) adicionarSondaQrCode.style.display = "none";
+    adicionarSondaQrCode.style.display = "none";
 
     // Função para restaurar a UI do modal de sonda ao estado inicial
     function resetAddSondaUI() {
@@ -744,7 +746,8 @@
 
             if (adicionarSondaQrCode) adicionarSondaQrCode.style.display = "none";
             btnAddMac.style.display = isVisible ? "block" : "none";
-            // btnAddQrCode.style.display = isVisible ? "block" : "none";
+            btnAddQrCode.style.display = isVisible ? "block" : "none";
+            btnAddMac.style.display = isVisible ? "block" : "none";
             if (ContinuarSemSonda) ContinuarSemSonda.style.display = isVisible ? "block" : "none";
         });
     }
@@ -755,7 +758,7 @@
             adicionarSondaQrCode.style.display = isVisible ? "none" : "block";
 
             if (adicionarSondaMac) adicionarSondaMac.style.display = "none";
-            // btnAddMac.style.display = isVisible ? "block" : "none";
+            btnAddMac.style.display = isVisible ? "block" : "none";
             btnAddQrCode.style.display = isVisible ? "block" : "none";
             if (ContinuarSemSonda) ContinuarSemSonda.style.display = isVisible ? "block" : "none";
         });

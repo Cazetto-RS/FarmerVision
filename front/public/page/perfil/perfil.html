@@ -34,7 +34,7 @@
   <div class="P-esconder">
     <div>
       <div class="enfeite">
-        <div class="fotoperfil">
+        <!-- <div class="fotoperfil">
           <img src="../../assets/img/Favicon.png" alt="Foto de Perfil" class="fotoP" />
           <div class="icone-editar">
             <i class="bi bi-pen-fill"></i>
@@ -43,7 +43,9 @@
         <div class="modal-perfil-info-cabecalho">
           <h1 id="userApelido" class="plantas-apelido-perfil">Apelido</h1>
           <p id="userNome" class="plantas-nome-perfil"></p>
-        </div>
+        </div> -->
+        <img src="../../assets/img/Logo 2.png" alt="" class="logo-perfil">
+        <!-- <label for="" id="FecharModalPerfil" class="FecharModalPerfil">X</label> -->
       </div>
       <div class="Pdiv">
 
@@ -61,15 +63,6 @@
 
           <div class="campo">
             <div>
-              <label>Nome</label>
-              <div class="elementos-perfil">
-                <span id="userNome">carregado...</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="campo">
-            <div>
               <label>Apelido</label>
               <div class="elementos-perfil">
                 <span id="userApelido">carregado...</span>
@@ -80,20 +73,29 @@
 
           <div class="campo">
             <div>
-              <label>E-mail</label>
+              <label>Telefone</label>
               <div class="elementos-perfil">
-                <span id="userEmail">carregado...</span>
-                <!-- <i class="bi bi-pen-fill btn-perfil-alteracoes"></i> -->
+                <span id="userTelefone">carregado...</span>
+                <i class="bi bi-pen-fill btn-perfil-alteracoes"></i>
               </div>
             </div>
           </div>
 
           <div class="campo">
             <div>
-              <label>Telefone</label>
+              <label>Nome</label>
               <div class="elementos-perfil">
-                <span id="userTelefone">carregado...</span>
-                <i class="bi bi-pen-fill btn-perfil-alteracoes"></i>
+                <span id="userNome">carregado...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="campo">
+            <div>
+              <label>E-mail</label>
+              <div class="elementos-perfil">
+                <span id="userEmail">carregado...</span>
+                <!-- <i class="bi bi-pen-fill btn-perfil-alteracoes"></i> -->
               </div>
             </div>
           </div>
@@ -122,7 +124,8 @@
   // 2. Preenche os dados
   document.getElementById('userId').textContent = user.id || 'Não informado';
   document.getElementById('userEmail').textContent = user.email || 'Não informado';
-  document.getElementById('userNome').textContent = user.nome || 'Não informado';
+  document.getElementById('userApelido').textContent = user.apelidos || 'Não informado';
+  document.getElementById('userNome').textContent = user.nome || 'Não informado'; 
   document.getElementById('userTelefone').textContent = user.telefone || 'Não informado';
 
   // 3. Garante que não haja outros eventos no botão

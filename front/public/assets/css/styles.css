@@ -1624,14 +1624,31 @@ img {
 
     .enfeite {
         width: 895px;
-        height: 150px;
+        height: 75px;
         background-color: var(--verde);
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
 
         display: flex;
-        flex-direction: row;
+        justify-content: space-between;
+        /* separa logo e X */
         align-items: center;
+        padding: 0 20px;
+        /* espaço interno */
+        position: relative;
+        /* garante que filhos fiquem limitados dentro */
+        z-index: 1;
+        /* assegura sobreposição correta */
+    }
+
+    .FecharModalPerfil {
+        font-size: 28px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+        /* mantém dentro do container flex */
     }
 
     .Pdiv {
@@ -1657,6 +1674,10 @@ img {
         color: var(--branco);
         font-weight: 600;
         letter-spacing: 0.5px;
+    }
+
+    .logo-perfil {
+        width: 25%;
     }
 
     .plantas-nome-perfil {
@@ -1838,11 +1859,15 @@ img {
         .Pdiv,
         .enfeite {
             border-radius: 0px;
-            width: 100vw;
+            width: 400px;
         }
 
         .elementos-perfil {
-            width: 75vw;
+            width: 300px;
+        }
+
+        .logo-perfil {
+            width: 40%;
         }
 
     }
@@ -2097,9 +2122,40 @@ img {
         z-index: 999999;
     }
 
+    .modal-uni-texto{
+        padding-top: 10px;
+    }
+
+    .modal-uni-text{
+        width: 80%;
+    }
+
+    .modal-uni-btn-aceito,
+    .modal-uni-btn-nego {
+        border: none;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 200px;
+        margin-top: 10px;
+        background-color: var(--cinza-escuro);
+        color: var(--branco);
+    }
+
+    .modal-uni-btn-aceito:hover {
+        background-color: var(--verde);
+    }
+
+    .modal-uni-btn-nego:hover {
+        background-color: var(--vermelho);
+    }
+
     .modal-container {
         position: relative;
-        background-color: var(--preto);
+        background-color: var(--cinza-escuro);
         width: 500px;
         max-width: 100%;
         height: auto;
@@ -2254,7 +2310,7 @@ img {
     }
 
     .modal-scroll {
-        background-color: var(--cinza-escuro);
+        background-color: var(--preto);
         width: 100%;
         height: 100%;
         border-radius: 10px;
@@ -2265,6 +2321,13 @@ img {
         padding-bottom: 10px;
         scrollbar-width: thin;
         scrollbar-color: var(--cinza) var(--cinza-escuro);
+    }
+
+    .elementos-modal-uni{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10px;
     }
 
     .modal-center {

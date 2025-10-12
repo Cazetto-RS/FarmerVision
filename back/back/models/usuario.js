@@ -5,7 +5,7 @@ export const consultarTodos = async () => {
     let cx;
     try {
         cx = await pool.getConnection();
-        const cmdSql = 'SELECT id, nome, telefone, email FROM usuarios;';
+        const cmdSql = 'SELECT id, nome, telefone, email, apelidos FROM usuarios;';
         const [dados] = await cx.query(cmdSql);
         return dados;
     } catch (error) {
@@ -19,7 +19,7 @@ export const consultarPorId = async (id) => {
     let cx;
     try {
         cx = await pool.getConnection();
-        const cmdSql = 'SELECT id,nome,telefone,email FROM usuarios WHERE id = ?;';
+        const cmdSql = 'SELECT id,nome,telefone,email, apelidos FROM usuarios WHERE id = ?;';
         const [dados, meta_dados] = await cx.query(cmdSql, [id]);
         return dados;
     } 
@@ -36,7 +36,7 @@ export const consultarPorEmail = async (email) => {
     try {
         cx = await pool.getConnection();
         // Aqui precisa trazer a senha também!
-        const cmdSql = 'SELECT id, nome, telefone, email, password FROM usuarios WHERE email = ?;';
+        const cmdSql = 'SELECT id, nome, telefone, email, apelidos, password FROM usuarios WHERE email = ?;';
         console.log(email);
         const [dados] = await cx.query(cmdSql, [email]);
         return dados; // array de usuários

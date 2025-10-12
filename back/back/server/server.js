@@ -5,6 +5,7 @@ import pool from "../database/data.js";
 import usuarioRoutes from "../routes/usuario.js";
 import plantasRoutes from "../routes/plantas.js";
 import UserplantasRoutes from "../routes/usuariosPlantas.js";
+import sensores from "../routes/sensor.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.get("/dbtest", async (req, res) => {
 app.use("/", usuarioRoutes);
 app.use("/", plantasRoutes);
 app.use("/", UserplantasRoutes);
+app.use("/", sensores);
 
 const PORT = process.env.PORT || 3000;
 
