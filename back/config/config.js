@@ -1,0 +1,27 @@
+// ****************** Configuração do banco de dados ************************** //
+dotenv.config();
+import dotenv from 'dotenv';
+
+const developmentConfig = {
+    host: "localhost",
+    port: 3306,
+    name: "farmervision",
+    dialect: "mysql",
+    user: "root",
+    password: ""
+};
+
+const productionConfig = {
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT, 10),
+    name: process.env.BD_NAME,
+    dialect: process.env.BD_DIALECT,
+    user: process.env.BD_USER,
+    password: process.env.BD_PASS
+};
+
+console.log(
+NODE_ENV
+)
+
+export const db = process.env.NODE_ENV === 'production' ? productionConfig : developmentConfig;

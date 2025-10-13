@@ -2,7 +2,7 @@
   "name": "api_info_plantas",
   "version": "1.0.0",
   "description": "Api para coleta e exibição de informações sobre plantas",
-  "main": "back/server/server.js",
+  "main": "server/server.js",
   "type": "module",
   "scripts": {
     "start": "node .",
