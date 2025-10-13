@@ -4,13 +4,18 @@ import * as Sensor from '../models/sensor.js';
 // Função auxiliar para normalizar MAC
 const normalizeMac = (mac) => {
     if (!mac) return null;
-    
-    // Remove os dois pontos (:) e outros caracteres não hexadecimais
-    const onlyHex = mac.replace(/[^a-fA-F0-9]/g, '').toUpperCase();
-    
-    console.log(`MAC após normalização: ${onlyHex}`); // Adiciona um log para ver como o MAC está sendo tratado
 
-    return onlyHex.length === 12 ? onlyHex : null;
+    // Remove tudo que não for caractere hexadecimal e deixa maiúsculo
+    const onlyHex = mac.trim().replace(/[^a-fA-F0-9]/g, '').toUpperCase();
+
+    // Aceita entre 8 e 12 caracteres (para placas que não têm o MAC completo)
+    if (onlyHex.length < 8 || onlyHex.length > 12) {
+        console.log(`❌ MAC inválido (tamanho ${onlyHex.length}):`, onlyHex);
+        return null;
+    }
+
+    console.log(`✅ MAC normalizado (${onlyHex.length} chars):`, onlyHex);
+    return onlyHex;
 };
 
 // ------------------------
@@ -25,14 +30,14 @@ export const adotarPlaca = async (req, res) => {
             return res.status(400).json({ error: 'mac_placa e usuario_planta_id são obrigatórios' });
         }
 
-        // console.log(`Recebido MAC antes de normalizar: ${mac_placa}`);
-        // const mac = normalizeMac(mac_placa);
+        console.log(`Recebido MAC antes de normalizar: ${mac_placa}`);
+        const mac = normalizeMac(mac_placa);
 
-        // if (!mac) {
-        //     return res.status(400).json({ error: 'MAC inválido' });
-        // }
+        if (!mac) {
+            return res.status(400).json({ error: 'MAC inválido' });
+        }
 
-        // console.log(`MAC normalizado: ${mac}`);
+        console.log(`MAC normalizado: ${mac}`);
 
         // Verifica se planta pertence ao usuário
         const planta = await Sensor.verificarPlantaDoUsuario(usuario_planta_id, usuario_id);
@@ -69,21 +74,21 @@ export const adotarPlaca = async (req, res) => {
 // ------------------------
 export const receberDados = async (req, res) => {
     try {
-        const { mac_placa, valores } = req.body;
+        const mac = normalizeMac(req.params.mac);
 
-        if (!mac_placa || !valores) {
-            return res.status(400).json({ error: 'mac_placa e valores são obrigatórios' });
-        }
+        const { valores } = req.body;
 
-        const mac = normalizeMac(mac_placa);
         if (!mac) {
             return res.status(400).json({ error: 'MAC inválido' });
         }
-
         // Verifica se o sensor foi adotado
         const existe = await Sensor.buscarAdoçãoPorMac(mac);
         if (existe.length === 0) {
             return res.status(404).json({ error: 'MAC não encontrado ou não adotado' });
+        }
+
+        if (!valores) {
+            return res.status(400).json({ error: 'valores são obrigatórios' });
         }
 
         // Registra leitura
