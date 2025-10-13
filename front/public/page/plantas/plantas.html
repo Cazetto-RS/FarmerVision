@@ -295,6 +295,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script src="../../assets/js/config.js"></script>
+
 <script>
     const titleElement = document.getElementById("title");
     if (titleElement) {
@@ -320,7 +322,7 @@
 
     // Busca as plantas do usuário logado
     const buscarPlantasPorUser = (user_id) => {
-        const url_req = `http://localhost:3000/UserPlantas/${user_id}`;
+        const url_req = `${url_api}/UserPlantas/${user_id}`;
         const adicionais = {
             headers: { "Authorization": `Bearer ${token}` }
         };
@@ -468,7 +470,7 @@
             }
 
             try {
-                const resp = await fetch(`http://localhost:3000/UserPlantas/${encodeURIComponent(plantId)}`, {
+                const resp = await fetch(`${url_api}/UserPlantas/${encodeURIComponent(plantId)}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -495,7 +497,7 @@
     Buscar e exibir TODAS as plantas (rota /plantas)
     --------------------------*/
     function buscarTodasPlantas() {
-        fetch("http://localhost:3000/plantas")
+        fetch(`${url_api}/plantas`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Erro ao buscar as plantas");
@@ -707,7 +709,7 @@
             }
 
             try {
-                const resp = await fetch('http://localhost:3000/UserPlantas', {
+                const resp = await fetch(`${url_api}/UserPlantas`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

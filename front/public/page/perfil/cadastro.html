@@ -148,6 +148,8 @@
     </div>
 </body>
 
+<script src="../../assets/js/config.js"></script>
+
 <script>
     const titleElement = document.getElementById("title");
     if (titleElement) {
@@ -304,7 +306,7 @@
         };
 
         try {
-            const resposta = await fetch('http://localhost:3000/usuario/cadastrar', {
+            const resposta = await fetch(`${url_api}/usuario/cadastrar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(novoUsuario)

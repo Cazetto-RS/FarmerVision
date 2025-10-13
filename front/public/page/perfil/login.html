@@ -133,7 +133,9 @@
     </div>
 </body>
 
-<script>
+<script src="../../assets/js/config.js"></script>
+
+<script >
     const titleElement = document.getElementById("title");
     if (titleElement) {
         titleElement.textContent = "Login - Agrovision";
@@ -217,8 +219,9 @@
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('senha').value;
-
-        fetch('http://localhost:3000/usuario/logar', {
+        const url_req = `${url_api}/usuario/logar`;
+        // console.log(url_req);
+        fetch(url_req, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
