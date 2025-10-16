@@ -143,7 +143,7 @@
                 </div>
                 <div class="modal-plantas-add-conteudo">
                     <div class="modal-plantas-add-rolagem">
-  
+
                         <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
                             <button class="modal-plantas-add-btn" id="addQrCode">Adicionar sonda via Qr Code</button>
                             <button class="modal-plantas-add-btn" id="addMac">Adicionar sonda via Codigo</button>
@@ -261,17 +261,17 @@
                                 </div>
                             </div> -->
 
-                        <!-- <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Gráficos</h2>
+                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Gráficos</h2>
 
-                            <div class="modal-plantas-info-item">
-                                <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Temperatura</h2>
-                                <canvas id="graficoTemperatura" width="400" height="200"></canvas>
-                            </div>
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Temperatura</h2>
+                            <canvas id="graficoTemperatura" width="400" height="200"></canvas>
+                        </div>
 
-                            <div class="modal-plantas-info-item">
-                                <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Umidade</h2>
-                                <canvas id="graficoUmidade" width="400" height="200"></canvas>
-                            </div> -->
+                        <div class="modal-plantas-info-item">
+                            <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Umidade</h2>
+                            <canvas id="graficoUmidade" width="400" height="200"></canvas>
+                        </div>
 
                         <div class="modal-plantas-btn-div">
                             <button class="modal-plantas-btn-modificações-add" id="adicionarSensor">Adicionar
@@ -307,6 +307,90 @@
     --------------------------*/
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
+
+    async function buscarMacPorPlanta(plantaUsuarioId) {
+        try {
+            const resp = await fetch(`${url_api}/sensor/adocoes/${user.id}`, {       
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!resp.ok) throw await resp.text();
+
+            const json = await resp.json();
+            const sensor = json.data.find(s => s.planta_usuario === plantaUsuarioId);
+            return sensor ? sensor.mac_placa : null;
+        } catch (err) {
+            console.error("Erro ao buscar MAC:", err);
+            return null;
+        }
+    }
+
+    async function buscarHistoricoSensor(mac) {
+        try {
+            const resp = await fetch(`${url_api}/sensor/historico/${mac}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!resp.ok) throw await resp.text();
+
+            const json = await resp.json();
+            return json.data.map(item => JSON.parse(item.valores));
+        } catch (err) {
+            console.error("Erro ao buscar histórico:", err);
+            return [];
+        }
+    }
+
+    function renderizarGraficos(leituras) {
+        const labels = leituras.map((_, i) => `#${i + 1}`);
+        const temperaturas = leituras.map(v => v.temperatura);
+        const umidades = leituras.map(v => v.umidade);
+
+        const ctxTemp = document.getElementById('graficoTemperatura').getContext('2d');
+        const ctxUmi = document.getElementById('graficoUmidade').getContext('2d');
+
+        // Destroi se já existir
+        if (window.graficoTemp) window.graficoTemp.destroy();
+        if (window.graficoUmi) window.graficoUmi.destroy();
+
+        window.graficoTemp = new Chart(ctxTemp, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Temperatura (°C)',
+                    data: temperaturas,
+                    borderColor: '#f36c21',
+                    backgroundColor: 'rgba(243,108,33,0.2)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: true } }
+            }
+        });
+
+        window.graficoUmi = new Chart(ctxUmi, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Umidade (%)',
+                    data: umidades,
+                    borderColor: '#3ca9d1',
+                    backgroundColor: 'rgba(60,169,209,0.2)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: true } }
+            }
+        });
+    }
 
     // Se não estiver logado → redireciona
     if (!user.id || !token) {
@@ -397,7 +481,7 @@
     Carregar modal da planta
     --------------------------*/
     // Função para abrir modal da planta
-    function abrirModalPlanta(planta) {
+    async function abrirModalPlanta(planta) {
         // Preenche os campos do modal com os dados da planta
         document.getElementById('modalPlantName').textContent = planta.nome_comum || planta.nome || 'Sem nome';
         document.getElementById('modalScientificName').textContent = planta.nome_cientifico || 'Não informado';
@@ -418,6 +502,24 @@
 
         // Exibe o modal
         document.getElementById('plantModal').style.display = 'block';
+
+        // 1. Busca o MAC vinculado à planta
+        const mac = await buscarMacPorPlanta(planta.id);
+        if (!mac) {
+            console.warn("Nenhum sensor vinculado a esta planta.");
+            return;
+        }
+
+        // 2. Busca leituras e renderiza os gráficos
+        const leituras = await buscarHistoricoSensor(mac);
+        if (leituras.length > 0) renderizarGraficos(leituras);
+
+        // 3. Atualiza automaticamente a cada 1 minuto
+        if (window.intervalLeitura) clearInterval(window.intervalLeitura);
+        window.intervalLeitura = setInterval(async () => {
+            const novasLeituras = await buscarHistoricoSensor(mac);
+            renderizarGraficos(novasLeituras);
+        }, 60000);
     }
 
     // Fecha o modal

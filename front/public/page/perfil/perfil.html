@@ -61,12 +61,21 @@
             </div>
           </div> -->
 
-          <div class="campo">
+          <!-- <div class="campo">
             <div>
               <label>Apelido</label>
               <div class="elementos-perfil">
                 <span id="userApelido">carregado...</span>
                 <i class="bi bi-pen-fill btn-perfil-alteracoes"></i>
+              </div>
+            </div>
+          </div> -->
+
+          <div class="campo">
+            <div>
+              <label>Nome</label>
+              <div class="elementos-perfil">
+                <span id="userNome">carregado...</span>
               </div>
             </div>
           </div>
@@ -76,16 +85,6 @@
               <label>Telefone</label>
               <div class="elementos-perfil">
                 <span id="userTelefone">carregado...</span>
-                <i class="bi bi-pen-fill btn-perfil-alteracoes"></i>
-              </div>
-            </div>
-          </div>
-
-          <div class="campo">
-            <div>
-              <label>Nome</label>
-              <div class="elementos-perfil">
-                <span id="userNome">carregado...</span>
               </div>
             </div>
           </div>
@@ -127,7 +126,7 @@
   document.getElementById('userId').textContent = user.id || 'Não informado';
   document.getElementById('userEmail').textContent = user.email || 'Não informado';
   document.getElementById('userApelido').textContent = user.apelidos || 'Não informado';
-  document.getElementById('userNome').textContent = user.nome || 'Não informado'; 
+  document.getElementById('userNome').textContent = user.nome || 'Não informado';
   document.getElementById('userTelefone').textContent = user.telefone || 'Não informado';
 
   // 3. Garante que não haja outros eventos no botão
