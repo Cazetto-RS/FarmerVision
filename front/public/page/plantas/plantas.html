@@ -1,65 +1,4 @@
 <div class="plantas-esconder-geral">
-    <!-- <div class="logout-plantas-esconder" id="WarningSemConta" style="display: none;">
-        <div class="logout-plantas-container">
-            <h1 class="logout-plantas-title">Opa, parece que você não está logado em nenhuma conta!</h1>
-            <p class="logout-plantas-subtitle">O que acha de irmos um pouco mais devagar?</p>
-
-            <div class="logout-plantas-caixa">
-                <div class="logout-plantas-code2">
-                    <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
-                    <div class="bola2" style="background-color: #F0971C;"></div>
-                    <div class="bola3" style="background-color: #C21B12;"></div>
-                </div>
-            </div>
-
-            <div class="logout-plantas-caixa">
-                <div class="logout-plantas-code">
-                    <img src="../../assets/img/noUser.png" alt="" class="logout-plantas-icon">
-                </div>
-            </div>
-
-            <p class="logout-plantas-message">Você precisa estar logado em uma conta para que assim <br> possa
-                visualizar e adicionar suas plantas! Faça login, ou então, <br> caso não tenha uma conta, se
-                cadastre!
-            </p>
-
-            <button class="logout-plantas-btn-login" id="btnRedirecionarLogin">Fazer login</button>
-            <button class="logout-plantas-btn-cadastro" id="btnRedirecionarCadastro">Se cadastrar</button>
-        </div>
-    </div> -->
-
-    <!-- <div class="sistema-para-alinhas-tudo-semplanta">
-        <div class="logout-plantas-esconder-semplanta" >
-            <div class="logout-plantas-container-semplanta">
-                <h1 class="logout-plantas-title" style="color: #F6EEE0;">Você ainda não possui nenhuma planta
-                    cadastrada!
-                </h1>
-                <p class="logout-plantas-subtitle">Que tal começar adicionando sua primeira planta?</p>
-
-                <div class="logout-plantas-caixa">
-                    <div class="logout-plantas-code2">
-                        <div class="bola" style="background-color: #7AB317; margin-left: 10px;"></div>
-                        <div class="bola2" style="background-color: #F0971C;"></div>
-                        <div class="bola3" style="background-color: #C21B12;"></div>
-                    </div>
-                </div>
-
-                <div class="logout-plantas-caixa">
-                    <div class="logout-plantas-code">
-                        <i class="bi bi-leaf-fill" class="logout-plantas-icon" style="margin-top: 90px;"></i>
-                    </div>
-                </div>
-
-                <p class="logout-plantas-message">
-                    Você ainda não adicionou nenhuma planta à sua conta. Adicione plantas para acompanhar informações,
-                    registrar sensores e gerenciar seu cultivo. Use "Adicionar planta" para escolher do catálogo ou
-                    "Explorar catálogo" para ver todas as plantas disponíveis.
-                </p>
-
-                <button class="logout-plantas-btn-login" id="btnCadastrarPlantaSemplanta">Adicionar planta</button>
-            </div>
-        </div>
-    </div> -->
 
     <div class="erro-esconder" id="WarningSemPlanta" style="display: none;">
         <div class="erro-container">
@@ -308,15 +247,21 @@
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
 
+    
+
     async function buscarMacPorPlanta(plantaUsuarioId) {
         try {
-            const resp = await fetch(`${url_api}/sensor/adocoes/${user.id}`, {       
+            const resp = await fetch(`${url_api}/sensor/adocoes/${user.id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!resp.ok) throw await resp.text();
 
             const json = await resp.json();
-            const sensor = json.data.find(s => s.planta_usuario === plantaUsuarioId);
+            console.log("🔍 Adoções do usuário:", json.data);
+
+            const sensor = json.data.find(s => Number(s.planta_usuario) === Number(plantaUsuarioId));
+            console.log("📡 Sensor vinculado encontrado:", sensor);
+
             return sensor ? sensor.mac_placa : null;
         } catch (err) {
             console.error("Erro ao buscar MAC:", err);
@@ -332,7 +277,10 @@
             if (!resp.ok) throw await resp.text();
 
             const json = await resp.json();
-            return json.data.map(item => JSON.parse(item.valores));
+            console.log("🌡️ Histórico do sensor:", json.data);
+
+            // agora o backend já manda o objeto direto
+            return json.data.map(item => item.valores);
         } catch (err) {
             console.error("Erro ao buscar histórico:", err);
             return [];
@@ -347,7 +295,6 @@
         const ctxTemp = document.getElementById('graficoTemperatura').getContext('2d');
         const ctxUmi = document.getElementById('graficoUmidade').getContext('2d');
 
-        // Destroi se já existir
         if (window.graficoTemp) window.graficoTemp.destroy();
         if (window.graficoUmi) window.graficoUmi.destroy();
 
@@ -392,6 +339,7 @@
         });
     }
 
+
     // Se não estiver logado → redireciona
     if (!user.id || !token) {
         window.location.href = "/reqLogin";
@@ -406,7 +354,7 @@
 
     // Busca as plantas do usuário logado
     const buscarPlantasPorUser = (user_id) => {
-        const url_req = `${url_api}/UserPlantas/${user_id}`;
+        const url_req = `${url_api}/UserPlantas/usuario/${user_id}`;
         const adicionais = {
             headers: { "Authorization": `Bearer ${token}` }
         };
@@ -503,18 +451,22 @@
         // Exibe o modal
         document.getElementById('plantModal').style.display = 'block';
 
-        // 1. Busca o MAC vinculado à planta
-        const mac = await buscarMacPorPlanta(planta.id);
+        // Pega o ID correto do vínculo usuário_planta
+        const plantaUsuarioId = planta.id_vinculo;
+        console.log("🌱 ID da planta_usuario:", plantaUsuarioId);
+
+        // Busca o MAC vinculado a essa planta
+        const mac = await buscarMacPorPlanta(plantaUsuarioId);
         if (!mac) {
-            console.warn("Nenhum sensor vinculado a esta planta.");
+            console.warn("❌ Nenhum sensor vinculado a esta planta.");
             return;
         }
 
-        // 2. Busca leituras e renderiza os gráficos
+        // Busca histórico de leituras
         const leituras = await buscarHistoricoSensor(mac);
         if (leituras.length > 0) renderizarGraficos(leituras);
 
-        // 3. Atualiza automaticamente a cada 1 minuto
+        // Atualiza automaticamente a cada 1 minuto
         if (window.intervalLeitura) clearInterval(window.intervalLeitura);
         window.intervalLeitura = setInterval(async () => {
             const novasLeituras = await buscarHistoricoSensor(mac);
@@ -765,7 +717,6 @@
     const adicionarSondaMac = document.getElementById("adicionar-sonda-mac");
     const adicionarSondaQrCode = document.getElementById("adicionar-sonda-qrcode");
     const btnAddMac = document.getElementById("addMac");
-    const btnAddQrCode = document.getElementById("addQrCode");
 
     adicionarSondaQrCode.style.display = "none";
 
