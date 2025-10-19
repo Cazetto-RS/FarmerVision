@@ -1,5 +1,5 @@
 import * as Usuario from '../models/usuario.js'
-import * as Sessoes from '../models/SessoesModel.js';
+import * as Sessoes from '../models/sessoesModel.js';
 import * as responses from '../utils/responses.js';
 
 export const consultarTodos = async (req, res) => {

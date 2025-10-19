@@ -7,7 +7,7 @@ const consultarPorUsuario = async (usuario, cx = null) => {
     if (!localCx) {
       localCx = await pool.getConnection();
     }
-    const cmdSql = "SELECT * FROM Sessoes WHERE usuario = ?;";
+    const cmdSql = "SELECT * FROM sessoes WHERE usuario = ?;";
     const [rows] = await localCx.query(cmdSql, [usuario]);
     return (rows.length > 0) ? rows[0] : null;
   } catch (error) {
@@ -36,7 +36,7 @@ export const criar = async (usuario, validade) => {
   try {
     const token = crypto.randomBytes(64).toString("hex"); // 128 caracteres
     const cmdSql = `
-      INSERT INTO Sessoes (usuario, token, validade)
+      INSERT INTO sessoes (usuario, token, validade)
       VALUES (?, ?, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL ? HOUR))
       ON DUPLICATE KEY UPDATE 
           token = VALUES(token), 
@@ -61,7 +61,7 @@ export const extender = async (usuario, tempo_em_horas) => {
   let cx;
   try {
     const cmdSql =
-      "UPDATE Sessoes SET validade = DATE_ADD(validade, INTERVAL ? HOUR) WHERE usuario = ?;";
+      "UPDATE sessoes SET validade = DATE_ADD(validade, INTERVAL ? HOUR) WHERE usuario = ?;";
     cx = await pool.getConnection();
     const [rows] = await cx.query(cmdSql, [tempo_em_horas, usuario]);
     return rows.affectedRows > 0;

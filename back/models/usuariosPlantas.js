@@ -15,6 +15,36 @@ export const consultarTodos = async () => {
     }
 };
 
+// Buscar todas as plantas de um usuário
+export const consultarPorUsuario = async (usuarioId) => {
+  let cx;
+  try {
+    cx = await pool.getConnection();
+    const cmdSql = `
+      SELECT 
+        usuario_plantas.id AS id_vinculo,
+        usuario_plantas.usuario_id,
+        usuario_plantas.planta_id,
+        plantas.nome_comum,
+        plantas.nome_cientifico,
+        usuarios.nome AS nome_usuario,
+        usuarios.email,
+        usuario_plantas.data_cadastro
+      FROM usuario_plantas
+      JOIN plantas ON usuario_plantas.planta_id = plantas.id
+      JOIN usuarios ON usuario_plantas.usuario_id = usuarios.id
+      WHERE usuario_plantas.usuario_id = ?
+      ORDER BY usuario_plantas.data_cadastro DESC;
+    `;
+    const [dados] = await cx.query(cmdSql, [usuarioId]);
+    return dados;
+  } finally {
+    if (cx) cx.release();
+  }
+};
+
+
+// Buscar uma planta específica (relacionamento direto)
 export const consultarPorId = async (id) => {
     let cx;
     try {
@@ -22,25 +52,24 @@ export const consultarPorId = async (id) => {
         const cmdSql = `
             SELECT 
                 usuario_plantas.*, 
-                usuarios.*, 
-                plantas.*
+                plantas.*, 
+                usuarios.nome, 
+                usuarios.email
             FROM 
                 usuario_plantas
-            JOIN 
-                usuarios ON usuario_plantas.usuario_id = usuarios.id
-            JOIN 
-                plantas ON usuario_plantas.planta_id = plantas.id
+            JOIN plantas 
+                ON usuario_plantas.planta_id = plantas.id
+            JOIN usuarios 
+                ON usuario_plantas.usuario_id = usuarios.id
             WHERE 
-                usuario_plantas.usuario_id = ?;
+                usuario_plantas.id = ?;
         `;
-        const [dados, meta_dados] = await cx.query(cmdSql, [id]);
+        const [dados] = await cx.query(cmdSql, [id]);
         return dados;
-    }
-    catch (error) {
+    } catch (error) {
         throw error;
-    }
-    finally {
-        if (cx) cx.release(); // Libere a conexão após o uso
+    } finally {
+        if (cx) cx.release();
     }
 };
 

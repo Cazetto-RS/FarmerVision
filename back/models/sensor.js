@@ -36,10 +36,10 @@ export const buscarHistorico = async (mac_placa, limit = 50) => {
     try {
         cx = await pool.getConnection();
         const cmdSql = `
-            SELECT id, valores 
+            SELECT valores 
             FROM dados_sensor 
             WHERE mac_placa = ? 
-            ORDER BY id DESC 
+            ORDER BY data DESC 
             LIMIT ?;
         `;
         const [dados] = await cx.query(cmdSql, [mac_placa, limit]);

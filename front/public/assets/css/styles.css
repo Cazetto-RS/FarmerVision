@@ -675,7 +675,7 @@ img {
 
     .adicionar-sonda-mac,
     .adicionar-sonda-qrcode {
-        display: none;
+        /* display: none; */
     }
 
     .modal-plantas-add-btn {

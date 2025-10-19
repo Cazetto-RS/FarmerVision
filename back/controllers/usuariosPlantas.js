@@ -10,19 +10,35 @@ export const consultarTodos = async (req, res) => {
     }
 };
 
-export const consultarPorId = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const data = await UsuarioPlantas.consultarPorId(id);
-
-    if (!data || data.length === 0) {
-      return res.status(404).json({ message: "Usuario não encontrado ou não possui plantas" });
+// Buscar todas as plantas de um usuário
+export const listarPorUsuario = async (req, res) => {
+    try {
+        const usuarioId = req.params.usuarioId;
+        const dados = await UsuarioPlantas.consultarPorUsuario(usuarioId);
+        if (!dados.length) {
+            return Response.success(res, {
+                success: true,
+                data: [],
+                message: "Usuário ainda não tem plantas"
+            });
+        }
+        return Response.success(res, { data: dados });
+    } catch (error) {
+        console.error(error);
+        return Response.error(res, 500, error.message);
     }
-    return Response.success(res,{data: data});
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
+};
+
+// Buscar uma planta específica (planta_usuario.id)
+export const consultarPorId = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const dados = await UsuarioPlantas.consultarPorId(id);
+        return Response.success(res, { data: dados });
+    } catch (error) {
+        console.error(error);
+        return Response.error(res, 500, error.message);
+    }
 };
 
 export const cadastrar = async (req, res) => {

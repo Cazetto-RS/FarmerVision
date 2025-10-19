@@ -83,25 +83,22 @@
                 <div class="modal-plantas-add-conteudo">
                     <div class="modal-plantas-add-rolagem">
 
-                        <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
-                            <button class="modal-plantas-add-btn" id="addQrCode">Adicionar sonda via Qr Code</button>
-                            <button class="modal-plantas-add-btn" id="addMac">Adicionar sonda via Codigo</button>
-                            <p class="modal-plantas-add-semSonda" id="noAdd">Continuar sem sonda</p>
+                        <div class="adicionar-sonda-qrcode" id="adicionar-sonda-qrcode">
+                            <div class="modal-plantas-add-pesquisa-pag2">
+                                <input type="text" class="modal-plantas-add-pesquisa-input-pag2" placeholder="qr code">
+                            </div>
                         </div>
 
                         <div class="adicionar-sonda-mac" id="adicionar-sonda-mac">
                             <div class="modal-plantas-add-pesquisa-pag2">
-                                <input type="text" class="modal-plantas-add-pesquisa-input-pag2"
+                                <input type="text" id="MacInput" class="modal-plantas-add-pesquisa-input-pag2"
                                     placeholder="Adicionar MAC da placa...">
-                                <button class="modal-plantas-add-btn-sonda" id="addQrCode">Adicionar</button>
+                                <button class="modal-plantas-add-btn-sonda" id="addMac">Adicionar</button>
                             </div>
                         </div>
 
-                        <div class="adicionar-sonda-qrcode" id="adicionar-sonda-qrcode">
-                            <div class="modal-plantas-add-pesquisa-pag2 adicionar-sonda-qrcode">
-                                <input type="text" class="modal-plantas-add-pesquisa-input-pag2" placeholder="qr code">
-                                <button class="modal-plantas-add-btn-sonda" id="addQrCode">Adicionar</button>
-                            </div>
+                        <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
+                            <p class="modal-plantas-add-semSonda" id="noAdd">Continuar sem sonda</p>
                         </div>
 
                     </div>
@@ -200,14 +197,14 @@
                                 </div>
                             </div> -->
 
-                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;">Gráficos</h2>
+                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;" id="tituloGrafico">Gráficos</h2>
 
-                        <div class="modal-plantas-info-item">
+                        <div class="modal-plantas-info-item" id="graficoTemperaturaDiv">
                             <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Temperatura</h2>
                             <canvas id="graficoTemperatura" width="400" height="200"></canvas>
                         </div>
 
-                        <div class="modal-plantas-info-item">
+                        <div class="modal-plantas-info-item" id="graficoUmidadeDiv">
                             <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Umidade</h2>
                             <canvas id="graficoUmidade" width="400" height="200"></canvas>
                         </div>
@@ -247,7 +244,7 @@
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
 
-    
+
 
     async function buscarMacPorPlanta(plantaUsuarioId) {
         try {
@@ -339,7 +336,6 @@
         });
     }
 
-
     // Se não estiver logado → redireciona
     if (!user.id || !token) {
         window.location.href = "/reqLogin";
@@ -425,6 +421,25 @@
         });
     }
 
+    // Pega grafico para exibir/sumir quando for necessario
+    const graficoTemperatura = document.getElementById('graficoTemperaturaDiv');
+    const graficoUmidade = document.getElementById('graficoUmidadeDiv');
+    const BtnAdicionarSensor = document.getElementById('adicionarSensor');
+    const tituloGrafico = document.getElementById('tituloGrafico');
+
+    function resetarGraficos(){
+        graficoTemperatura.style.display = 'block';
+        graficoUmidade.style.display = 'block';
+        BtnAdicionarSensor.style.display = 'none';
+    }
+
+    function DeletarGraficos(){
+        graficoTemperatura.style.display = 'none';
+        graficoUmidade.style.display = 'none';
+        tituloGrafico.style.display = 'none';
+        BtnAdicionarSensor.style.display = 'block';
+    }
+
     /* -------------------------
     Carregar modal da planta
     --------------------------*/
@@ -459,7 +474,11 @@
         const mac = await buscarMacPorPlanta(plantaUsuarioId);
         if (!mac) {
             console.warn("❌ Nenhum sensor vinculado a esta planta.");
+            DeletarGraficos();
             return;
+        }
+        else {
+            resetarGraficos();
         }
 
         // Busca histórico de leituras
@@ -725,15 +744,10 @@
         const modal = document.getElementById("modalAddSonda");
         const mac = document.getElementById("adicionar-sonda-mac");
         const qr = document.getElementById("adicionar-sonda-qrcode");
-        const btnMacEl = document.getElementById("addMac");
-        const btnQrEl = document.getElementById("addQrCode");
         const noAddEl = document.getElementById("noAdd");
 
-        if (mac) mac.style.display = "none";
-        if (qr) qr.style.display = "none";
-
-        if (btnMacEl) btnMacEl.style.display = "block";
-        if (btnQrEl) btnQrEl.style.display = "block";
+        if (mac) mac.style.display = "block";
+        if (qr) qr.style.display = "block";
         if (noAddEl) noAddEl.style.display = "block";
     }
 
@@ -793,141 +807,4 @@
         });
     }
 
-    // Adicionar sonda via MAC
-    if (btnAddMac) {
-        btnAddMac.addEventListener("click", () => {
-            const isVisible = adicionarSondaMac.style.display === "block";
-            adicionarSondaMac.style.display = isVisible ? "none" : "block";
-
-            if (adicionarSondaQrCode) adicionarSondaQrCode.style.display = "none";
-            btnAddMac.style.display = isVisible ? "block" : "none";
-            btnAddQrCode.style.display = isVisible ? "block" : "none";
-            btnAddMac.style.display = isVisible ? "block" : "none";
-            if (ContinuarSemSonda) ContinuarSemSonda.style.display = isVisible ? "block" : "none";
-        });
-    }
-    // Adicionar sonda via QR Code
-    if (btnAddQrCode) {
-        btnAddQrCode.addEventListener("click", () => {
-            const isVisible = adicionarSondaQrCode.style.display === "block";
-            adicionarSondaQrCode.style.display = isVisible ? "none" : "block";
-
-            if (adicionarSondaMac) adicionarSondaMac.style.display = "none";
-            btnAddMac.style.display = isVisible ? "block" : "none";
-            btnAddQrCode.style.display = isVisible ? "block" : "none";
-            if (ContinuarSemSonda) ContinuarSemSonda.style.display = isVisible ? "block" : "none";
-        });
-    }
-
-</script>
-
-<script>
-    // Inicializa variáveis
-    let QrcodeScanner = null;
-    const adicionarSondaQrEl = document.getElementById('adicionar-sonda-qrcode');
-    const AbrirAddSondaEl = document.getElementById('modalAddSonda');
-
-    adicionarSondaQrEl.style.display = 'none'; // começa oculto
-
-    // guarda o HTML original da área de QR para ser restaurado depois
-    const originalAdicionarSondaQrHTML = adicionarSondaQrEl ? adicionarSondaQrEl.innerHTML : '';
-
-    function startScanner() {
-        if (!adicionarSondaQrEl) return;
-        // evita inicializar duas vezes
-        if (QrcodeScanner) return;
-
-        // mostra a área de qr (caso esteja oculta)
-        adicionarSondaQrEl.style.display = 'block';
-
-        QrcodeScanner = new Html5QrcodeScanner('adicionar-sonda-qrcode', {
-            qrbox: { width: 250, height: 250 },
-            fps: 20
-        });
-
-        QrcodeScanner.render(success, error);
-    }
-
-    function stopScanner() {
-        if (!QrcodeScanner) return Promise.resolve();
-        // clear() retorna Promise; quando concluído, removemos a instância e restauramos o HTML original
-        return QrcodeScanner.clear()
-            .then(() => {
-                QrcodeScanner = null;
-                // restaura a área do leitor para o estado inicial
-                if (adicionarSondaQrEl) adicionarSondaQrEl.innerHTML = originalAdicionarSondaQrHTML;
-                // garante que a UI do modal volte ao estado normal
-                resetAddSondaUI();
-            })
-            .catch((err) => {
-                // falha ao parar a câmera - apenas log opcional, ainda assim restaura UI
-                console.warn('Falha ao parar o leitor QR:', err);
-                QrcodeScanner = null;
-                if (adicionarSondaQrEl) adicionarSondaQrEl.innerHTML = originalAdicionarSondaQrHTML;
-                resetAddSondaUI();
-            });
-    }
-
-    function success(result) {
-        console.log(result);
-        // para o scanner e fecha o modal, então restaura a UI ao normal
-        stopScanner().then(() => {
-            if (document.getElementById('modalAddSonda')) {
-                document.getElementById('modalAddSonda').style.display = 'none';
-            }
-            // garante que tudo volte ao estado inicial da modal
-            resetAddSondaUI();
-        });
-    }
-
-    function error(err) {
-        // Ignorar erros recorrentes de leitura
-    }
-
-    // Observa mudanças no estilo do modal de sonda para iniciar/parar a câmera corretamente
-    if (AbrirAddSondaEl) {
-        const observer = new MutationObserver(() => {
-            const disp = window.getComputedStyle(AbrirAddSondaEl).display;
-            if (disp === 'block') {
-                startScanner();
-            } else {
-                stopScanner();
-            }
-        });
-        observer.observe(AbrirAddSondaEl, { attributes: true, attributeFilter: ['style'] });
-    }
-
-    // Também garante que, ao fechar via botões/ações existentes, a câmera seja parada e o modal restaurado
-    document.addEventListener('click', (e) => {
-        // botões que fecham o modal: botão fechar (id="fecharAdd") e "Continuar sem sonda" (id="noAdd")
-        if (e.target.closest('#fecharAdd') || e.target.closest('#noAdd')) {
-            stopScanner().then(() => {
-                if (document.getElementById('modalAddSonda')) {
-                    document.getElementById('modalAddSonda').style.display = 'none';
-                }
-                resetAddSondaUI();
-            });
-        }
-    });
-
-    // Caso a página seja descarregada, parar a câmera
-    window.addEventListener('beforeunload', () => {
-        if (QrcodeScanner) {
-            // não aguardamos a Promise aqui, apenas tentamos parar
-            QrcodeScanner.clear().catch(() => { });
-        }
-    });
-
-    // Iniciar leitura automaticamente ao carregar a página, exibindo o modal de sonda se necessário
-    document.addEventListener('DOMContentLoaded', () => {
-        // se existir o modal de sonda, abrir e iniciar o scanner automaticamente
-        if (AbrirAddSondaEl) {
-            const currentDisplay = window.getComputedStyle(AbrirAddSondaEl).display;
-            if (currentDisplay !== 'block') {
-                AbrirAddSondaEl.style.display = 'block';
-            }
-        }
-        // tenta iniciar o scanner mesmo se o modal estiver oculto; startScanner já previne dupla inicialização
-        startScanner();
-    });
 </script>

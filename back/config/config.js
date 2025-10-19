@@ -20,8 +20,4 @@ const productionConfig = {
     password: process.env.BD_PASS
 };
 
-console.log(
-NODE_ENV
-)
-
 export const db = process.env.NODE_ENV === 'production' ? productionConfig : developmentConfig;
