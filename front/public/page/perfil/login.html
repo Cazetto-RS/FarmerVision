@@ -263,15 +263,24 @@
                 alert('Erro ao conectar ao servidor.');
             });
     });
+
+
+    (function () {
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
+            if (!e.key) return;
+            if (e.key.toLowerCase() !== 'enter') return;
+
+            // não acionar enquanto o usuário estiver digitando em um input/textarea/contentEditable
+            const ae = document.activeElement;
+            const tag = ae && ae.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || (ae && ae.isContentEditable)) return;
+
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            if (btn && !btn.disabled) btn.click();
+        });
+    })();
 </script>
 
 </html>
-
-<!-- {
-    "message":"Login realizado com sucesso",
-    "data":{
-        "token":"6.ad824b12b828a84b63c4babac7345a5551774e5e2149072adecb6cf3af25e3090b439781f8799eeada5429129804c95d1c605b183bbf2063e5b749c40dd49266",
-        "expiracao":"2025-10-01T05:54:50.000Z",
-        "usuario":{"id":6,"nome":"teste token","telefone":"+55 15 11111-1111","email":"testeTokengmail.com"}
-    }
-} -->

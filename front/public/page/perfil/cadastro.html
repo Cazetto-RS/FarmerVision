@@ -325,6 +325,23 @@
             alert('Erro ao conectar com o servidor.');
         }
     });
+
+    (function () {
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
+            if (!e.key) return;
+            if (e.key.toLowerCase() !== 'enter') return;
+
+            // não acionar enquanto o usuário estiver digitando em um input/textarea/contentEditable
+            const ae = document.activeElement;
+            const tag = ae && ae.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || (ae && ae.isContentEditable)) return;
+
+            e.preventDefault();
+            const btn = document.getElementById('btn-cadastro');
+            if (btn && !btn.disabled) btn.click();
+        });
+    })();
 </script>
 
 </html>

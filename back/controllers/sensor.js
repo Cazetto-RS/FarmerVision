@@ -39,23 +39,25 @@ export const adotarPlaca = async (req, res) => {
 
         console.log(`MAC normalizado: ${mac}`);
 
-        // Verifica se planta pertence ao usuário
+        // Verifica se a planta pertence ao usuário
         const planta = await Sensor.verificarPlantaDoUsuario(usuario_planta_id, usuario_id);
-        console.log(`Planta encontrada para o usuário: ${planta.length}`);
-
         if (planta.length === 0) {
             return res.status(403).json({ error: 'Planta não pertence ao usuário' });
         }
 
-        // Verifica se o MAC já está cadastrado
-        const existente = await Sensor.buscarAdoçãoPorMac(mac);
-        console.log(`Resultado da busca de adoção por MAC: ${existente.length}`);
-
-        if (existente.length > 0) {
-            return res.status(409).json({ error: 'Este MAC já está cadastrado' });
+        // 🚨 NOVO: Verifica se o MAC existe na tabela mac
+        const macExiste = await Sensor.verificarMacExistente(mac);
+        if (macExiste.length === 0) {
+            return res.status(404).json({ error: 'Este MAC não está registrado no sistema.' });
         }
 
-        // Registra a adoção
+        // Verifica se o MAC já está adotado
+        const existente = await Sensor.buscarAdoçãoPorMac(mac);
+        if (existente.length > 0) {
+            return res.status(409).json({ error: 'Este MAC já está cadastrado.' });
+        }
+
+        // Faz a adoção
         await Sensor.adotarPlaca(mac, usuario_planta_id);
 
         res.status(201).json({

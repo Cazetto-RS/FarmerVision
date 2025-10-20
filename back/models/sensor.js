@@ -15,6 +15,21 @@ export const adotarPlaca = async (mac_placa, usuario_planta_id) => {
     }
 };
 
+export const verificarMacExistente = async (mac_placa) => {
+    let cx;
+    try {
+        cx = await pool.getConnection();
+        const cmdSql = 'SELECT * FROM mac WHERE mac = ?;';
+        const [dados] = await cx.query(cmdSql, [mac_placa]);
+        return dados;
+    } catch (error) {
+        throw error;
+    } finally {
+        if (cx) cx.release();
+    }
+};
+
+
 // Registra uma leitura enviada pelo sensor
 export const registrarLeitura = async (mac_placa, valores) => {
     let cx;

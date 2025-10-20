@@ -76,9 +76,27 @@
   const dropdown = document.querySelector(".dropdown");
 
   // Expande/recolhe o menu
-  btnExp.addEventListener('click', function () {
+  // função de toggle reutilizável
+  function toggleMenu() {
+    if (!menuSide || !btnExpandir) return;
     menuSide.classList.toggle('expandir');
     btnExpandir.classList.toggle('expandir');
+  }
+
+  btnExp.addEventListener('click', toggleMenu);
+
+  // dispara o mesmo toggle ao pressionar a seta esquerda (ArrowLeft)
+  document.addEventListener('keydown', function (e) {
+    // não interferir quando o usuário estiver editando um input/textarea/select ou conteúdo editável
+    const ae = document.activeElement;
+    const tag = ae && ae.tagName;
+    const isEditable = ae && (ae.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
+    if (isEditable) return;
+
+    if (e.key === 'Escape' || e.keyCode === 37,9) {
+      e.preventDefault();
+      toggleMenu();
+    }
   });
 
   // Define automaticamente o item ativo com base na URL
