@@ -197,7 +197,8 @@
                                 </div>
                             </div> -->
 
-                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;" id="tituloGrafico">Gráficos</h2>
+                        <h2 class="modal-plantas-tips-titulo" style="margin-bottom: -8px;" id="tituloGrafico">Gráficos
+                        </h2>
 
                         <div class="modal-plantas-info-item" id="graficoTemperaturaDiv">
                             <h2 class="modal-plantas-info-titulo-grafico">Gráfico de Temperatura</h2>
@@ -427,13 +428,13 @@
     const BtnAdicionarSensor = document.getElementById('adicionarSensor');
     const tituloGrafico = document.getElementById('tituloGrafico');
 
-    function resetarGraficos(){
+    function resetarGraficos() {
         graficoTemperatura.style.display = 'block';
         graficoUmidade.style.display = 'block';
         BtnAdicionarSensor.style.display = 'none';
     }
 
-    function DeletarGraficos(){
+    function DeletarGraficos() {
         graficoTemperatura.style.display = 'none';
         graficoUmidade.style.display = 'none';
         tituloGrafico.style.display = 'none';
@@ -736,6 +737,7 @@
     const adicionarSondaMac = document.getElementById("adicionar-sonda-mac");
     const adicionarSondaQrCode = document.getElementById("adicionar-sonda-qrcode");
     const btnAddMac = document.getElementById("addMac");
+    const macInput = document.getElementById("MacInput");
 
     adicionarSondaQrCode.style.display = "none";
 
@@ -749,6 +751,80 @@
         if (mac) mac.style.display = "block";
         if (qr) qr.style.display = "block";
         if (noAddEl) noAddEl.style.display = "block";
+    }
+
+    if (btnAddMac) {
+        btnAddMac.addEventListener("click", async () => {
+            const mac = macInput.value.trim();
+
+            if (!mac) {
+                alert("Por favor, insira o endereço MAC da placa.");
+                return;
+            }
+
+            if (!selectedPlantId) {
+                alert("Selecione uma planta antes de adicionar a sonda.");
+                return;
+            }
+
+            try {
+                // 1️⃣ Primeiro: cadastra a planta no usuário (igual ao continuar sem sonda)
+                const respUserPlanta = await fetch(`${url_api}/UserPlantas`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        usuario_id: user.id,
+                        planta_id: selectedPlantId
+                    })
+                });
+
+                const dataUserPlanta = await respUserPlanta.json();
+                if (!respUserPlanta.ok) {
+                    throw new Error(dataUserPlanta.error || "Erro ao vincular planta ao usuário.");
+                }
+
+                // pega o id da relação (usuario_planta_id)
+                const usuario_planta_id = dataUserPlanta.id || dataUserPlanta.data?.id;
+                if (!usuario_planta_id) {
+                    throw new Error("Não foi possível obter o ID da planta do usuário.");
+                }
+
+                // 2️⃣ Depois: faz o POST na rota /sensor/adotar
+                const respAdotar = await fetch(`${url_api}/sensor/adotar`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        mac_placa: mac,
+                        usuario_planta_id
+                    })
+                });
+
+                const dataAdotar = await respAdotar.json();
+                if (!respAdotar.ok) {
+                    throw new Error(dataAdotar.error || "Erro ao registrar o sensor.");
+                }
+
+                alert("✅ Sensor adicionado com sucesso!");
+
+                // Limpa e fecha modais
+                macInput.value = "";
+                if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
+                if (modalAdd) modalAdd.style.display = "none";
+
+                // Atualiza a lista de plantas
+                buscarPlantasPorUser(user.id);
+
+            } catch (err) {
+                console.error("Erro ao adicionar sonda:", err);
+                alert("❌ " + (err.message || "Erro desconhecido ao adicionar sonda."));
+            }
+        });
     }
 
     // Continuar sem sonda
