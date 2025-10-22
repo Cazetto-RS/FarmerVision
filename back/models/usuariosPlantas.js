@@ -25,8 +25,7 @@ export const consultarPorUsuario = async (usuarioId) => {
         usuario_plantas.id AS id_vinculo,
         usuario_plantas.usuario_id,
         usuario_plantas.planta_id,
-        plantas.nome_comum,
-        plantas.nome_cientifico,
+        plantas.*,
         usuarios.nome AS nome_usuario,
         usuarios.email,
         usuario_plantas.data_cadastro

@@ -98,6 +98,10 @@
                         </div>
 
                         <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
+                            <p class="modal-plantas-add-semSonda" style="color: #C21B12; margin-top: -5px; margin-bottom: 10px;" id="AddAviso"></p>
+                        </div>
+
+                        <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
                             <p class="modal-plantas-add-semSonda" id="noAdd">Continuar sem sonda</p>
                         </div>
 
@@ -239,14 +243,49 @@
     if (titleElement) {
         titleElement.textContent = "Catálogo de Plantas";
     }
+
     /* -------------------------
-    Carregar plantas do usuário
+    Variáveis globais e inicialização
     --------------------------*/
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
+    let todasPlantasCache = [];
+    let lastClickedPlantId = null;
+    let selectedPlantId = null;
 
+    // Elementos DOM
+    const WarningSemPlanta = document.getElementById("WarningSemPlanta");
+    const modalAddSearchInput = document.querySelector('.modal-plantas-add-pesquisa-input');
+    const btnAbrirAdd = document.getElementById("btnAbrirAdd");
+    const modalAdd = document.getElementById("modalAdd");
+    const btnCadastrarPlantaSemplanta = document.getElementById("btnCadastrarPlantaSemplanta");
+    const AbrirAddSonda = document.getElementById("modalAddSonda");
+    const listaPlantasContainer = document.getElementById('listaPlantas');
+    const listaPlantasAddContainer = document.getElementById('listaPlantasAdd');
+    const ContinuarSemSonda = document.getElementById("noAdd");
+    const AddAviso = document.getElementById("AddAviso");
+    const adicionarSondaMac = document.getElementById("adicionar-sonda-mac");
+    const adicionarSondaQrCode = document.getElementById("adicionar-sonda-qrcode");
+    const btnAddMac = document.getElementById("addMac");
+    const macInput = document.getElementById("MacInput");
+    const fecharSondaBtn = document.getElementById("fecharAddSonda");
+    const noAddBtn = document.getElementById('noAdd');
+    const deletarPlantaBtn = document.getElementById("deletarPlanta");
+    const graficoTemperatura = document.getElementById('graficoTemperaturaDiv');
+    const graficoUmidade = document.getElementById('graficoUmidadeDiv');
+    const BtnAdicionarSensor = document.getElementById('adicionarSensor');
+    const tituloGrafico = document.getElementById('tituloGrafico');
 
+    /* -------------------------
+    Verificação de autenticação
+    --------------------------*/
+    if (!user.id || !token) {
+        window.location.href = "/reqLogin";
+    }
 
+    /* -------------------------
+    Funções de API
+    --------------------------*/
     async function buscarMacPorPlanta(plantaUsuarioId) {
         try {
             const resp = await fetch(`${url_api}/sensor/adocoes/${user.id}`, {
@@ -277,12 +316,130 @@
             const json = await resp.json();
             console.log("🌡️ Histórico do sensor:", json.data);
 
-            // agora o backend já manda o objeto direto
             return json.data.map(item => item.valores);
         } catch (err) {
             console.error("Erro ao buscar histórico:", err);
             return [];
         }
+    }
+
+    const buscarPlantasPorUser = (user_id) => {
+        const url_req = `${url_api}/UserPlantas/usuario/${user_id}`;
+        const adicionais = {
+            headers: { "Authorization": `Bearer ${token}` }
+        };
+
+        fetch(url_req, adicionais)
+            .then(response => {
+                if (!response.ok) {
+                    document.getElementById("WarningSemPlanta").style.display = "flex";
+                    document.getElementById('listaPlantas').innerHTML = '';
+                    throw new Error("Nenhuma planta encontrada");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const plantas = data.data || [];
+                renderizarPlantas(plantas);
+
+                if (plantas.length > 0) {
+                    WarningSemPlanta.style.display = "none";
+                } else {
+                    WarningSemPlanta.style.display = "flex";
+                }
+            })
+            .catch(error => {
+                console.error("Erro ao buscar plantas:", error);
+                WarningSemPlanta.style.display = "flex";
+            });
+    };
+
+    function buscarTodasPlantas() {
+        fetch(`${url_api}/plantas`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar as plantas");
+                }
+                return response.json();
+            })
+            .then(data => {
+                todasPlantasCache = Array.isArray(data) ? data : (data.data || []);
+                renderizarTodasPlantas(todasPlantasCache);
+            })
+            .catch(error => {
+                console.error("Erro ao carregar plantas:", error);
+                document.getElementById("listaPlantasAdd").innerHTML =
+                    "<p style='color:red;'>Erro ao carregar plantas.</p>";
+            });
+    }
+
+    /* -------------------------
+    Funções de renderização
+    --------------------------*/
+    function renderizarPlantas(plantas) {
+        const listaPlantas = document.getElementById('listaPlantas');
+        listaPlantas.innerHTML = '';
+
+        if (!plantas || plantas.length === 0) {
+            listaPlantas.innerHTML = '<p>Nenhuma planta encontrada para este usuário.</p>';
+            return;
+        }
+
+        plantas.forEach(planta => {
+            const plantaHTML = `
+                <div class="plantas-container" data-id="${planta.id}">
+                    <div class="div-plantas-imagem">
+                        <img src="../../assets/img/Favicon.png"
+                            alt="${planta.nome_comum || planta.nome}" class="plantas-imagem img-fluid">
+                    </div>
+                    <div class="plantas-info mt-2">
+                        <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || planta.nome || 'Sem nome'}</h5>
+                        <p class="plantas-nome-cientifico text-muted mb-0">
+                            <em>${planta.nome_cientifico || planta.familia || 'Não informado'}</em>
+                        </p>
+                    </div>
+                </div>
+            `;
+            listaPlantas.insertAdjacentHTML('beforeend', plantaHTML);
+
+            const novoCard = listaPlantas.lastElementChild;
+            novoCard.addEventListener('click', () => abrirModalPlanta(planta));
+        });
+    }
+
+    function renderizarTodasPlantas(plantas) {
+        const listaPlantasAdd = document.getElementById("listaPlantasAdd");
+        listaPlantasAdd.innerHTML = "";
+
+        if (!plantas || plantas.length === 0) {
+            const isOpen = WarningSemPlanta.style.display === "block";
+            WarningSemPlanta.style.display = isOpen ? "none" : "block";
+            return;
+        }
+
+        plantas.forEach(planta => {
+            const plantaHTML = `
+                <div class="plantas-container-add" data-id="${planta.id}">
+                    <div class="div-plantas-imagem">
+                        <img src="../../assets/img/Favicon.png"
+                            alt="${planta.nome_comum || planta.nome}" class="plantas-imagem img-fluid">
+                    </div>
+                    <div class="plantas-info mt-2">
+                        <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || planta.nome || 'Sem nome'}</h5>
+                        <p class="plantas-nome-cientifico text-muted mb-0">
+                            <em>${planta.nome_cientifico || planta.familia || 'Não informado'}</em>
+                        </p>
+                    </div>
+                </div>
+            `;
+            listaPlantasAdd.insertAdjacentHTML("beforeend", plantaHTML);
+
+            const novoCard = listaPlantasAdd.lastElementChild;
+            novoCard.addEventListener('click', () => {
+                selectedPlantId = planta.id;
+                console.log("ID da planta:", planta.id, "ID do usuário:", user.id);
+            });
+        });
     }
 
     function renderizarGraficos(leituras) {
@@ -337,96 +494,19 @@
         });
     }
 
-    // Se não estiver logado → redireciona
-    if (!user.id || !token) {
-        window.location.href = "/reqLogin";
-    }
-
-    // Cache local das plantas carregadas para permitir filtros sem nova requisição
-    let todasPlantasCache = [];
-
-    // Seleciona o input de pesquisa no modal de adicionar planta
-    const modalAddSearchInput = document.querySelector('.modal-plantas-add-pesquisa-input');
-    const WarningSemPlanta = document.getElementById("WarningSemPlanta");
-
-    // Busca as plantas do usuário logado
-    const buscarPlantasPorUser = (user_id) => {
-        const url_req = `${url_api}/UserPlantas/usuario/${user_id}`;
-        const adicionais = {
-            headers: { "Authorization": `Bearer ${token}` }
-        };
-
-        fetch(url_req, adicionais)
-            .then(response => {
-                if (!response.ok) {
-                    // Se o servidor não retornar plantas válidas, mostra o aviso
-                    document.getElementById("WarningSemPlanta").style.display = "flex";
-                    // Limpa a lista visual
-                    document.getElementById('listaPlantas').innerHTML = '';
-                    throw new Error("Nenhuma planta encontrada");
-                }
-                return response.json();
-            })
-            .then(data => {
-                const plantas = data.data || [];
-
-                // Atualiza a lista de plantas
-                renderizarPlantas(plantas);
-
-                // Se houver plantas, esconde o aviso; senão, mostra
-                const WarningSemPlanta = document.getElementById("WarningSemPlanta");
-                if (plantas.length > 0) {
-                    WarningSemPlanta.style.display = "none";
-                } else {
-                    WarningSemPlanta.style.display = "flex";
-                }
-            })
-            .catch(error => {
-                console.error("Erro ao buscar plantas:", error);
-                const WarningSemPlanta = document.getElementById("WarningSemPlanta");
-                WarningSemPlanta.style.display = "flex";
-            });
-    };
-
-    buscarPlantasPorUser(user.id);
-
-
-    function renderizarPlantas(plantas) {
-        const listaPlantas = document.getElementById('listaPlantas');
-        listaPlantas.innerHTML = ''; // limpa antes de adicionar
-
-        if (!plantas || plantas.length === 0) {
-            listaPlantas.innerHTML = '<p>Nenhuma planta encontrada para este usuário.</p>';
-            return;
-        }
-
-        plantas.forEach(planta => {
-            const plantaHTML = `
-                        <div class="plantas-container" data-id="${planta.id}">
-                            <div class="div-plantas-imagem">
-                                <img src="../../assets/img/Favicon.png"
-                                    alt="${planta.nome_comum || planta.nome}" class="plantas-imagem img-fluid">
-                            </div>
-                            <div class="plantas-info mt-2">
-                                <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || planta.nome || 'Sem nome'}</h5>
-                                <p class="plantas-nome-cientifico text-muted mb-0">
-                                    <em>${planta.nome_cientifico || planta.familia || 'Não informado'}</em>
-                                </p>
-                            </div>
-                        </div>
-                    `;
-            listaPlantas.insertAdjacentHTML('beforeend', plantaHTML);
-
-            const novoCard = listaPlantas.lastElementChild;
-            novoCard.addEventListener('click', () => abrirModalPlanta(planta));
+    /* -------------------------
+    Funções de utilidade
+    --------------------------*/
+    function filtrarPlantasPorTermo(term) {
+        if (!term) return todasPlantasCache.slice();
+        const t = term.toLowerCase();
+        return todasPlantasCache.filter(p => {
+            return (p.nome_comum || '').toLowerCase().includes(t) ||
+                (p.nome || '').toLowerCase().includes(t) ||
+                (p.nome_cientifico || '').toLowerCase().includes(t) ||
+                (p.familia || '').toLowerCase().includes(t);
         });
     }
-
-    // Pega grafico para exibir/sumir quando for necessario
-    const graficoTemperatura = document.getElementById('graficoTemperaturaDiv');
-    const graficoUmidade = document.getElementById('graficoUmidadeDiv');
-    const BtnAdicionarSensor = document.getElementById('adicionarSensor');
-    const tituloGrafico = document.getElementById('tituloGrafico');
 
     function resetarGraficos() {
         graficoTemperatura.style.display = 'block';
@@ -441,12 +521,33 @@
         BtnAdicionarSensor.style.display = 'block';
     }
 
+    function resetAddSondaUI() {
+        const mac = document.getElementById("adicionar-sonda-mac");
+        const qr = document.getElementById("adicionar-sonda-qrcode");
+        const noAddEl = document.getElementById("noAdd");
+
+        if (mac) mac.style.display = "block";
+        if (qr) qr.style.display = "block";
+        if (noAddEl) noAddEl.style.display = "block";
+    }
+
+    function toggleAddSonda() {
+        const isOpen = AbrirAddSonda.style.display === "block";
+        if (isOpen) {
+            AbrirAddSonda.style.display = "none";
+        } else {
+            if (modalAdd && modalAdd.style.display === "block") {
+                modalAdd.style.display = "none";
+            }
+            AbrirAddSonda.style.display = "block";
+        }
+    }
+
     /* -------------------------
-    Carregar modal da planta
+    Modal da planta
     --------------------------*/
-    // Função para abrir modal da planta
     async function abrirModalPlanta(planta) {
-        // Preenche os campos do modal com os dados da planta
+        // Preenche os campos do modal
         document.getElementById('modalPlantName').textContent = planta.nome_comum || planta.nome || 'Sem nome';
         document.getElementById('modalScientificName').textContent = planta.nome_cientifico || 'Não informado';
         document.getElementById('modalDescricao').textContent = planta.descricao || 'Sem descrição';
@@ -464,29 +565,23 @@
         document.getElementById('modalDivisao').textContent = planta.divisao || 'Não informado';
         document.getElementById('modalClasse').textContent = planta.classe || 'Não informado';
 
-        // Exibe o modal
         document.getElementById('plantModal').style.display = 'block';
 
-        // Pega o ID correto do vínculo usuário_planta
         const plantaUsuarioId = planta.id_vinculo;
         console.log("🌱 ID da planta_usuario:", plantaUsuarioId);
 
-        // Busca o MAC vinculado a essa planta
         const mac = await buscarMacPorPlanta(plantaUsuarioId);
         if (!mac) {
             console.warn("❌ Nenhum sensor vinculado a esta planta.");
             DeletarGraficos();
             return;
-        }
-        else {
+        } else {
             resetarGraficos();
         }
 
-        // Busca histórico de leituras
         const leituras = await buscarHistoricoSensor(mac);
         if (leituras.length > 0) renderizarGraficos(leituras);
 
-        // Atualiza automaticamente a cada 1 minuto
         if (window.intervalLeitura) clearInterval(window.intervalLeitura);
         window.intervalLeitura = setInterval(async () => {
             const novasLeituras = await buscarHistoricoSensor(mac);
@@ -494,19 +589,20 @@
         }, 60000);
     }
 
-    // Fecha o modal
+    /* -------------------------
+    Event Listeners
+    --------------------------*/
+    // Fechar modal da planta
     document.getElementById('modalCloseBtn').addEventListener('click', () => {
         document.getElementById('plantModal').style.display = 'none';
     });
 
-    // Adicionar sonda depois da planta ja cadastrada
-    const adicionarSensor = document.getElementById("adicionarSensor");
-    adicionarSensor.addEventListener("click", () => {
+    // Adicionar sonda após planta cadastrada
+    BtnAdicionarSensor.addEventListener("click", () => {
         const isOpen = AbrirAddSonda.style.display === "block";
         if (isOpen) {
             AbrirAddSonda.style.display = "none";
         } else {
-            // ao abrir AbrirAddSonda, garante que modalAdd suma
             if (modalAdd && modalAdd.style.display === "block") {
             }
             AbrirAddSonda.style.display = "block";
@@ -514,12 +610,9 @@
         }
     });
 
-    // Deletar planta do usuário
-    // Gerencia id da planta selecionada (capturado ao clicar no card)
-    let lastClickedPlantId = null;
-    const listaPlantasEl = document.getElementById('listaPlantas');
-    if (listaPlantasEl) {
-        listaPlantasEl.addEventListener('click', (e) => {
+    // Capturar ID da planta ao clicar no card
+    if (listaPlantasContainer) {
+        listaPlantasContainer.addEventListener('click', (e) => {
             const card = e.target.closest('.plantas-container');
             if (card && card.dataset && card.dataset.id) {
                 lastClickedPlantId = card.dataset.id;
@@ -527,13 +620,11 @@
         });
     }
 
-    const deletarPlantaBtn = document.getElementById("deletarPlanta");
+    // Deletar planta
     if (deletarPlantaBtn) {
         deletarPlantaBtn.addEventListener("click", async () => {
             if (!confirm('Tem certeza que deseja deletar esta planta?')) return;
 
-            // prioridade: id armazenado no data-attribute do botão (defina quando abrir o modal),
-            // fallback para lastClickedPlantId e finalmente para o primeiro card disponível
             const plantId = deletarPlantaBtn.dataset.plantId ||
                 lastClickedPlantId ||
                 document.querySelector('.plantas-container[data-id]')?.getAttribute('data-id');
@@ -554,9 +645,7 @@
                     throw new Error(txt || 'Erro ao deletar a planta do usuário.');
                 }
 
-                // Atualiza a lista de plantas do usuário e fecha o modal
                 document.getElementById('plantModal').style.display = 'none';
-                // remove o id associado ao botão
                 delete deletarPlantaBtn.dataset.plantId;
                 buscarPlantasPorUser(user.id);
                 alert('Planta deletada com sucesso.');
@@ -567,80 +656,7 @@
         });
     }
 
-    /* -------------------------
-    Buscar e exibir TODAS as plantas (rota /plantas)
-    --------------------------*/
-    function buscarTodasPlantas() {
-        fetch(`${url_api}/plantas`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erro ao buscar as plantas");
-                }
-                return response.json();
-            })
-            .then(data => {
-                // normaliza o array vindo da API
-                todasPlantasCache = Array.isArray(data) ? data : (data.data || []);
-                renderizarTodasPlantas(todasPlantasCache);
-            })
-            .catch(error => {
-                console.error("Erro ao carregar plantas:", error);
-                document.getElementById("listaPlantasAdd").innerHTML =
-                    "<p style='color:red;'>Erro ao carregar plantas.</p>";
-            });
-    }
-
-    // Função utilitária de filtro (procura por nome comum, nome, nome científico e família)
-    function filtrarPlantasPorTermo(term) {
-        if (!term) return todasPlantasCache.slice();
-        const t = term.toLowerCase();
-        return todasPlantasCache.filter(p => {
-            return (p.nome_comum || '').toLowerCase().includes(t) ||
-                (p.nome || '').toLowerCase().includes(t) ||
-                (p.nome_cientifico || '').toLowerCase().includes(t) ||
-                (p.familia || '').toLowerCase().includes(t);
-        });
-    }
-
-    function renderizarTodasPlantas(plantas) {
-        const listaPlantasAdd = document.getElementById("listaPlantasAdd");
-        listaPlantasAdd.innerHTML = ""; // limpa antes de adicionar
-
-
-        if (!plantas || plantas.length === 0) {
-            const isOpen = WarningSemPlanta.style.display === "block";
-            WarningSemPlanta.style.display = isOpen ? "none" : "block";
-            return;
-        }
-
-        plantas.forEach(planta => {
-            const plantaHTML = `
-                        <div class="plantas-container-add" data-id="${planta.id}">
-                            <div class="div-plantas-imagem">
-                                <img src="../../assets/img/Favicon.png"
-                                    alt="${planta.nome_comum || planta.nome}" class="plantas-imagem img-fluid">
-                            </div>
-                            <div class="plantas-info mt-2">
-                                <h5 class="plantas-nome-usual mb-1">${planta.nome_comum || planta.nome || 'Sem nome'}</h5>
-                                <p class="plantas-nome-cientifico text-muted mb-0">
-                                    <em>${planta.nome_cientifico || planta.familia || 'Não informado'}</em>
-                                </p>
-                            </div>
-                        </div>
-                    `;
-            listaPlantasAdd.insertAdjacentHTML("beforeend", plantaHTML);
-
-            // Adiciona o evento de clique para exibir o id da planta e do usuário
-            const novoCard = listaPlantasAdd.lastElementChild;
-            novoCard.addEventListener('click', () => {
-                // guarda o id da planta para uso posterior (botão "Continuar sem sonda")
-                selectedPlantId = planta.id;
-                console.log("ID da planta:", planta.id, "ID do usuário:", user.id);
-            });
-        });
-    }
-
-    // Adiciona listener no input de pesquisa para filtrar em tempo real
+    // Pesquisa em tempo real
     if (modalAddSearchInput) {
         modalAddSearchInput.addEventListener('input', (e) => {
             const termo = e.target.value.trim();
@@ -649,19 +665,14 @@
         });
     }
 
-    const btnAbrirAdd = document.getElementById("btnAbrirAdd");
-    const modalAdd = document.getElementById("modalAdd");
-    const btnCadastrarPlantaSemplanta = document.getElementById("btnCadastrarPlantaSemplanta");
-
-    // abrir / fechar botão (ao clicar no +)
+    // Abrir modal de adicionar planta
     if (btnAbrirAdd) {
         btnAbrirAdd.addEventListener("click", () => {
             const isOpen = modalAdd.style.display === "block";
             modalAdd.style.display = isOpen ? "none" : "block";
             if (!isOpen) {
-                // limpa a pesquisa ao abrir
                 if (modalAddSearchInput) modalAddSearchInput.value = '';
-                buscarTodasPlantas(); // recarrega quando abrir
+                buscarTodasPlantas();
             }
         });
     }
@@ -671,52 +682,29 @@
             const isOpen = modalAdd.style.display === "block";
             modalAdd.style.display = isOpen ? "none" : "block";
             if (!isOpen) {
-                // limpa a pesquisa ao abrir
                 if (modalAddSearchInput) modalAddSearchInput.value = '';
-                buscarTodasPlantas(); // recarrega quando abrir
+                buscarTodasPlantas();
             }
         });
     }
 
-    // garantir que o botão 'fechar' do modal funciona - delegação segura
+    // Fechar modais
     document.addEventListener('click', (e) => {
-        // botão de fechar específico (id="fecharAdd")
         if (e.target.closest('#fecharAdd')) {
             if (modalAdd) modalAdd.style.display = 'none';
             if (AbrirAddSonda) AbrirAddSonda.style.display = 'none';
         }
     });
 
-    // fecha o modal clicando no overlay (fora do conteúdo)
     if (modalAdd) {
         modalAdd.addEventListener('click', (e) => {
-            // seu markup tem <div id="modalAdd"><div class="modal-overlay">...</div></div>
-            // se o clique for exatamente no overlay, fecha
             if (e.target.classList.contains('modal-overlay') || e.target === modalAdd) {
                 modalAdd.style.display = 'none';
             }
         });
     }
 
-    const AbrirAddSonda = document.getElementById("modalAddSonda");
-
-    // Use event delegation: the plant cards are added dynamically, so attach a single listener to their container(s).
-    const listaPlantasContainer = document.getElementById('listaPlantas');
-    const listaPlantasAddContainer = document.getElementById('listaPlantasAdd');
-
-    function toggleAddSonda() {
-        const isOpen = AbrirAddSonda.style.display === "block";
-        if (isOpen) {
-            AbrirAddSonda.style.display = "none";
-        } else {
-            // ao abrir AbrirAddSonda, garante que modalAdd suma
-            if (modalAdd && modalAdd.style.display === "block") {
-                modalAdd.style.display = "none";
-            }
-            AbrirAddSonda.style.display = "block";
-        }
-    }
-
+    // Toggle modal de sonda
     if (listaPlantasContainer) {
         listaPlantasContainer.addEventListener('click', (e) => {
             if (e.target.closest('.plantas-container-add')) {
@@ -733,32 +721,16 @@
         });
     }
 
-    const ContinuarSemSonda = document.getElementById("noAdd");
-    const adicionarSondaMac = document.getElementById("adicionar-sonda-mac");
-    const adicionarSondaQrCode = document.getElementById("adicionar-sonda-qrcode");
-    const btnAddMac = document.getElementById("addMac");
-    const macInput = document.getElementById("MacInput");
-
+    // Configuração inicial do modal de sonda
     adicionarSondaQrCode.style.display = "none";
 
-    // Função para restaurar a UI do modal de sonda ao estado inicial
-    function resetAddSondaUI() {
-        const modal = document.getElementById("modalAddSonda");
-        const mac = document.getElementById("adicionar-sonda-mac");
-        const qr = document.getElementById("adicionar-sonda-qrcode");
-        const noAddEl = document.getElementById("noAdd");
-
-        if (mac) mac.style.display = "block";
-        if (qr) qr.style.display = "block";
-        if (noAddEl) noAddEl.style.display = "block";
-    }
-
+    // Adicionar sonda por MAC
     if (btnAddMac) {
         btnAddMac.addEventListener("click", async () => {
             const mac = macInput.value.trim();
 
             if (!mac) {
-                alert("Por favor, insira o endereço MAC da placa.");
+                AddAviso.textContent = "Por favor, insira o endereço MAC da placa.";
                 return;
             }
 
@@ -768,7 +740,6 @@
             }
 
             try {
-                // 1️⃣ Primeiro: cadastra a planta no usuário (igual ao continuar sem sonda)
                 const respUserPlanta = await fetch(`${url_api}/UserPlantas`, {
                     method: "POST",
                     headers: {
@@ -786,13 +757,11 @@
                     throw new Error(dataUserPlanta.error || "Erro ao vincular planta ao usuário.");
                 }
 
-                // pega o id da relação (usuario_planta_id)
                 const usuario_planta_id = dataUserPlanta.id || dataUserPlanta.data?.id;
                 if (!usuario_planta_id) {
                     throw new Error("Não foi possível obter o ID da planta do usuário.");
                 }
 
-                // 2️⃣ Depois: faz o POST na rota /sensor/adotar
                 const respAdotar = await fetch(`${url_api}/sensor/adotar`, {
                     method: "POST",
                     headers: {
@@ -812,17 +781,15 @@
 
                 alert("✅ Sensor adicionado com sucesso!");
 
-                // Limpa e fecha modais
                 macInput.value = "";
                 if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
                 if (modalAdd) modalAdd.style.display = "none";
 
-                // Atualiza a lista de plantas
                 buscarPlantasPorUser(user.id);
 
             } catch (err) {
                 console.error("Erro ao adicionar sonda:", err);
-                alert("❌ " + (err.message || "Erro desconhecido ao adicionar sonda."));
+                AddAviso.textContent = "Erro ao adicionar sonda: " + (err.message || err);
             }
         });
     }
@@ -835,7 +802,6 @@
         });
     }
 
-    const fecharSondaBtn = document.getElementById("fecharAddSonda");
     if (fecharSondaBtn) {
         fecharSondaBtn.addEventListener("click", () => {
             if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
@@ -843,7 +809,7 @@
         });
     }
 
-    const noAddBtn = document.getElementById('noAdd');
+    // Adicionar planta sem sonda
     if (noAddBtn) {
         noAddBtn.addEventListener('click', async () => {
             if (!selectedPlantId) {
@@ -869,18 +835,21 @@
                     throw new Error(txt || 'Erro ao adicionar a planta ao usuário.');
                 }
 
-                // opcional: atualizar a lista de plantas do usuário e fechar modais
                 if (AbrirAddSonda) AbrirAddSonda.style.display = 'none';
                 if (modalAdd) modalAdd.style.display = 'none';
                 selectedPlantId = null;
                 buscarPlantasPorUser(user.id);
 
-                // alert('Planta adicionada com sucesso.');
             } catch (err) {
                 console.error(err);
                 alert('Erro ao adicionar planta: ' + (err.message || err));
             }
         });
     }
+
+    /* -------------------------
+    Inicialização
+    --------------------------*/
+    buscarPlantasPorUser(user.id);
 
 </script>

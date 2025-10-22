@@ -93,7 +93,7 @@
     const isEditable = ae && (ae.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
     if (isEditable) return;
 
-    if (e.key === 'Escape' || e.keyCode === 37,9) {
+    if (e.key === 'Escape' || e.keyCode === 37) {
       e.preventDefault();
       toggleMenu();
     }
