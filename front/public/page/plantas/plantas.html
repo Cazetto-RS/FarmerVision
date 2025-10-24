@@ -98,7 +98,9 @@
                         </div>
 
                         <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
-                            <p class="modal-plantas-add-semSonda" style="color: #C21B12; margin-top: -5px; margin-bottom: 10px;" id="AddAviso"></p>
+                            <p class="modal-plantas-add-semSonda"
+                                style="color: #C21B12; margin-top: -5px; margin-bottom: 10px; text-align: center;"
+                                id="AddAviso"></p>
                         </div>
 
                         <div class="modal-planstas-add-centralizar" id="listaPlantasAdd">
@@ -217,7 +219,8 @@
                         <div class="modal-plantas-btn-div">
                             <button class="modal-plantas-btn-modificações-add" id="adicionarSensor">Adicionar
                                 Sensor</button>
-                            <button class="modal-plantas-btn-modificações-delete" id="deletarPlanta">Deletar
+                            <button class="modal-plantas-btn-modificações-delete" id="deletarPlanta"
+                                data-plant-id="ID_DO_VINCULO_CORRETO">Deletar
                                 Planta</button>
                         </div>
                     </div>
@@ -373,6 +376,13 @@
             });
     }
 
+    // Confirmando que o ID é do vinculo
+    const plantUserId = deletarPlantaBtn.dataset.plantId;
+    fetch(`${url_api}/UserPlantas/${encodeURIComponent(plantUserId)}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
     /* -------------------------
     Funções de renderização
     --------------------------*/
@@ -387,7 +397,7 @@
 
         plantas.forEach(planta => {
             const plantaHTML = `
-                <div class="plantas-container" data-id="${planta.id}">
+                <div class="plantas-container" data-id="${planta.id_vinculo}">
                     <div class="div-plantas-imagem">
                         <img src="../../assets/img/Favicon.png"
                             alt="${planta.nome_comum || planta.nome}" class="plantas-imagem img-fluid">
@@ -727,10 +737,16 @@
     // Adicionar sonda por MAC
     if (btnAddMac) {
         btnAddMac.addEventListener("click", async () => {
-            const mac = macInput.value.trim();
+            const mac = macInput.value.replace(/[^a-fA-F0-9]/g, "").toUpperCase(); // limpa máscara visual
+            AddAviso.textContent = ""; // limpa mensagens anteriores
 
             if (!mac) {
                 AddAviso.textContent = "Por favor, insira o endereço MAC da placa.";
+                return;
+            }
+
+            if (mac.length !== 12) {
+                AddAviso.textContent = "O endereço MAC deve conter entre 10 e 12 caracteres";
                 return;
             }
 
@@ -740,6 +756,24 @@
             }
 
             try {
+                // 1️⃣ Testa primeiro a adoção do sensor (sem adicionar planta ainda)
+                const respAdotar = await fetch(`${url_api}/sensor/adotar`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ mac_placa: mac })
+                });
+
+                const dataAdotar = await respAdotar.json();
+                if (!respAdotar.ok) {
+                    throw new Error(dataAdotar.error || "Erro ao registrar o sensor.");
+                }
+
+                console.log("Sensor adotado com sucesso:", dataAdotar);
+
+                // 2️⃣ Só depois de sucesso, vincula a planta ao usuário
                 const respUserPlanta = await fetch(`${url_api}/UserPlantas`, {
                     method: "POST",
                     headers: {
@@ -757,30 +791,9 @@
                     throw new Error(dataUserPlanta.error || "Erro ao vincular planta ao usuário.");
                 }
 
-                const usuario_planta_id = dataUserPlanta.id || dataUserPlanta.data?.id;
-                if (!usuario_planta_id) {
-                    throw new Error("Não foi possível obter o ID da planta do usuário.");
-                }
+                alert("✅ Sensor e planta adicionados com sucesso!");
 
-                const respAdotar = await fetch(`${url_api}/sensor/adotar`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        mac_placa: mac,
-                        usuario_planta_id
-                    })
-                });
-
-                const dataAdotar = await respAdotar.json();
-                if (!respAdotar.ok) {
-                    throw new Error(dataAdotar.error || "Erro ao registrar o sensor.");
-                }
-
-                alert("✅ Sensor adicionado com sucesso!");
-
+                // limpa e fecha modais
                 macInput.value = "";
                 if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
                 if (modalAdd) modalAdd.style.display = "none";
@@ -852,4 +865,27 @@
     --------------------------*/
     buscarPlantasPorUser(user.id);
 
+</script>
+
+<!-- Detalhe fluflu no inserir MAC -->
+<script>
+    // aplica máscara visual
+    macInput.addEventListener("input", (e) => {
+        let valor = e.target.value.replace(/[^a-fA-F0-9]/g, "").toUpperCase(); // remove tudo que não é hex e põe maiúsculo
+        let formatado = valor.match(/.{1,2}/g)?.join(" : ") || "";
+        e.target.value = formatado;
+    });
+
+    // quando for enviar, tira a máscara
+    document.getElementById("addMac").addEventListener("click", () => {
+        const valorSemMascara = macInput.value.replace(/[^a-fA-F0-9]/g, "").toUpperCase();
+        console.log("Valor enviado:", valorSemMascara);
+
+        // exemplo de envio:
+        fetch("/sensor/adotar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mac: valorSemMascara })
+        });
+    });
 </script>
