@@ -116,14 +116,18 @@ export const cadastrar = async ({ usuario_id, planta_id }) => {
     }
 };
 
-export const deletar = async (usuario_id, planta_id) => {
-  let cx;
-  try {
-    const cmdSql = 'DELETE FROM usuario_plantas WHERE usuario_id = ? AND planta_id = ?;';
-    cx = await pool.getConnection();
-    const [dados] = await cx.query(cmdSql, [usuario_id, planta_id]);
-    return dados;
-  } finally {
-    if (cx) cx.release();
-  }
+export const deletar = async (id) => {
+    let cx;
+    try {
+        const cmdSql = 'DELETE FROM usuario_plantas WHERE id = ? LIMIT 1;';
+        cx = await pool.getConnection();
+        const [dados, meta_dados] = await cx.query(cmdSql, [id]);
+        return dados;
+    }
+    catch (error) {
+        throw error;
+    }
+    finally {
+        if (cx) cx.release();
+    }
 };
