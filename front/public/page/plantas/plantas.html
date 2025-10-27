@@ -445,10 +445,16 @@
             listaPlantasAdd.insertAdjacentHTML("beforeend", plantaHTML);
 
             const novoCard = listaPlantasAdd.lastElementChild;
-            novoCard.addEventListener('click', () => {
+            novoCard.addEventListener('click', async (e) => {
+                e.stopPropagation(); // impede que o clique chegue até listaPlantasContainer
+
                 selectedPlantId = planta.id;
-                console.log("ID da planta:", planta.id, "ID do usuário:", user.id);
+                console.log("🌱 Clicou na planta:", planta.id, "Usuário:", user.id);
+
+                if (modalAdd) modalAdd.style.display = "none";
+                if (AbrirAddSonda) AbrirAddSonda.style.display = "block";
             });
+
         });
     }
 
@@ -735,77 +741,88 @@
     adicionarSondaQrCode.style.display = "none";
 
     // Adicionar sonda por MAC
+    // Substitua o handler atual por este bloco
     if (btnAddMac) {
         btnAddMac.addEventListener("click", async () => {
-            const mac = macInput.value.replace(/[^a-fA-F0-9]/g, "").toUpperCase(); // limpa máscara visual
-            AddAviso.textContent = ""; // limpa mensagens anteriores
-
-            if (!mac) {
-                AddAviso.textContent = "Por favor, insira o endereço MAC da placa.";
-                return;
-            }
-
-            if (mac.length !== 12) {
-                AddAviso.textContent = "O endereço MAC deve conter entre 10 e 12 caracteres";
-                return;
-            }
+            const mac = macInput.value.trim().toUpperCase().replace(/[^A-F0-9]/g, "");
+            AddAviso.textContent = "";
 
             if (!selectedPlantId) {
-                alert("Selecione uma planta antes de adicionar a sonda.");
+                alert("Selecione uma planta primeiro.");
+                return;
+            }
+
+            // 1️⃣ Verifica o tamanho do MAC
+            if (mac.length < 10 || mac.length > 12) {
+                AddAviso.textContent = "❌ O endereço MAC deve ter entre 10 e 12 caracteres.";
                 return;
             }
 
             try {
-                // 1️⃣ Testa primeiro a adoção do sensor (sem adicionar planta ainda)
-                const respAdotar = await fetch(`${url_api}/sensor/adotar`, {
-                    method: "POST",
+                // 2️⃣ Verifica se o MAC já existe no banco
+                const respCheck = await fetch(`${url_api}/sensor/verificarCadastrado/${mac}`, {
                     headers: {
-                        "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ mac_placa: mac })
+                    }
                 });
 
-                const dataAdotar = await respAdotar.json();
-                if (!respAdotar.ok) {
-                    throw new Error(dataAdotar.error || "Erro ao registrar o sensor.");
+                if (respCheck.ok) {
+                    const dataCheck = await respCheck.json();
+                    if (dataCheck.existe) {
+                        AddAviso.textContent = "⚠️ Este MAC já está cadastrado para outra planta.";
+                        return;
+                    }
+                } else {
+                    console.warn("⚠️ Rota de verificação retornou erro, continuando mesmo assim...");
                 }
 
-                console.log("Sensor adotado com sucesso:", dataAdotar);
-
-                // 2️⃣ Só depois de sucesso, vincula a planta ao usuário
+                // 3️⃣ Cadastra a planta
                 const respUserPlanta = await fetch(`${url_api}/UserPlantas`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
+                    body: JSON.stringify({ planta_id: selectedPlantId })
+                });
+
+                const userPlantaJson = await respUserPlanta.json();
+                if (!respUserPlanta.ok) {
+                    throw new Error(userPlantaJson.error || userPlantaJson.message || "Erro ao cadastrar planta.");
+                }
+
+                const vinculoId = userPlantaJson.id || userPlantaJson.data?.id || userPlantaJson.insertId;
+
+                // 4️⃣ Adota a sonda (MAC válido e não duplicado)
+                const respAdotar = await fetch(`${url_api}/sensor/adotar`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
                     body: JSON.stringify({
-                        usuario_id: user.id,
-                        planta_id: selectedPlantId
+                        mac_placa: mac,
+                        usuario_planta_id: vinculoId
                     })
                 });
 
-                const dataUserPlanta = await respUserPlanta.json();
-                if (!respUserPlanta.ok) {
-                    throw new Error(dataUserPlanta.error || "Erro ao vincular planta ao usuário.");
+                const dataAdotar = await respAdotar.json();
+                if (!respAdotar.ok) {
+                    throw new Error(dataAdotar.error || dataAdotar.message || "Erro ao registrar sonda.");
                 }
 
-                alert("✅ Sensor e planta adicionados com sucesso!");
-
-                // limpa e fecha modais
+                alert("✅ Sonda e planta adicionadas com sucesso!");
                 macInput.value = "";
-                if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
-                if (modalAdd) modalAdd.style.display = "none";
-
+                AbrirAddSonda.style.display = "none";
                 buscarPlantasPorUser(user.id);
 
             } catch (err) {
                 console.error("Erro ao adicionar sonda:", err);
-                AddAviso.textContent = "Erro ao adicionar sonda: " + (err.message || err);
+                AddAviso.textContent = "Erro: " + (err.message || err);
             }
         });
     }
+
 
     // Continuar sem sonda
     if (ContinuarSemSonda) {
