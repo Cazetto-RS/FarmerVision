@@ -7,6 +7,9 @@ const router = express.Router();
 
 // Adotar uma placa (usuário cadastra sensor pelo MAC)
 router.post('/sensor/adotar', autenticar, SensorController.adotarPlaca);
+// Verifica se um MAC existe no sistema
+router.get('/sensor/verificar/:mac', autenticar, SensorController.verificarMac);
+router.get('/sensor/verificarCadastrado/:mac', autenticar, SensorController.verificarMacCadastrado);
 // Sensor envia dados de leitura (sem autenticação)
 router.post('/sensor/dados/:mac', SensorController.receberDados);
 // Buscar histórico de leituras por MAC (para gráfico)

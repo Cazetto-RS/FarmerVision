@@ -104,6 +104,52 @@ export const receberDados = async (req, res) => {
 };
 
 // ------------------------
+// 4️⃣ Verificar se MAC existe
+// ------------------------
+export const verificarMac = async (req, res) => {
+    try {
+        const macRaw = req.params.mac;
+        const mac = normalizeMac(macRaw);
+        
+        if (!mac) {
+            return res.status(400).json({ error: 'MAC inválido' });
+        }
+
+        const macExiste = await Sensor.verificarMacExistente(mac);
+        return res.json({
+            sucesso: true,
+            existe: macExiste.length > 0
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// ------------------------
+// 4️⃣ Verificar se MAC esta cadastrado
+// ------------------------
+export const verificarMacCadastrado = async (req, res) => {
+    try {
+        const macRaw = req.params.mac;
+        const mac = normalizeMac(macRaw);
+        
+        if (!mac) {
+            return res.status(400).json({ error: 'MAC inválido' });
+        }
+
+        const macExiste = await Sensor.verificarMacExistenteCadastrado(mac);
+        return res.json({
+            sucesso: true,
+            existe: macExiste.length > 0
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// ------------------------
 // 3️⃣ Histórico (para o gráfico)
 // ------------------------
 export const historicoPorMac = async (req, res) => {
