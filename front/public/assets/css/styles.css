@@ -676,6 +676,11 @@ img {
     .adicionar-sonda-mac,
     .adicionar-sonda-qrcode {
         /* display: none; */
+
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
     }
 
     .modal-plantas-add-btn {
@@ -743,6 +748,7 @@ img {
         display: flex;
         flex-direction: column;
         gap: 10px;
+        margin-top: -10px;
     }
 
     .modal-plantas-add-pesquisa {
@@ -2122,11 +2128,11 @@ img {
         z-index: 999999;
     }
 
-    .modal-uni-texto{
+    .modal-uni-texto {
         padding-top: 10px;
     }
 
-    .modal-uni-text{
+    .modal-uni-text {
         width: 80%;
     }
 
@@ -2323,7 +2329,7 @@ img {
         scrollbar-color: var(--cinza) var(--cinza-escuro);
     }
 
-    .elementos-modal-uni{
+    .elementos-modal-uni {
         display: flex;
         flex-direction: column;
         align-items: center;
