@@ -44,12 +44,17 @@ export const verificarMacExistenteCadastrado = async (mac_placa) => {
 };
 
 // Registra uma leitura enviada pelo sensor
-export const registrarLeitura = async (mac_placa, valores) => {
+export const registrarLeitura = async (mac_placa, dados) => {
     let cx;
     try {
         cx = await pool.getConnection();
-        const cmdSql = 'INSERT INTO dados_sensor (mac_placa, valores) VALUES (?, ?);';
-        await cx.query(cmdSql, [mac_placa, JSON.stringify(valores)]);
+        const valores = JSON.stringify(dados);
+        const cmdSql = `
+            INSERT INTO dados_sensor (mac_placa, valores)
+            VALUES (?, ?);
+        `;
+        await cx.query(cmdSql, [mac_placa, valores]);
+        console.log(`💾 Leitura salva no banco: ${mac_placa} → ${valores}`);
         return true;
     } catch (error) {
         throw error;

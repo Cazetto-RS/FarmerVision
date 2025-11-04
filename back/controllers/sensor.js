@@ -77,28 +77,31 @@ export const adotarPlaca = async (req, res) => {
 export const receberDados = async (req, res) => {
     try {
         const mac = normalizeMac(req.params.mac);
-
-        const { valores } = req.body;
+        const { umidade, temperatura, valores } = req.body;
 
         if (!mac) {
             return res.status(400).json({ error: 'MAC inválido' });
         }
-        // Verifica se o sensor foi adotado
+
+        // Caso venha o formato antigo { valores: {...} }, mantém compatibilidade
+        const dados = valores || { umidade, temperatura };
+
+        if (!dados.umidade || !dados.temperatura) {
+            return res.status(400).json({ error: 'Campos umidade e temperatura são obrigatórios' });
+        }
+
+        // Verifica se o MAC foi adotado
         const existe = await Sensor.buscarAdoçãoPorMac(mac);
         if (existe.length === 0) {
             return res.status(404).json({ error: 'MAC não encontrado ou não adotado' });
         }
 
-        if (!valores) {
-            return res.status(400).json({ error: 'valores são obrigatórios' });
-        }
-
-        // Registra leitura
-        await Sensor.registrarLeitura(mac, valores);
+        // Registra leitura no banco
+        await Sensor.registrarLeitura(mac, dados);
 
         res.status(201).json({ sucesso: true, mensagem: 'Leitura registrada com sucesso!' });
     } catch (error) {
-        console.error(error);
+        console.error('❌ Erro ao receber dados do sensor:', error);
         res.status(500).json({ error: error.message });
     }
 };
