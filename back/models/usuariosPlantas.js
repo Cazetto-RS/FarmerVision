@@ -119,15 +119,25 @@ export const cadastrar = async ({ usuario_id, planta_id }) => {
 export const deletar = async (id) => {
     let cx;
     try {
-        const cmdSql = 'DELETE FROM usuario_plantas WHERE id = ? LIMIT 1;';
         cx = await pool.getConnection();
-        const [dados, meta_dados] = await cx.query(cmdSql, [id]);
-        return dados;
-    }
-    catch (error) {
+
+        // 🧠 executa o delete e verifica o resultado
+        const [resultado] = await cx.query(
+            'DELETE FROM usuario_plantas WHERE id = ? LIMIT 1',
+            [id]
+        );
+
+        console.log("🗑️ Resultado do DELETE:", resultado);
+
+        if (resultado.affectedRows === 0) {
+            throw new Error('Nenhum registro encontrado com este ID.');
+        }
+
+        return { success: true, id };
+    } catch (error) {
+        console.error("Erro no model usuario_plantas.deletar:", error);
         throw error;
-    }
-    finally {
+    } finally {
         if (cx) cx.release();
     }
 };

@@ -62,12 +62,17 @@ export const cadastrar = async (req, res) => {
 };
 
 export const deletar = async (req, res) => {
-  try {
-    const usuario_id = req.loginId;
-    const planta_id = req.params.id;
-    const data = await UsuarioPlantas.deletar(usuario_id, planta_id);
-    res.status(200).json({ method: 'DELETE', data });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const id = req.params.id;
+        console.log("🗑️ Tentando deletar vínculo ID:", id);
+
+        const data = await UsuarioPlantas.deletar(id);
+        return res.status(200).json({
+            message: "Planta do usuário deletada com sucesso.",
+            data
+        });
+    } catch (error) {
+        console.error("Erro no controller deletar:", error);
+        res.status(500).json({ error: error.message });
+    }
 };

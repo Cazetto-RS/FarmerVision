@@ -85,7 +85,8 @@
 
                         <div class="adicionar-sonda-qrcode" id="adicionar-sonda-qrcode">
                             <div class="modal-plantas-add-pesquisa-pag2">
-                                <video id="videoSonda" autoplay playsinline muted style="width: 300px; height: 200px"></video>
+                                <video id="videoSonda" autoplay playsinline muted
+                                    style="width: 300px; height: 200px"></video>
                             </div>
                         </div>
 
@@ -379,11 +380,11 @@
     }
 
     // Confirmando que o ID é do vinculo
-    const plantUserId = deletarPlantaBtn.dataset.plantId;
-    fetch(`${url_api}/UserPlantas/${encodeURIComponent(plantUserId)}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
+    // const plantUserId = deletarPlantaBtn.dataset.plantId;
+    // fetch(`${url_api}/UserPlantas/${encodeURIComponent(plantUserId)}`, {
+    //     method: 'DELETE',
+    //     headers: { 'Authorization': `Bearer ${token}` }
+    // });
 
     /* -------------------------
     Funções de renderização
@@ -393,7 +394,7 @@
         listaPlantas.innerHTML = '';
 
         if (!plantas || plantas.length === 0) {
-            listaPlantas.innerHTML = '<p>Nenhuma planta encontrada para este usuário.</p>';
+            listaPlantas.innerHTML = '<p></p>';
             return;
         }
 
@@ -571,24 +572,32 @@
         document.getElementById('modalDescricao').textContent = planta.descricao || 'Sem descrição';
         document.getElementById('modalFamilia').textContent = planta.familia || 'Não informado';
         document.getElementById('modalClima').textContent = planta.clima || 'Não informado';
-        document.getElementById('modalAltura').textContent = (planta.altura_media_cm ? (planta.altura_media_cm + " cm") : 'Não informado');
+        document.getElementById('modalAltura').textContent = planta.altura_media_cm ? `${planta.altura_media_cm} cm` : 'Não informado';
         document.getElementById('modalToxicidade').textContent = planta.toxicidade || 'Não informado';
         document.getElementById('modalEfeitos').textContent = planta.efeitos_toxicos || 'Não informado';
         document.getElementById('modalGenero').textContent = planta.genero || 'Não informado';
         document.getElementById('modalLight').textContent = planta.luz || 'Não informado';
         document.getElementById('modalWater').textContent = planta.agua || 'Não informado';
         document.getElementById('modalUsos').textContent = planta.usos || 'Não informado';
-        document.getElementById('modalTempCultivo').textContent = (planta.tempo_de_cultivo_dias ? (planta.tempo_de_cultivo_dias + " dias") : 'Não informado');
+        document.getElementById('modalTempCultivo').textContent = planta.tempo_de_cultivo_dias ? `${planta.tempo_de_cultivo_dias} dias` : 'Não informado';
         document.getElementById('modalFloracao').textContent = planta.floracao || 'Não informado';
         document.getElementById('modalDivisao').textContent = planta.divisao || 'Não informado';
         document.getElementById('modalClasse').textContent = planta.classe || 'Não informado';
 
+        // Mostra o modal
         document.getElementById('plantModal').style.display = 'block';
 
-        const plantaUsuarioId = planta.id_vinculo;
-        console.log("🌱 ID da planta_usuario:", plantaUsuarioId);
+        // ✅ Define o ID do vínculo para o botão DELETAR, antes de verificar o sensor
+        const deletarBtn = document.getElementById('deletarPlanta');
+        if (deletarBtn) {
+            deletarBtn.dataset.plantId = planta.id_vinculo;
+            console.log("🗑️ ID do vínculo atribuído ao botão:", planta.id_vinculo);
+        }
 
+        // 🌱 Agora vem a parte dos sensores
+        const plantaUsuarioId = planta.id_vinculo;
         const mac = await buscarMacPorPlanta(plantaUsuarioId);
+
         if (!mac) {
             console.warn("❌ Nenhum sensor vinculado a esta planta.");
             DeletarGraficos();
@@ -643,10 +652,7 @@
         deletarPlantaBtn.addEventListener("click", async () => {
             if (!confirm('Tem certeza que deseja deletar esta planta?')) return;
 
-            const plantId = deletarPlantaBtn.dataset.plantId ||
-                lastClickedPlantId ||
-                document.querySelector('.plantas-container[data-id]')?.getAttribute('data-id');
-
+            const plantId = deletarPlantaBtn.dataset.plantId;
             if (!plantId) {
                 alert('ID da planta não encontrado.');
                 return;
@@ -663,10 +669,9 @@
                     throw new Error(txt || 'Erro ao deletar a planta do usuário.');
                 }
 
+                alert('Planta deletada com sucesso!');
                 document.getElementById('plantModal').style.display = 'none';
-                delete deletarPlantaBtn.dataset.plantId;
                 buscarPlantasPorUser(user.id);
-                alert('Planta deletada com sucesso.');
             } catch (err) {
                 console.error(err);
                 alert('Erro ao deletar planta: ' + (err.message || err));
@@ -907,171 +912,171 @@
 </script>
 
 <script>
-/* ===== QR → usar texto lido como MAC e adotar a sonda ===== */
-(() => {
-  // elemento onde o leitor vai exibir (usar a div que já existe: adicionar-sonda-qrcode)
-  const qrContainerId = "adicionar-sonda-qrcode";
-  let html5QrCode = null;
-  let qrRunning = false;
+    /* ===== QR → usar texto lido como MAC e adotar a sonda ===== */
+    (() => {
+        // elemento onde o leitor vai exibir (usar a div que já existe: adicionar-sonda-qrcode)
+        const qrContainerId = "adicionar-sonda-qrcode";
+        let html5QrCode = null;
+        let qrRunning = false;
 
-  // sanitiza texto do QR para ficar só HEX sem separadores (igual ao MAC usado no input)
-  function sanitizeToMac(raw) {
-    if (!raw) return "";
-    // remove tudo que não é 0-9 A-F (hex), maiúscula
-    return raw.replace(/[^a-fA-F0-9]/g, "").toUpperCase();
-  }
-
-  // chamada para adotar (mesma ideia que seu addMac)
-  async function adotarPorMac(macSemMascara) {
-    if (!selectedPlantId) {
-      AddAviso.textContent = "Selecione uma planta antes de escanear o QR.";
-      return;
-    }
-    AddAviso.textContent = "";
-
-    // valida tamanho (mesma regra que você já usa: 10-12)
-    if (macSemMascara.length < 10 || macSemMascara.length > 12) {
-      AddAviso.textContent = "MAC lido inválido (tamanho).";
-      return;
-    }
-
-    try {
-      // Verifica duplicado (opcional, mas mantive conforme seu fluxo)
-      try {
-        const respCheck = await fetch(`${url_api}/sensor/verificarCadastrado/${macSemMascara}`, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (respCheck.ok) {
-          const dataCheck = await respCheck.json();
-          if (dataCheck.existe) {
-            AddAviso.textContent = "⚠️ Este MAC já está cadastrado para outra planta.";
-            return;
-          }
+        // sanitiza texto do QR para ficar só HEX sem separadores (igual ao MAC usado no input)
+        function sanitizeToMac(raw) {
+            if (!raw) return "";
+            // remove tudo que não é 0-9 A-F (hex), maiúscula
+            return raw.replace(/[^a-fA-F0-9]/g, "").toUpperCase();
         }
-      } catch (e) {
-        console.warn("Verificação de existencia falhou, prosseguindo...", e);
-      }
 
-      // 1) cadastra vínculo usuário->planta (se ainda não existir o vinculo; seu fluxo cria sempre)
-      const respUserPlanta = await fetch(`${url_api}/UserPlantas`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ planta_id: selectedPlantId })
-      });
-      const jsonUserPlanta = await respUserPlanta.json();
-      if (!respUserPlanta.ok) throw new Error(jsonUserPlanta.error || jsonUserPlanta.message || "Erro ao cadastrar planta.");
+        // chamada para adotar (mesma ideia que seu addMac)
+        async function adotarPorMac(macSemMascara) {
+            if (!selectedPlantId) {
+                AddAviso.textContent = "Selecione uma planta antes de escanear o QR.";
+                return;
+            }
+            AddAviso.textContent = "";
 
-      const vinculoId = jsonUserPlanta.id || jsonUserPlanta.data?.id || jsonUserPlanta.insertId;
-      if (!vinculoId) throw new Error("Não foi possível obter o ID do vínculo.");
+            // valida tamanho (mesma regra que você já usa: 10-12)
+            if (macSemMascara.length < 10 || macSemMascara.length > 12) {
+                AddAviso.textContent = "MAC lido inválido (tamanho).";
+                return;
+            }
 
-      // 2) adotar sonda (registrar MAC)
-      const respAdotar = await fetch(`${url_api}/sensor/adotar`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ mac_placa: macSemMascara, usuario_planta_id: vinculoId })
-      });
-      const dataAdotar = await respAdotar.json();
-      if (!respAdotar.ok) throw new Error(dataAdotar.error || dataAdotar.message || "Erro ao registrar sonda.");
+            try {
+                // Verifica duplicado (opcional, mas mantive conforme seu fluxo)
+                try {
+                    const respCheck = await fetch(`${url_api}/sensor/verificarCadastrado/${macSemMascara}`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    if (respCheck.ok) {
+                        const dataCheck = await respCheck.json();
+                        if (dataCheck.existe) {
+                            AddAviso.textContent = "⚠️ Este MAC já está cadastrado para outra planta.";
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Verificação de existencia falhou, prosseguindo...", e);
+                }
 
-      // sucesso
-      alert("✅ Sonda e planta adicionadas com sucesso via QR!");
-      // fecha modal e atualiza UI
-      if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
-      if (modalAdd) modalAdd.style.display = "none";
-      buscarPlantasPorUser(user.id);
-    } catch (err) {
-      console.error("Erro ao adotar por MAC via QR:", err);
-      AddAviso.textContent = "Erro ao adicionar sonda: " + (err.message || err);
-    }
-  }
+                // 1) cadastra vínculo usuário->planta (se ainda não existir o vinculo; seu fluxo cria sempre)
+                const respUserPlanta = await fetch(`${url_api}/UserPlantas`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    body: JSON.stringify({ planta_id: selectedPlantId })
+                });
+                const jsonUserPlanta = await respUserPlanta.json();
+                if (!respUserPlanta.ok) throw new Error(jsonUserPlanta.error || jsonUserPlanta.message || "Erro ao cadastrar planta.");
 
-  // callback quando o QR for lido
-  async function onQrSuccess(decodedText, decodedResult) {
-    // evita múltiplas chamadas
-    if (!decodedText || !qrRunning) return;
-    qrRunning = false; // bloqueia novas leituras até processar
-    try {
-      const mac = sanitizeToMac(decodedText);
-      console.log("QR lido → raw:", decodedText, "→ mac:", mac);
-      // opcional: mostrar no input com máscara visual (se quiser)
-      if (macInput) macInput.value = mac.match(/.{1,2}/g)?.join(" : ") || mac;
-      // chama função que faz o cadastro (usa selectedPlantId)
-      await adotarPorMac(mac);
-    } finally {
-      // após processar, para o scanner (evita re-leituras)
-      stopQrReader();
-    }
-  }
+                const vinculoId = jsonUserPlanta.id || jsonUserPlanta.data?.id || jsonUserPlanta.insertId;
+                if (!vinculoId) throw new Error("Não foi possível obter o ID do vínculo.");
 
-  async function startQrReader() {
-    if (html5QrCode) return;
-    const element = document.getElementById(qrContainerId);
-    if (!element) {
-      console.error("Container do QR não encontrado:", qrContainerId);
-      return;
-    }
+                // 2) adotar sonda (registrar MAC)
+                const respAdotar = await fetch(`${url_api}/sensor/adotar`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    body: JSON.stringify({ mac_placa: macSemMascara, usuario_planta_id: vinculoId })
+                });
+                const dataAdotar = await respAdotar.json();
+                if (!respAdotar.ok) throw new Error(dataAdotar.error || dataAdotar.message || "Erro ao registrar sonda.");
 
-    // cria elemento que html5-qrcode usa internamente (o lib espera um elemento id como container)
-    // se já existir um child vídeo, limpar para a lib criar seu próprio UI
-    element.innerHTML = '<div id="qr-reader" style="width:320px"></div>';
+                // sucesso
+                alert("✅ Sonda e planta adicionadas com sucesso via QR!");
+                // fecha modal e atualiza UI
+                if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
+                if (modalAdd) modalAdd.style.display = "none";
+                buscarPlantasPorUser(user.id);
+            } catch (err) {
+                console.error("Erro ao adotar por MAC via QR:", err);
+                AddAviso.textContent = "Erro ao adicionar sonda: " + (err.message || err);
+            }
+        }
 
-    html5QrCode = new Html5Qrcode("qr-reader");
-    const config = { fps: 10, qrbox: { width: 260, height: 260 } };
+        // callback quando o QR for lido
+        async function onQrSuccess(decodedText, decodedResult) {
+            // evita múltiplas chamadas
+            if (!decodedText || !qrRunning) return;
+            qrRunning = false; // bloqueia novas leituras até processar
+            try {
+                const mac = sanitizeToMac(decodedText);
+                console.log("QR lido → raw:", decodedText, "→ mac:", mac);
+                // opcional: mostrar no input com máscara visual (se quiser)
+                if (macInput) macInput.value = mac.match(/.{1,2}/g)?.join(" : ") || mac;
+                // chama função que faz o cadastro (usa selectedPlantId)
+                await adotarPorMac(mac);
+            } finally {
+                // após processar, para o scanner (evita re-leituras)
+                stopQrReader();
+            }
+        }
 
-    try {
-      qrRunning = true;
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        (decodedText, decodedResult) => onQrSuccess(decodedText, decodedResult),
-        (errorMessage) => { /* leitura em background, ignora */ }
-      );
-      console.log("QR reader iniciado.");
-    } catch (err) {
-      console.error("Erro ao iniciar leitor QR:", err);
-      AddAviso.textContent = "Não foi possível iniciar o leitor QR: " + (err.message || err);
-      // cleanup se falhar
-      stopQrReader();
-    }
-  }
+        async function startQrReader() {
+            if (html5QrCode) return;
+            const element = document.getElementById(qrContainerId);
+            if (!element) {
+                console.error("Container do QR não encontrado:", qrContainerId);
+                return;
+            }
 
-  async function stopQrReader() {
-    if (!html5QrCode) return;
-    try {
-      await html5QrCode.stop();
-    } catch (e) {
-      console.warn("Parar html5QrCode deu erro:", e);
-    }
-    try {
-      html5QrCode.clear();
-    } catch (e) {}
-    html5QrCode = null;
-    qrRunning = false;
-    // restaura o conteúdo original se necessário
-    const el = document.getElementById(qrContainerId);
-    if (el) el.innerHTML = '<video id="videoSonda" autoplay playsinline muted style="width: 300px; height: 200px"></video>';
-    console.log("QR reader parado.");
-  }
+            // cria elemento que html5-qrcode usa internamente (o lib espera um elemento id como container)
+            // se já existir um child vídeo, limpar para a lib criar seu próprio UI
+            element.innerHTML = '<div id="qr-reader" style="width:320px"></div>';
 
-  // Observador do modal: inicia quando abrir, para quando fechar
-  const observer = new MutationObserver(() => {
-    try {
-      const isOpen = (AbrirAddSonda && AbrirAddSonda.style.display === "block");
-      if (isOpen) startQrReader();
-      else stopQrReader();
-    } catch (e) { console.error(e); }
-  });
-  if (AbrirAddSonda) observer.observe(AbrirAddSonda, { attributes: true, attributeFilter: ["style", "class"] });
+            html5QrCode = new Html5Qrcode("qr-reader");
+            const config = { fps: 10, qrbox: { width: 260, height: 260 } };
 
-  // Também para/reset ao fechar com botão
-  const fecharBtn = document.getElementById("fecharAddSonda");
-  if (fecharBtn) fecharBtn.addEventListener("click", () => {
-    if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
-    stopQrReader();
-    resetAddSondaUI && resetAddSondaUI();
-  });
+            try {
+                qrRunning = true;
+                await html5QrCode.start(
+                    { facingMode: "environment" },
+                    config,
+                    (decodedText, decodedResult) => onQrSuccess(decodedText, decodedResult),
+                    (errorMessage) => { /* leitura em background, ignora */ }
+                );
+                console.log("QR reader iniciado.");
+            } catch (err) {
+                console.error("Erro ao iniciar leitor QR:", err);
+                AddAviso.textContent = "Não foi possível iniciar o leitor QR: " + (err.message || err);
+                // cleanup se falhar
+                stopQrReader();
+            }
+        }
 
-  // segurança: parar ao sair da página
-  window.addEventListener("beforeunload", () => stopQrReader());
-})();
+        async function stopQrReader() {
+            if (!html5QrCode) return;
+            try {
+                await html5QrCode.stop();
+            } catch (e) {
+                console.warn("Parar html5QrCode deu erro:", e);
+            }
+            try {
+                html5QrCode.clear();
+            } catch (e) { }
+            html5QrCode = null;
+            qrRunning = false;
+            // restaura o conteúdo original se necessário
+            const el = document.getElementById(qrContainerId);
+            if (el) el.innerHTML = '<video id="videoSonda" autoplay playsinline muted style="width: 300px; height: 200px"></video>';
+            console.log("QR reader parado.");
+        }
+
+        // Observador do modal: inicia quando abrir, para quando fechar
+        const observer = new MutationObserver(() => {
+            try {
+                const isOpen = (AbrirAddSonda && AbrirAddSonda.style.display === "block");
+                if (isOpen) startQrReader();
+                else stopQrReader();
+            } catch (e) { console.error(e); }
+        });
+        if (AbrirAddSonda) observer.observe(AbrirAddSonda, { attributes: true, attributeFilter: ["style", "class"] });
+
+        // Também para/reset ao fechar com botão
+        const fecharBtn = document.getElementById("fecharAddSonda");
+        if (fecharBtn) fecharBtn.addEventListener("click", () => {
+            if (AbrirAddSonda) AbrirAddSonda.style.display = "none";
+            stopQrReader();
+            resetAddSondaUI && resetAddSondaUI();
+        });
+
+        // segurança: parar ao sair da página
+        window.addEventListener("beforeunload", () => stopQrReader());
+    })();
 </script>
