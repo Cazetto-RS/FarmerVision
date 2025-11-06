@@ -15,6 +15,8 @@ router.post('/sensor/dados/:mac', SensorController.receberDados);
 // Buscar histórico de leituras por MAC (para gráfico)
 router.get('/sensor/historico/:mac/:limit', autenticar, SensorController.historicoPorMac);
 router.get('/sensor/historico/:mac', autenticar, SensorController.historicoPorMac);
+//Buscar última leitura por usuário_planta_id (para mostrar dados atuais)
+router.get('/sensor/ultima/:usuario_planta_id', autenticar, SensorController.ultimaLeitura);
 
 // Listar sensores adotados por um usuário (para o front saber quais plantas têm sensores)
 router.get('/sensor/adocoes/:usuario_id', autenticar, async (req, res) => {

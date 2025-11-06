@@ -1,5 +1,6 @@
 // controllers/sensor.js
 import * as Sensor from '../models/sensor.js';
+import pool from '../database/data.js';
 
 // Função auxiliar para normalizar MAC
 const normalizeMac = (mac) => {
@@ -189,5 +190,60 @@ export const historicoPorMac = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
+    }
+};
+
+// ------------------------
+// 5️⃣ Última leitura do sensor por planta_usuario_id
+// ------------------------
+export const ultimaLeitura = async (req, res) => {
+    try {
+        const { usuario_planta_id } = req.params;
+
+        // ajusta nome do campo conforme sua tabela
+        const [macInfo] = await pool.query(
+            'SELECT mac_placa FROM adocao WHERE planta_usuario = ? LIMIT 1',
+            [usuario_planta_id]
+        );
+
+        if (!macInfo || macInfo.length === 0) {
+            return res.status(404).json({ sucesso: false, msg: 'Sem sensor vinculado' });
+        }
+
+        const mac = macInfo[0].mac_placa;
+
+        const [dados] = await pool.query(
+            'SELECT valores, data FROM dados_sensor WHERE mac_placa = ? ORDER BY data DESC LIMIT 1',
+            [mac]
+        );
+
+        if (!dados || dados.length === 0) {
+            return res.status(404).json({ sucesso: false, msg: 'Nenhum dado registrado' });
+        }
+
+        let valores = {};
+        try {
+            if (typeof dados[0].valores === "string") {
+                valores = JSON.parse(dados[0].valores);
+            } else if (typeof dados[0].valores === "object" && dados[0].valores !== null) {
+                valores = dados[0].valores;
+            } else {
+                valores = {};
+            }
+        } catch (e) {
+            console.warn("⚠️ Erro ao parsear valores:", e);
+            valores = {};
+        }
+
+        res.json({
+            sucesso: true,
+            umidade: valores.umidade ?? null,
+            temperatura: valores.temperatura ?? null,
+            data: dados[0].data
+        });
+
+    } catch (err) {
+        console.error('Erro em ultimaLeitura:', err);
+        res.status(500).json({ sucesso: false, erro: err.message });
     }
 };

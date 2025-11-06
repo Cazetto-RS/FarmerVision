@@ -116,3 +116,39 @@ export const verificarPlantaDoUsuario = async (usuario_planta_id, usuario_id) =>
         if (cx) cx.release();
     }
 };
+
+// Busca o MAC vinculado a uma planta_usuario
+export const buscarMacPorPlanta = async (usuario_planta_id) => {
+    let cx;
+    try {
+        cx = await pool.getConnection();
+        const cmdSql = `SELECT mac_placa FROM adocao WHERE planta_usuario = ? LIMIT 1;`;
+        const [dados] = await cx.query(cmdSql, [usuario_planta_id]);
+        return dados;
+    } catch (error) {
+        throw error;
+    } finally {
+        if (cx) cx.release();
+    }
+};
+
+// Busca a última leitura (1 registro mais recente)
+export const buscarUltimaLeitura = async (mac_placa) => {
+    let cx;
+    try {
+        cx = await pool.getConnection();
+        const cmdSql = `
+            SELECT valores, data 
+            FROM dados_sensor 
+            WHERE mac_placa = ? 
+            ORDER BY data DESC 
+            LIMIT 1;
+        `;
+        const [dados] = await cx.query(cmdSql, [mac_placa]);
+        return dados[0];
+    } catch (error) {
+        throw error;
+    } finally {
+        if (cx) cx.release();
+    }
+};
